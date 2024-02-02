@@ -50,7 +50,7 @@ export default function Sidebar({
 }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    children: any;
+    children: JSX.Element;
 }) {
     const theme = useTheme();
 
