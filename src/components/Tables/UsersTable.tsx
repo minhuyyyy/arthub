@@ -19,7 +19,12 @@ const StyledTable = styled(Table)(() => ({
         '& tr': { '& th': { paddingLeft: 0, paddingRight: 0 } },
     },
     '& tbody': {
-        '& tr': { '& td': { paddingLeft: 0, textTransform: 'capitalize' } },
+        '& tr': {
+            '& td': {
+                paddingLeft: 0,
+                textTransform: 'capitalize',
+            },
+        },
     },
 }));
 
@@ -126,7 +131,7 @@ const UsersTable = () => {
                             <TableCell align='center'>Company</TableCell>
                             <TableCell align='center'>Start Date</TableCell>
                             <TableCell align='left'>Status</TableCell>
-                            <TableCell align='center'>Amount</TableCell>
+                            <TableCell align='left'>Amount</TableCell>
                             <TableCell align='center'>Action</TableCell>
                         </TableRow>
                     </TableHead>
@@ -147,10 +152,10 @@ const UsersTable = () => {
                                     <TableCell align='center'>
                                         {subscriber.date}
                                     </TableCell>
-                                    <TableCell align='right'>
+                                    <TableCell align='left'>
                                         {subscriber.status}
                                     </TableCell>
-                                    <TableCell align='right'>
+                                    <TableCell align='left'>
                                         ${subscriber.amount}
                                     </TableCell>
                                     <TableCell align='center'>

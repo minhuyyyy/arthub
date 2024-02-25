@@ -15,6 +15,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import useAuth from '../hooks/useAuth';
+import { Roles } from '../types/user';
 const drawerWidth = 240;
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
@@ -54,35 +56,17 @@ export default function Sidebar({
 }) {
     const theme = useTheme();
 
+    const { isAuthenticated, userInfo } = useAuth();
     const handleDrawerClose = () => {
         setOpen(false);
     };
 
     return (
+        // {isAuthenticated && userInfo.role===Roles.admin ? (
+
+        // )}
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {/* <AppBar
-                position='fixed'
-                open={open}>
-                <Toolbar sx={{ backgroundColor: 'white' }}>
-                    <IconButton
-                        color='inherit'
-                        aria-label='open drawer'
-                        onClick={handleDrawerOpen}
-                        edge='start'
-                        sx={{ mr: 2, ...(open && { display: 'none' }) }}>
-                        <MenuIcon sx={{ color: 'black' }} />
-                    </IconButton>
-                    <Typography
-                        variant='h6'
-                        noWrap
-                        color='black'
-                        component='div'>
-                        Arthub
-                    </Typography>
-                </Toolbar>
-            </AppBar> */}
-            {/* <Topbar /> */}
             <Drawer
                 sx={{
                     width: drawerWidth,

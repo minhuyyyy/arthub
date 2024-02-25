@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 function Layout() {
     return (
         <>
-            <Box>
+            <Box sx={{padding:'2rem'}}>
                 <Grid container>
                     <Box>
                         <Topbar>

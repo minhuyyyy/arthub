@@ -1,9 +1,21 @@
 import { createContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import Loading from '../components/Loading';
+import { Roles, User } from '../types/user';
 
-const initialState = {
-    user: null,
+const initialState: User = {
+    userInfo: {
+        id: '',
+        username: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        dob: '',
+        phone: '',
+        address: '',
+        imageUrl: '',
+        role: Roles.guest,
+    },
     isInitialised: false,
     isAuthenticated: false,
 };
@@ -35,7 +47,9 @@ const reducer = (state, action) => {
 
         case 'LOGIN': {
             const { user } = action.payload;
+            // if (user) {
             return { ...state, isAuthenticated: true, user };
+            // } else return { ...state };
         }
 
         case 'LOGOUT': {
@@ -69,9 +83,10 @@ export const AuthProvider = ({ children }) => {
             email,
             password,
         });
+        // if (response.status === 200) {
         const { user } = response.data;
-
         dispatch({ type: 'LOGIN', payload: { user } });
+        // }
     };
 
     const register = async (

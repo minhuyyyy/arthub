@@ -1,11 +1,15 @@
 import { LoadingButton } from '@mui/lab';
 import { Card, Checkbox, Grid, TextField } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/material';
+import axios from 'axios';
 import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import useAuth from '../hooks/useAuth';
+// import useAuth from '../hooks/useAuth';
+// import axios from 'axios';
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -20,11 +24,12 @@ const ContentBox = styled(Box)(() => ({
 
 const JWTRoot = styled(JustifyBox)(() => ({
     background: '#1A2038',
-    minHeight: '100% !important',
+    minHeight: '100vh !important',
+    minWidth: '100vw !important',
     '& .card': {
         maxWidth: 800,
         minHeight: 400,
-        margin: '1rem',
+        margin: '0 auto',
         display: 'flex',
         borderRadius: 12,
         alignItems: 'center',
@@ -65,7 +70,7 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await login(values.email, values.password);
-            navigate('/');
+            navigate('/user');
         } catch (e) {
             setLoading(false);
         }
@@ -84,7 +89,7 @@ const LoginPage = () => {
                             height='100%'
                             sx={{ minWidth: 320 }}>
                             <img
-                                src='/assets/images/illustrations/dreamer.svg'
+                                src='/assets/dreamer.svg'
                                 width='100%'
                                 alt=''
                             />
