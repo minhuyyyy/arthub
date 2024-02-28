@@ -1,18 +1,18 @@
 import { lazy } from 'react';
-import Loadable from './components/Loadable';
+import Layout from './Layout/Layout';
 import AuthGuard from './auth/AuthGuard';
 import LoginPage from './auth/Login';
-import { Navigate } from 'react-router-dom';
-import Layout from './Layout/Layout';
+import Loadable from './components/Loadable';
+import Create from './components/Pages/Create';
 import UserHomePage from './components/Pages/Home';
+import ProfilePage from './components/Pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
-import Create from './components/Pages/Create';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
 const UserTable = Loadable(
-    lazy(() => import('./components/Tables/UsersTable')),
+    lazy(() => import('./components/Tables/UsersTable'))
 );
 const routes = [
     {
@@ -51,6 +51,10 @@ const routes = [
                 element: <UserTable />,
             },
         ],
+    },
+    {
+        path: '/profile/:userId',
+        element: <ProfilePage />,
     },
 
     { path: '/session/signup', element: <Register /> },

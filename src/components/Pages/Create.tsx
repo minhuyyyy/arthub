@@ -37,15 +37,16 @@ function Create() {
             <Grid container>
                 <Grid item>
                     <Button
-                        component='label'
+                        component="label"
                         role={undefined}
-                        variant='contained'
+                        variant="contained"
                         tabIndex={-1}
-                        startIcon={<CloudUpload />}>
+                        startIcon={<CloudUpload />}
+                    >
                         Upload file
                         <VisuallyHiddenInput
-                            type='file'
-                            accept='.jpg, .png'
+                            type="file"
+                            accept=".jpg, .png"
                             onChange={(e) => handleAddPhoto(e)}
                         />
                     </Button>
