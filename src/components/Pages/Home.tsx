@@ -1,7 +1,12 @@
 import React from 'react';
+import ArtworkCard from '../ArtworkCard/ArtworkCard';
 
 function Home() {
-    return <div>Home</div>;
+    return (
+        <div>
+            <ArtworkCard />
+        </div>
+    );
 }
 
 export default Home;

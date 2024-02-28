@@ -7,6 +7,7 @@ import Layout from './Layout/Layout';
 import UserHomePage from './components/Pages/Home';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
+import Create from './components/Pages/Create';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -23,30 +24,31 @@ const routes = [
         ),
         children: [
             {
-                path: 'admin',
+                path: '',
                 element: (
-                    <ProtectedRoute role={Roles.admin}>
-                        <UserTable />,
-                    </ProtectedRoute>
+                    // <ProtectedRoute role={Roles.user}>
+                    <UserHomePage />
+                    // </ProtectedRoute>
                 ),
             },
+            {
+                path: 'create',
+                element: <Create />,
+            },
+            // {path:'create',element:}
         ],
     },
     {
-        path: '/',
+        path: 'admin',
         element: (
-            <AuthGuard>
+            <ProtectedRoute role={Roles.admin}>
                 <Layout />
-            </AuthGuard>
+            </ProtectedRoute>
         ),
         children: [
             {
-                path: 'home',
-                element: (
-                    <ProtectedRoute role={Roles.user}>
-                        <UserHomePage />,
-                    </ProtectedRoute>
-                ),
+                path: 'dashboard/user',
+                element: <UserTable />,
             },
         ],
     },
@@ -54,7 +56,6 @@ const routes = [
     { path: '/session/signup', element: <Register /> },
     { path: '/session/signin', element: <LoginPage /> },
     { path: '/session/404', element: <NotFound /> },
-    { path: '/', element: <Navigate to='admin/dashboard/users' /> },
     { path: '*', element: <NotFound /> },
 ];
 export default routes;

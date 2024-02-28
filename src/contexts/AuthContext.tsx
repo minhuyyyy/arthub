@@ -41,8 +41,14 @@ const initialState: User = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'INIT': {
-            const { isAuthenticated, user } = action.payload;
-            return { ...state, isAuthenticated, isInitialised: true, user };
+            const { email, password } = action.payload;
+            return {
+                ...state,
+                isAuthenticated: true,
+                isInitialised: true,
+                email,
+                password,
+            };
         }
 
         case 'LOGIN': {
@@ -79,13 +85,13 @@ export const AuthProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const login = async (email: string, password: string) => {
-        const response = await axios.post('/api/auth/login', {
-            email,
-            password,
-        });
-        // if (response.status === 200) {
-        const { user } = response.data;
-        dispatch({ type: 'LOGIN', payload: { user } });
+        // const response = await axios.post('/api/auth/login', {
+        //     email,
+        //     password,
+        // });
+        // // if (response.status === 200) {
+        // const { user } = response.data;
+        dispatch({ type: 'LOGIN', payload: { email, password } });
         // }
     };
 

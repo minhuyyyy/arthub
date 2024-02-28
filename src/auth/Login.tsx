@@ -70,7 +70,7 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await login(values.email, values.password);
-            navigate('/user');
+            navigate('/home');
         } catch (e) {
             setLoading(false);
         }
