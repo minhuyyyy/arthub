@@ -2,7 +2,6 @@ import {
     Avatar,
     Box,
     Button,
-    Container,
     Grid,
     IconButton,
     InputBase,
@@ -168,7 +167,6 @@ function CardDetails() {
                         <Typography variant='body1'>
                             <strong>Comments</strong>
                         </Typography>
-                        
                     </Box>
                     {isAuthenticated && (
                         <Box textAlign={'left'}>
