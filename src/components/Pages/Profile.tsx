@@ -1,9 +1,24 @@
 import { Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
+type ImageType = {
+    url: string;
+    title: string;
+    description: string;
+};
+
+interface IProfilePageProps {
+    userId: string;
+    avatar?: string;
+    followerCount: number;
+    FullName: string;
+    listImage: ImageType[];
+}
+
 export default function ProfilePage() {
     let { userId } = useParams();
-    const listIamge = [
+    // const listImage: ImageType[] = [];
+    const listImage: ImageType[] = [
         {
             url: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
             title: 'Ảnh 1',
@@ -55,15 +70,15 @@ export default function ProfilePage() {
                     justifyContent: 'center',
                 }}
             >
-                <Button color="success" variant="contained">
+                <Button color="info" variant="outlined">
                     Chia sẻ
                 </Button>
-                <Button color="info" variant="contained">
+                <Button color="info" variant="outlined">
                     Chỉnh sửa hồ sơ
                 </Button>
             </div>
             <div>
-                <h2>Ảnh của tôi</h2>
+                {listImage.length > 0 && <h2>Ảnh của tôi</h2>}
                 <div
                     style={{
                         display: 'flex',
@@ -72,46 +87,66 @@ export default function ProfilePage() {
                         justifyContent: 'center',
                     }}
                 >
-                    {listIamge.map((item, index) => (
-                        <>
-                            <div
-                                style={{
-                                    backgroundColor: 'whitesmoke',
-                                    padding: '0 10px 20px 10px',
-                                    borderTopLeftRadius: '30px',
-                                    borderTopRightRadius: '30px',
-                                    width: '100%',
-                                    textAlign: 'left',
-                                    fontSize: '20px',
-                                }}
-                            >
-                                <p
+                    {listImage &&
+                        listImage.map((item: ImageType, index) => (
+                            <>
+                                <div
                                     style={{
-                                        fontWeight: 'bold',
+                                        backgroundColor: 'whitesmoke',
+                                        padding: '0 10px 20px 10px',
+                                        borderTopLeftRadius: '30px',
+                                        borderTopRightRadius: '30px',
+                                        width: '100%',
+                                        textAlign: 'left',
+                                        fontSize: '20px',
                                     }}
                                 >
-                                    {item.title.toUpperCase()}
-                                </p>
-                                <p>{item.description}</p>
-                            </div>
-                            <img
-                                key={index}
-                                alt={item.title}
+                                    <p
+                                        style={{
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                        {item.title.toUpperCase()}
+                                    </p>
+                                    <p>{item.description}</p>
+                                </div>
+                                <img
+                                    key={index}
+                                    alt={item.title}
+                                    style={{
+                                        width: '700px',
+                                        objectFit: 'cover',
+                                        marginBottom: '40px',
+                                        borderBottomLeftRadius: '30px',
+                                        borderBottomRightRadius: '30px',
+                                        cursor: 'pointer',
+                                    }}
+                                    src={item.url}
+                                    onDoubleClick={() => {
+                                        handleDoubleClick(index);
+                                    }}
+                                />
+                            </>
+                        ))}
+
+                    {listImage.length === 0 && (
+                        <>
+                            <p
                                 style={{
-                                    height: '500px',
-                                    objectFit: 'cover',
-                                    marginBottom: '40px',
-                                    borderBottomLeftRadius: '30px',
-                                    borderBottomRightRadius: '30px',
-                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    fontWeight: 'bold',
                                 }}
-                                src={item.url}
-                                onDoubleClick={() => {
-                                    handleDoubleClick(index);
-                                }}
-                            />
+                            >
+                                Bạn chưa có hình ảnh nào, hãy chia sẻ hình ảnh
+                                của bạn.
+                            </p>
+                            <div>
+                                <Button color="secondary" variant="contained">
+                                    Tải hình ảnh
+                                </Button>
+                            </div>
                         </>
-                    ))}
+                    )}
                 </div>
             </div>
         </div>
