@@ -13,6 +13,7 @@ export type User = {
         imageUrl: string;
         role: Roles;
     };
+    
 };
 
 export enum Roles {
