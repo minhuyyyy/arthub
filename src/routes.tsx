@@ -54,8 +54,18 @@ const routes = [
         ],
     },
     {
-        path: '/profile/:userId',
-        element: <ProfilePage />,
+        path: 'profile',
+        element: (
+            <AuthGuard>
+                <Layout />
+            </AuthGuard>
+        ),
+        children: [
+            {
+                path: ':userId',
+                element: <ProfilePage />,
+            },
+        ],
     },
 
     { path: '/session/signup', element: <Register /> },
