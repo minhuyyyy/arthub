@@ -8,6 +8,7 @@ import UserHomePage from './components/Pages/Home';
 import ProfilePage from './components/Pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
+import CardDetails from './components/ArtworkCard/CardDetails';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -35,7 +36,7 @@ const routes = [
                 path: 'create',
                 element: <Create />,
             },
-            // {path:'create',element:}
+            { path: 'card/:_id', element: <CardDetails /> },
         ],
     },
     {
