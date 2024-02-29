@@ -7,24 +7,32 @@ export default function ProfilePage() {
         {
             url: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
             title: 'Ảnh 1',
+            description: 'Ảnh này được chụp bằng điện thoại di động',
         },
         {
             url: 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg',
             title: 'Ảnh 2',
+            description: 'Ảnh này được chụp bằng điện thoại di động',
         },
         {
             url: 'https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?$pjpeg$&jpegSize=300&wid=1000',
             title: 'Ảnh 3',
+            description: 'Ảnh này được chụp bằng điện thoại di động',
         },
         {
             url: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg',
             title: 'Ảnh 4',
+            description: 'Ảnh này được chụp bằng điện thoại di động',
         },
     ];
     const followerCount = 100;
 
     return (
-        <div>
+        <div
+            style={{
+                marginTop: '30px',
+            }}
+        >
             <img
                 style={{
                     borderRadius: '50%',
@@ -56,38 +64,44 @@ export default function ProfilePage() {
                         display: 'flex',
                         flexDirection: 'column',
                         flexWrap: 'revert-layer',
-                        gap: '15px',
                         justifyContent: 'center',
                     }}
                 >
                     {listIamge.map((item, index) => (
-                        <div
-                            style={{
-                                backgroundColor: 'whitesmoke',
-                                padding: '0 10px 20px 10px',
-                                borderRadius: '30px',
-                                width: '100%',
-                            }}
-                        >
-                            <p
+                        <>
+                            <div
                                 style={{
-                                    textAlign: 'left',
-                                    fontSize: '20px',
-                                    fontWeight: 'bold',
+                                    backgroundColor: 'whitesmoke',
+                                    padding: '0 10px 20px 10px',
+                                    borderTopLeftRadius: '30px',
+                                    borderTopRightRadius: '30px',
+                                    width: '100%',
                                 }}
                             >
-                                {item.title}
-                            </p>
+                                <p
+                                    style={{
+                                        textAlign: 'left',
+                                        fontSize: '20px',
+                                        fontWeight: 'bold',
+                                    }}
+                                >
+                                    {item.title}
+                                </p>
+                                <p>{item.description}</p>
+                            </div>
                             <img
                                 key={index}
                                 alt={item.title}
                                 style={{
                                     height: '500px',
                                     objectFit: 'cover',
+                                    marginBottom: '40px',
+                                    borderBottomLeftRadius: '30px',
+                                    borderBottomRightRadius: '30px',
                                 }}
                                 src={item.url}
                             />
-                        </div>
+                        </>
                     ))}
                 </div>
             </div>
