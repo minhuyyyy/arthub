@@ -27,6 +27,10 @@ export default function ProfilePage() {
     ];
     const followerCount = 100;
 
+    const handleDoubleClick = (imageId: number) => {
+        console.log('Tym to:', imageId);
+    };
+
     return (
         <div
             style={{
@@ -42,6 +46,7 @@ export default function ProfilePage() {
                 src="https://scontent.fsgn2-6.fna.fbcdn.net/v/t1.6435-9/90110224_2567536326818648_5739247854275264512_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=7a1959&_nc_eui2=AeFQzEvlYN2ixkzLcG_IWZdvygL0wfG9NZTKAvTB8b01lE26Nt05MwEVYvip2V31i3Vdio97PFojigHUZAlG5bso&_nc_ohc=VhdAaa53bmgAX9GnKDn&_nc_ht=scontent.fsgn2-6.fna&oh=00_AfAQni4Lemk46uHXpSCkMGZFB0x_imA7StqfJRiRQmfr7Q&oe=6607C24E"
             />
             <h2>Quyet Anh Le</h2>
+            <p>ID:{userId}</p>
             <p>{followerCount} người theo dõi</p>
             <div
                 style={{
@@ -76,16 +81,16 @@ export default function ProfilePage() {
                                     borderTopLeftRadius: '30px',
                                     borderTopRightRadius: '30px',
                                     width: '100%',
+                                    textAlign: 'left',
+                                    fontSize: '20px',
                                 }}
                             >
                                 <p
                                     style={{
-                                        textAlign: 'left',
-                                        fontSize: '20px',
                                         fontWeight: 'bold',
                                     }}
                                 >
-                                    {item.title}
+                                    {item.title.toUpperCase()}
                                 </p>
                                 <p>{item.description}</p>
                             </div>
@@ -98,8 +103,12 @@ export default function ProfilePage() {
                                     marginBottom: '40px',
                                     borderBottomLeftRadius: '30px',
                                     borderBottomRightRadius: '30px',
+                                    cursor: 'pointer',
                                 }}
                                 src={item.url}
+                                onDoubleClick={() => {
+                                    handleDoubleClick(index);
+                                }}
                             />
                         </>
                     ))}
