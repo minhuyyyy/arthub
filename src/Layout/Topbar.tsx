@@ -15,7 +15,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Sidebar from './Sidebar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { Avatar, Grid, Paper, Typography } from '@mui/material';
+import { Avatar, Grid, Typography } from '@mui/material';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
 import CustomButton from '../components/Link';
@@ -85,7 +85,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const { logout, isAuthenticated, userInfo } = useAuth();
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };

@@ -38,8 +38,6 @@ function CardDetails() {
     useEffect(() => {
         const foundCard = FakeCard.find((card) => card._id === _id);
         if (foundCard) {
-            console.log(foundCard);
-
             setCard(foundCard);
         }
     }, [_id]);

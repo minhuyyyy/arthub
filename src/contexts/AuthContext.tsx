@@ -1,7 +1,9 @@
 import { createContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import Loading from '../components/Loading';
-import { Roles, User } from '../types/user';
+import { Roles, User, getRoleKey } from '../types/user';
+import { decodeToken } from '../hooks/useJWT';
+import { useNavigate } from 'react-router-dom';
 
 const initialState: User = {
     userInfo: {
@@ -28,15 +30,15 @@ const initialState: User = {
 //   return decodedToken.exp > currentTime;
 // };
 
-// const setSession = (accessToken) => {
-//   if (accessToken) {
-//     localStorage.setItem('accessToken', accessToken);
-//     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-//   } else {
-//     localStorage.removeItem('accessToken');
-//     delete axios.defaults.headers.common.Authorization;
-//   }
-// };
+const setSession = (accessToken: string) => {
+    if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+        axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    } else {
+        localStorage.removeItem('accessToken');
+        delete axios.defaults.headers.common.Authorization;
+    }
+};
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -53,9 +55,8 @@ const reducer = (state, action) => {
 
         case 'LOGIN': {
             const { user } = action.payload;
-            // if (user) {
-            return { ...state, isAuthenticated: true, user };
-            // } else return { ...state };
+
+            return { ...state, user };
         }
 
         case 'LOGOUT': {
@@ -83,16 +84,31 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
-
+    const navigate = useNavigate();
     const login = async (email: string, password: string) => {
-        // const response = await axios.post('/api/auth/login', {
-        //     email,
-        //     password,
-        // });
-        // // if (response.status === 200) {
-        // const { user } = response.data;
-        dispatch({ type: 'LOGIN', payload: { email, password } });
-        // }
+        const response = await axios.post(
+            `${import.meta.env.VITE_API_URL}/login`,
+            {
+                emailAddress: email,
+                accountPassword: password,
+            },
+        );
+        if (response.status === 200) {
+            const { token } = response.data;
+            const decoded = decodeToken(token);
+            setSession(token);
+            const user: User = {
+                userInfo: {
+                    id: decoded.MemberId,
+                    email: decoded.email,
+                    role: parseInt(decoded.Role),
+                },
+                isAuthenticated: true,
+                isInitialised: true,
+            };
+            dispatch({ type: 'LOGIN', payload: { user } });
+            navigate('/');
+        }
     };
 
     const register = async (

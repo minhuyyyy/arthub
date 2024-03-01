@@ -1,15 +1,12 @@
 import { LoadingButton } from '@mui/lab';
 import { Card, Checkbox, Grid, TextField } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/material';
-import axios from 'axios';
 import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import useAuth from '../hooks/useAuth';
-// import useAuth from '../hooks/useAuth';
-// import axios from 'axios';
+
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -61,16 +58,14 @@ const validationSchema = Yup.object().shape({
 const LoginPage = () => {
     document.title = 'Sign in';
     const theme = useTheme();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
     const { login } = useAuth();
-
     const handleFormSubmit = async (values: FormValues) => {
         setLoading(true);
         try {
             await login(values.email, values.password);
-            navigate('/home');
         } catch (e) {
             setLoading(false);
         }

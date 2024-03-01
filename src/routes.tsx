@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
 import Create from './components/Pages/Create';
 import CardDetails from './components/ArtworkCard/CardDetails';
+import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -19,24 +20,34 @@ const routes = [
     {
         path: '/',
         element: (
-            <AuthGuard>
-                <Layout />
-            </AuthGuard>
+            // <AuthGuard>
+            <Layout />
+            // </AuthGuard>
         ),
         children: [
             {
                 path: '',
-                element: (
-                    // <ProtectedRoute role={Roles.user}>
-                    <UserHomePage />
-                    // </ProtectedRoute>
-                ),
+                element: <UserHomePage />,
             },
             {
                 path: 'create',
-                element: <Create />,
+
+                element: (
+                    <ProtectedRoute role={Roles.guest}>
+                        <Create />,
+                    </ProtectedRoute>
+                ),
             },
             { path: 'card/:_id', element: <CardDetails /> },
+
+            {
+                path: 'pre-order',
+                element: (
+                    <ProtectedRoute role={Roles.user}>
+                        <PreOrderModal />
+                    </ProtectedRoute>
+                ),
+            },
         ],
     },
     {

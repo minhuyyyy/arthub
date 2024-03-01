@@ -1,4 +1,3 @@
-import React from 'react';
 import ArtworkCard from '../ArtworkCard/ArtworkCard';
 
 function Home() {
