@@ -53,11 +53,11 @@ const reducer = (state, action) => {
             };
         }
 
-        case 'LOGIN': {
-            const { user } = action.payload;
+        // case 'LOGIN': {
+        //     const { user } = action.payload;
 
-            return { ...state, user };
-        }
+        //     return { ...state, user };
+        // }
 
         case 'LOGOUT': {
             return { ...state, isAuthenticated: false, user: null };
@@ -83,16 +83,14 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [state, dispatch] = useReducer(reducer, initialState);
     const navigate = useNavigate();
     const login = async (email: string, password: string) => {
-        const response = await axios.post(
-            `${import.meta.env.VITE_API_URL}/login`,
-            {
-                emailAddress: email,
-                accountPassword: password,
-            },
-        );
+        const response = await axios.post(`${API_URL}/login`, {
+            emailAddress: email,
+            accountPassword: password,
+        });
         if (response.status === 200) {
             const { token } = response.data;
             const decoded = decodeToken(token);
@@ -113,20 +111,24 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (
         email: string,
-        username: string,
+        fullname: string,
         password: string,
+        confirmPassword: string,
     ) => {
-        const response = await axios.post('/api/auth/register', {
-            email,
-            username,
-            password,
+        const response = await axios.post(`${API_URL}/register`, {
+            emailAddress: email,
+            fullName: fullname,
+            password: password,
+            confirmPassword: confirmPassword,
         });
-        const { user } = response.data;
-
-        dispatch({ type: 'REGISTER', payload: { user } });
+        if (response.status === 200) {
+            navigate('/session/signin');
+        }
+        // dispatch({ type: 'REGISTER', payload: { user } });
     };
 
     const logout = () => {
+        navigate('/');
         dispatch({ type: 'LOGOUT' });
     };
 

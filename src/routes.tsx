@@ -2,7 +2,6 @@ import { lazy } from 'react';
 import Loadable from './components/Loadable';
 import AuthGuard from './auth/AuthGuard';
 import LoginPage from './auth/Login';
-import { Navigate } from 'react-router-dom';
 import Layout from './Layout/Layout';
 import UserHomePage from './components/Pages/Home';
 import ProtectedRoute from './components/ProtectedRoute';

@@ -7,7 +7,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import useAuth from '../hooks/useAuth';
 
-
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
 const JustifyBox = styled(FlexBox)(() => ({ justifyContent: 'center' }));
@@ -48,7 +47,7 @@ const initialValues = {
 // form field validation schema
 const validationSchema = Yup.object().shape({
     password: Yup.string()
-        .min(6, 'Password must be 6 character length')
+        .min(8, 'Password must be 8 character length')
         .required('Password is required!'),
     email: Yup.string()
         .email('Invalid Email address')

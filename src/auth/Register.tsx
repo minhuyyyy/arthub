@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Card, Checkbox, Grid, TextField, styled } from '@mui/material';
 import * as Yup from 'yup';
 import useAuth from '../hooks/useAuth';
@@ -34,24 +34,34 @@ const RegisterStyle = styled(JustifyBox)(() => ({
 interface FormValues {
     email: string;
     password: string;
-    username: string;
+    confirmPassword: string;
+    fullname: string;
     remember: boolean;
 }
-11
+11;
 const initialValues: FormValues = {
     email: '',
     password: '',
-    username: '',
+    confirmPassword: '',
+    fullname: '',
     remember: true,
 };
 
 const validationSchema = Yup.object().shape({
     password: Yup.string()
-        .min(6, 'Password must be 6 characters long')
-        .required('Password is required!'),
+        .required('Password is required!')
+        .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*[\]{}()?"\\,><':;|_~`=+-])[a-zA-Z\d!@#$%^&*[\]{}()?"\\,><':;|_~`=+-]{8,15}$/,
+            'Must contain at least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Special Character, and 1 Number',
+        ),
+    fullname: Yup.string().required('Full name is required'),
     email: Yup.string()
         .email('Invalid Email address')
         .required('Email is required!'),
+    confirmPassword: Yup.string().oneOf(
+        [Yup.ref('password')],
+        'Passwords must match',
+    ),
 });
 
 const RegisterPage = () => {
@@ -63,8 +73,12 @@ const RegisterPage = () => {
     const handleFormSubmit = async (values: FormValues) => {
         setLoading(true);
         try {
-            await register(values.email, values.username, values.password);
-            navigate('/');
+            await register(
+                values.email,
+                values.fullname,
+                values.password,
+                values.confirmPassword,
+            );
         } catch (error) {
             console.error(error);
         } finally {
@@ -112,27 +126,6 @@ const RegisterPage = () => {
                                             <TextField
                                                 fullWidth
                                                 size='small'
-                                                type='text'
-                                                name='username'
-                                                label='Username'
-                                                variant='outlined'
-                                                onBlur={handleBlur}
-                                                value={values.username}
-                                                onChange={handleChange}
-                                                helperText={
-                                                    touched.username &&
-                                                    errors.username
-                                                }
-                                                error={Boolean(
-                                                    errors.username &&
-                                                        touched.username,
-                                                )}
-                                                sx={{ mb: 3 }}
-                                            />
-
-                                            <TextField
-                                                fullWidth
-                                                size='small'
                                                 type='email'
                                                 name='email'
                                                 label='Email'
@@ -147,6 +140,26 @@ const RegisterPage = () => {
                                                 error={Boolean(
                                                     errors.email &&
                                                         touched.email,
+                                                )}
+                                                sx={{ mb: 3 }}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                size='small'
+                                                type='text'
+                                                name='fullname'
+                                                label='Full name'
+                                                variant='outlined'
+                                                onBlur={handleBlur}
+                                                value={values.fullname}
+                                                onChange={handleChange}
+                                                helperText={
+                                                    touched.fullname &&
+                                                    errors.fullname
+                                                }
+                                                error={Boolean(
+                                                    errors.fullname &&
+                                                        touched.fullname,
                                                 )}
                                                 sx={{ mb: 3 }}
                                             />
@@ -171,7 +184,26 @@ const RegisterPage = () => {
                                                 )}
                                                 sx={{ mb: 2 }}
                                             />
-
+                                            <TextField
+                                                fullWidth
+                                                size='small'
+                                                name='confirmPassword'
+                                                type='password'
+                                                label='Confirm Password'
+                                                variant='outlined'
+                                                onBlur={handleBlur}
+                                                value={values.confirmPassword}
+                                                onChange={handleChange}
+                                                helperText={
+                                                    touched.confirmPassword &&
+                                                    errors.confirmPassword
+                                                }
+                                                error={Boolean(
+                                                    errors.confirmPassword &&
+                                                        touched.confirmPassword,
+                                                )}
+                                                sx={{ mb: 2 }}
+                                            />
                                             <FlexBox
                                                 gap={1}
                                                 alignItems='center'>
