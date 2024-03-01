@@ -202,127 +202,127 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     xs={8}
                                     md={8}
                                     lg={8}> */}
-                                    {userInfo.role === Roles.admin ? (
-                                        <IconButton
-                                            onClick={() => setOpen(!open)}
-                                            size='large'
-                                            edge='start'
-                                            color='inherit'
-                                            aria-label='open drawer'
-                                            sx={{
-                                                mr: 2,
-                                                ...(open && {
-                                                    display: 'none',
-                                                }),
-                                            }}>
-                                            <MenuIcon />
-                                        </IconButton>
-                                    ) : (
-                                        <>
-                                            {/* <Box alignContent={'start'}> */}
-                                                <Typography
-                                                    display={'inline'}
-                                                    noWrap
-                                                    variant='h5'
-                                                    mr={2}>
-                                                    Arthub
-                                                </Typography>
-                                                <CustomButton destination='/'>
-                                                    Home
-                                                </CustomButton>
-                                                <CustomButton destination='/create'>
-                                                    Create
-                                                </CustomButton>
-                                            {/* </Box> */}
-                                        </>
-                                    )}
-                                    <Search>
-                                        <SearchIconWrapper>
-                                            <SearchIcon />
-                                        </SearchIconWrapper>
-                                        <StyledInputBase
-                                            placeholder='Search…'
-                                            inputProps={{
-                                                'aria-label': 'search',
-                                            }}
-                                        />
-                                    </Search>
-                                {/* </Grid>
+                            {userInfo.role === Roles.admin ? (
+                                <IconButton
+                                    onClick={() => setOpen(!open)}
+                                    size='large'
+                                    edge='start'
+                                    color='inherit'
+                                    aria-label='open drawer'
+                                    sx={{
+                                        mr: 2,
+                                        ...(open && {
+                                            display: 'none',
+                                        }),
+                                    }}>
+                                    <MenuIcon />
+                                </IconButton>
+                            ) : (
+                                <>
+                                    {/* <Box alignContent={'start'}> */}
+                                    <Typography
+                                        display={'inline'}
+                                        noWrap
+                                        variant='h5'
+                                        mr={2}>
+                                        Arthub
+                                    </Typography>
+                                    <CustomButton destination='/'>
+                                        Home
+                                    </CustomButton>
+                                    <CustomButton destination='/create'>
+                                        Create
+                                    </CustomButton>
+                                    {/* </Box> */}
+                                </>
+                            )}
+                            <Search>
+                                <SearchIconWrapper>
+                                    <SearchIcon />
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder='Search…'
+                                    inputProps={{
+                                        'aria-label': 'search',
+                                    }}
+                                />
+                            </Search>
+                            {/* </Grid>
                                 <Grid
                                     item
                                     sm={4}
                                     md={4}
                                     // display={'inline'}
                                     lg={4}> */}
-                                    <Box sx={{ flexGrow: 1 }} />
-                                    <Box
-                                        sx={{
-                                            display: { xs: 'none', md: 'flex' },
-                                        }}>
-                                        <IconButton
-                                            size='large'
-                                            aria-label='show 4 new mails'
-                                            color='inherit'>
-                                            <Badge
-                                                badgeContent={4}
-                                                color='error'>
-                                                <MailIcon />
-                                            </Badge>
-                                        </IconButton>
-                                        <IconButton
-                                            size='large'
-                                            aria-label='show 17 new notifications'
-                                            color='inherit'>
-                                            <Badge
-                                                badgeContent={17}
-                                                color='error'>
-                                                <NotificationsIcon />
-                                            </Badge>
-                                        </IconButton>
-                                        <Box>
-                                            <Typography
-                                                variant='body2'
-                                                display='inline'>
-                                                Hi
-                                                <strong>
-                                                    {/* {user.fullName} */}
-                                                    {
-                                                        (userInfo.firstName,
-                                                        userInfo.lastName)
-                                                    }
-                                                </strong>
-                                            </Typography>
-                                            <IconButton
-                                                size='large'
-                                                edge='end'
-                                                aria-label='account of current user'
-                                                aria-controls={menuId}
-                                                aria-haspopup='true'
-                                                onClick={handleProfileMenuOpen}
-                                                color='inherit'>
-                                                <Avatar
-                                                    // src={user.avatar}
-                                                    alt={`${userInfo.firstName} ${userInfo.lastName}`}
-                                                    src={userInfo.imageUrl}
-                                                />
-                                            </IconButton>
-                                        </Box>
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            display: { xs: 'flex', md: 'none' },
-                                        }}>
-                                        <IconButton
-                                            size='large'
-                                            aria-label='show more'
-                                            aria-controls={mobileMenuId}
-                                            aria-haspopup='true'
-                                            onClick={handleMobileMenuOpen}
-                                            color='inherit'>
-                                            <MoreIcon />
-                                        </IconButton>
-                                    </Box>
-                                {/* </Grid>
+                            <Box sx={{ flexGrow: 1 }} />
+                            <Box
+                                sx={{
+                                    display: { xs: 'none', md: 'flex' },
+                                }}>
+                                <IconButton
+                                    size='large'
+                                    aria-label='show 4 new mails'
+                                    color='inherit'>
+                                    <Badge
+                                        badgeContent={4}
+                                        color='error'>
+                                        <MailIcon />
+                                    </Badge>
+                                </IconButton>
+                                <IconButton
+                                    size='large'
+                                    aria-label='show 17 new notifications'
+                                    color='inherit'>
+                                    <Badge
+                                        badgeContent={17}
+                                        color='error'>
+                                        <NotificationsIcon />
+                                    </Badge>
+                                </IconButton>
+                                <Box>
+                                    <Typography
+                                        variant='body2'
+                                        display='inline'>
+                                        Hi
+                                        <strong>
+                                            {/* {user.fullName} */}
+                                            {
+                                                (userInfo.firstName,
+                                                userInfo.lastName)
+                                            }
+                                        </strong>
+                                    </Typography>
+                                    <IconButton
+                                        size='large'
+                                        edge='end'
+                                        aria-label='account of current user'
+                                        aria-controls={menuId}
+                                        aria-haspopup='true'
+                                        onClick={handleProfileMenuOpen}
+                                        color='inherit'>
+                                        <Avatar
+                                            // src={user.avatar}
+                                            alt={`${userInfo.firstName} ${userInfo.lastName}`}
+                                            src={userInfo.imageUrl}
+                                        />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: { xs: 'flex', md: 'none' },
+                                }}>
+                                <IconButton
+                                    size='large'
+                                    aria-label='show more'
+                                    aria-controls={mobileMenuId}
+                                    aria-haspopup='true'
+                                    onClick={handleMobileMenuOpen}
+                                    color='inherit'>
+                                    <MoreIcon />
+                                </IconButton>
+                            </Box>
+                            {/* </Grid>
                             </Grid> */}
                         </>
                     ) : (
