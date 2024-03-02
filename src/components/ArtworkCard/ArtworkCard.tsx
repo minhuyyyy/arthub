@@ -9,6 +9,7 @@ import {
     Typography,
 } from '@mui/material';
 import axios from 'axios';
+import './Artwork.scss';
 import { useNavigate } from 'react-router-dom';
 import { CardType } from '../../types/card';
 
@@ -57,9 +58,7 @@ function ArtworkCard() {
 
     return (
         <Box sx={{ marginTop: '20px' }}>
-            <Grid
-                container
-                spacing={1}>
+            <Grid container spacing={1}>
                 {cards.map((card) => (
                     <Grid
                         item
@@ -71,8 +70,8 @@ function ArtworkCard() {
                             <CardActionArea
                                 onClick={() => navigate(`/card/${card.id}`)}>
                                 <CardMedia
-                                    component='img'
-                                    height='140px'
+                                    component="img"
+                                    height="140px"
                                     image={card.imgLink}
                                     alt={card.imgDescription}
                                 />
@@ -94,10 +93,8 @@ function ArtworkCard() {
                     </Grid>
                 ))}
                 {loading && (
-                    <Grid
-                        item
-                        xs={12}>
-                        <Typography variant='body2'>Loading...</Typography>
+                    <Grid item xs={12}>
+                        <Typography variant="body2">Loading...</Typography>
                     </Grid>
                 )}
             </Grid>

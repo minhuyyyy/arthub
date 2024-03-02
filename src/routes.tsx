@@ -1,27 +1,28 @@
 import { lazy } from 'react';
-import Loadable from './components/Loadable';
+import Layout from './Layout/Layout';
 import AuthGuard from './auth/AuthGuard';
 import LoginPage from './auth/Login';
-import Layout from './Layout/Layout';
+import Loadable from './components/Loadable';
+import Create from './components/Pages/Create';
 import UserHomePage from './components/Pages/Home';
+import ProfilePage from './components/Pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
-import Create from './components/Pages/Create';
 import CardDetails from './components/ArtworkCard/CardDetails';
 import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
 const UserTable = Loadable(
-    lazy(() => import('./components/Tables/UsersTable')),
+    lazy(() => import('./components/Tables/UsersTable'))
 );
 const routes = [
     {
         path: '/',
         element: (
-            <AuthGuard>
-                <Layout />
-            </AuthGuard>
+            // <AuthGuard>
+            <Layout />
+            // </AuthGuard>
         ),
         children: [
             {
@@ -60,6 +61,20 @@ const routes = [
             {
                 path: 'dashboard/user',
                 element: <UserTable />,
+            },
+        ],
+    },
+    {
+        path: 'profile',
+        element: (
+            <AuthGuard>
+                <Layout />
+            </AuthGuard>
+        ),
+        children: [
+            {
+                path: ':userId',
+                element: <ProfilePage />,
             },
         ],
     },

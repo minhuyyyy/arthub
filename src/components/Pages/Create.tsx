@@ -104,11 +104,12 @@ function Create() {
                         )}
                     </Box>
                     <Button
-                        component='label'
+                        component="label"
                         role={undefined}
-                        variant='contained'
+                        variant="contained"
                         tabIndex={-1}
-                        startIcon={<CloudUpload />}>
+                        startIcon={<CloudUpload />}
+                    >
                         Upload file
                         <VisuallyHiddenInput
                             type='file'
