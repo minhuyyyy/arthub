@@ -19,9 +19,9 @@ const routes = [
     {
         path: '/',
         element: (
-            // <AuthGuard>
-            <Layout />
-            // </AuthGuard>
+            <AuthGuard>
+                <Layout />
+            </AuthGuard>
         ),
         children: [
             {
