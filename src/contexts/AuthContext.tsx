@@ -1,7 +1,7 @@
+// AuthProvider.js
 import { createContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
-import Loading from '../components/Loading';
-import { Roles, User, getRoleKey } from '../types/user';
+import { Roles, User } from '../types/user';
 import { decodeToken } from '../hooks/useJWT';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,14 +22,6 @@ const initialState: User = {
     isAuthenticated: false,
 };
 
-// const isValidToken = (accessToken) => {
-//   if (!accessToken) return false;
-
-//   const decodedToken = jwtDecode(accessToken);
-//   const currentTime = Date.now() / 1000;
-//   return decodedToken.exp > currentTime;
-// };
-
 const setSession = (accessToken: string) => {
     if (accessToken) {
         localStorage.setItem('accessToken', accessToken);
@@ -42,33 +34,25 @@ const setSession = (accessToken: string) => {
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'INIT': {
-            const { email, password } = action.payload;
+        case 'INIT':
             return {
                 ...state,
                 isAuthenticated: true,
                 isInitialised: true,
-                email,
-                password,
+                userInfo: action.payload.userInfo,
             };
-        }
-
-        // case 'LOGIN': {
-        //     const { user } = action.payload;
-
-        //     return { ...state, user };
-        // }
-
-        case 'LOGOUT': {
-            return { ...state, isAuthenticated: false, user: null };
-        }
-
-        case 'REGISTER': {
-            const { user } = action.payload;
-
-            return { ...state, isAuthenticated: true, user };
-        }
-
+        case 'LOGIN':
+            return {
+                ...state,
+                isAuthenticated: true,
+                userInfo: action.payload.user,
+            };
+        case 'LOGOUT':
+            return {
+                ...state,
+                isAuthenticated: false,
+                userInfo: initialState.userInfo,
+            };
         default:
             return state;
     }
@@ -79,13 +63,30 @@ const AuthContext = createContext({
     method: 'JWT',
     login: () => {},
     logout: () => {},
-    register: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
     const API_URL = import.meta.env.VITE_API_URL;
     const [state, dispatch] = useReducer(reducer, initialState);
     const navigate = useNavigate();
+
+    // Check for token in local storage on mount
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+            axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+            const decoded = decodeToken(accessToken);
+            const user = {
+                id: decoded.MemberId,
+                email: decoded.email,
+                role: parseInt(decoded.Role),
+            };
+            dispatch({ type: 'INIT', payload: { userInfo: user } });
+        } else {
+            dispatch({ type: 'LOGOUT' });
+        }
+    }, []);
+
     const login = async (email: string, password: string) => {
         const response = await axios.post(`${API_URL}/login`, {
             emailAddress: email,
@@ -95,18 +96,19 @@ export const AuthProvider = ({ children }) => {
             const { token } = response.data;
             const decoded = decodeToken(token);
             setSession(token);
-            const user: User = {
-                userInfo: {
-                    id: decoded.MemberId,
-                    email: decoded.email,
-                    role: parseInt(decoded.Role),
-                },
-                isAuthenticated: true,
-                isInitialised: true,
+            const user = {
+                id: decoded.MemberId,
+                email: decoded.email,
+                role: parseInt(decoded.Role),
             };
             dispatch({ type: 'LOGIN', payload: { user } });
             navigate('/');
         }
+    };
+
+    const logout = () => {
+        navigate('/');
+        dispatch({ type: 'LOGOUT' });
     };
 
     const register = async (
@@ -124,34 +126,10 @@ export const AuthProvider = ({ children }) => {
         if (response.status === 200) {
             navigate('/session/signin');
         }
-        // dispatch({ type: 'REGISTER', payload: { user } });
     };
-
-    const logout = () => {
-        navigate('/');
-        dispatch({ type: 'LOGOUT' });
-    };
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await axios.get('/api/auth/profile');
-                dispatch({
-                    type: 'INIT',
-                    payload: { isAuthenticated: true, user: data.user },
-                });
-            } catch (err) {
-                console.error(err);
-                dispatch({
-                    type: 'INIT',
-                    payload: { isAuthenticated: false, user: null },
-                });
-            }
-        })();
-    }, []);
 
     // SHOW LOADER
-    if (!state.isInitialised) return <Loading />;
+    // if (!state.isInitialised) return <Loading />;
 
     return (
         <AuthContext.Provider

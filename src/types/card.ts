@@ -1,5 +1,5 @@
 export type CardType = {
-    _id: string;
+    id: string;
     imgDescription: string;
     imgLink: string;
     owner: {
@@ -13,15 +13,18 @@ export type CardType = {
     owns: boolean;
     hasSaved: boolean;
     comments: {
-        _id: string;
+        id: string;
         displayName: string;
         comment: string;
         createdAt: string;
         userId: string;
-    }[]; // Assuming comments are strings, could be a more complex object
-    createdAt: string; // Assuming ISO 8601 format
+    }[];
+    likes: {
+        userId: string;
+    }[];
+    createdAt: string;
     tags: {
-        _id: string;
+        id: string;
         tag?: string;
     }[];
     AIgenerated: boolean;

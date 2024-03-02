@@ -8,13 +8,7 @@ const AuthGuard = ({ children }: { children: ReactElement }) => {
 
     if (isAuthenticated) return <>{children}</>;
 
-    return (
-        <Navigate
-            replace
-            to='/session/signin'
-            state={{ from: pathname }}
-        />
-    );
+    return <div>Unauthorized</div>;
 };
 
 export default AuthGuard;

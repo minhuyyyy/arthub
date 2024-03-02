@@ -8,16 +8,16 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { FakeCard } from '../../card';
 import { CardType } from '../../types/card';
-import { FavoriteBorderOutlined, Send } from '@mui/icons-material';
+import { Favorite, FavoriteBorderOutlined, Send } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
 import { Container, StyledInputBase } from '../../utils/InputComponents';
+import axios from 'axios';
 
 function CardDetails() {
     const navigate = useNavigate();
     const [card, setCard] = useState<CardType>({
-        _id: '',
+        id: '',
         imgDescription: '',
         imgLink: '',
         owner: {
@@ -28,19 +28,41 @@ function CardDetails() {
         owns: false,
         hasSaved: false,
         comments: [],
+        likes: [],
         createdAt: '',
         tags: [],
         AIgenerated: false,
     });
     const [comment, setComment] = useState('');
-    const { _id } = useParams();
+    const [liked, isLiked] = useState(false);
+    const { id } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
     useEffect(() => {
-        const foundCard = FakeCard.find((card) => card._id === _id);
-        if (foundCard) {
-            setCard(foundCard);
+        const getCard = async () => {
+            try {
+                const res = await axios.get(
+                    `http://localhost:5000/cards/?id=${id}`,
+                );
+                if (res.status === 200) {
+                    setCard(res.data[0]); // Assuming the response is an array of cards and you want to set the first one
+                }
+            } catch (error) {
+                console.error('Error fetching card details:', error);
+            }
+        };
+        getCard();
+    }, [id]);
+
+    const likeCard = async () => {
+        const res = await axios.put(`http://localhost:5000/cards/${id}`, {
+            likes: {
+                userId: userInfo.id,
+            },
+        });
+        if (res.status === 200) {
+            isLiked(true);
         }
-    }, [_id]);
+    };
 
     return (
         <Box
@@ -85,7 +107,9 @@ function CardDetails() {
                     xs={12}
                     md={8}
                     lg={6}>
-                    <Box marginTop='20px'>
+                    <Box
+                        marginTop='20px'
+                        width={400}>
                         <Button
                             sx={{
                                 position: 'absolute',
@@ -160,11 +184,20 @@ function CardDetails() {
                                         <strong>What do you think?</strong>
                                     )}
                                 </Typography>
-                                <IconButton
-                                    size='large'
-                                    edge='end'>
-                                    <FavoriteBorderOutlined />
-                                </IconButton>
+                                {liked ? (
+                                    <IconButton
+                                        size='large'
+                                        edge='end'>
+                                        <Favorite />
+                                    </IconButton>
+                                ) : (
+                                    <IconButton
+                                        size='large'
+                                        edge='end'
+                                        onClick={() => likeCard()}>
+                                        <FavoriteBorderOutlined />
+                                    </IconButton>
+                                )}
                                 <Box
                                     position={'relative'}
                                     display={'flex'}

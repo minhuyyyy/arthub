@@ -24,6 +24,7 @@
         "echarts": "^5.4.1",
         "echarts-for-react": "^3.0.2",
         "formik": "^2.2.9",
+        "json-server": "^1.0.0-alpha.23",
         "jwt-decode": "^4.0.0",
         "lodash": "^4.17.21",
         "notistack": "^3.0.1",

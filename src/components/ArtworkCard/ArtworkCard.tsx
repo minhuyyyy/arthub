@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Card,
@@ -8,9 +8,9 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
-import { FakeCard } from '../../card';
-import { CardType } from '../../types/card';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { CardType } from '../../types/card';
 
 function ArtworkCard() {
     const [cards, setCards] = useState<CardType[]>([]);
@@ -23,16 +23,27 @@ function ArtworkCard() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const loadMoreCards = () => {
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const loadMoreCards = async () => {
         setLoading(true);
-        // Simulate loading data from an API, you can replace this with your actual data fetching logic
-        setTimeout(() => {
-            const startIndex = (page - 1) * pageSize;
-            const newCards = FakeCard.slice(startIndex, startIndex + pageSize);
+        try {
+            const newCardsResponse = await axios.get(
+                `http://localhost:5000/cards?_page=${page}&_per_page=${pageSize}`,
+            );
+            const newCards = newCardsResponse.data;
             setCards((prevCards) => [...prevCards, ...newCards]);
-            setPage((prevPage) => prevPage + 1);
-            setLoading(false);
-        }, 1000);
+            setPage(page + 1);
+        } catch (error) {
+            console.error('Error loading more cards:', error);
+        } finally {
+            setLoading(false); // Set loading to false after cards are loaded or if there's an error
+        }
     };
 
     const handleScroll = () => {
@@ -43,13 +54,6 @@ function ArtworkCard() {
             loadMoreCards();
         }
     };
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
     return (
         <Box sx={{ marginTop: '20px' }}>
@@ -62,10 +66,10 @@ function ArtworkCard() {
                         sm={4}
                         md={3}
                         lg={3}
-                        key={card._id}>
+                        key={card.id}>
                         <Card sx={{ maxWidth: 345 }}>
                             <CardActionArea
-                                onClick={() => navigate(`/card/${card._id}`)}>
+                                onClick={() => navigate(`/card/${card.id}`)}>
                                 <CardMedia
                                     component='img'
                                     height='140px'
@@ -77,12 +81,12 @@ function ArtworkCard() {
                                         gutterBottom
                                         variant='h5'
                                         component='div'>
-                                        {card.owner.name}
+                                        {card?.owner?.name}
                                     </Typography>
                                     <Typography
                                         variant='body2'
                                         color='text.secondary'>
-                                        {card.imgDescription}
+                                        {card?.imgDescription}
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>

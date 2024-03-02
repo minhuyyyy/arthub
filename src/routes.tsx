@@ -32,12 +32,12 @@ const routes = [
                 path: 'create',
 
                 element: (
-                    <ProtectedRoute role={Roles.guest}>
+                    <ProtectedRoute role={Roles.user}>
                         <Create />,
                     </ProtectedRoute>
                 ),
             },
-            { path: 'card/:_id', element: <CardDetails /> },
+            { path: 'card/:id', element: <CardDetails /> },
 
             {
                 path: 'pre-order',

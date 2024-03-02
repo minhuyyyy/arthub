@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
 import { ChangeEvent, useState } from 'react';
+import axios from 'axios';
+import useAuth from '../../hooks/useAuth';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -33,6 +35,7 @@ function Create() {
     const handleGenreChange = (e: SelectChangeEvent) => {
         setSelectedGenre(e.target.value as string);
     };
+    const { userInfo } = useAuth();
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -57,6 +60,23 @@ function Create() {
         } else {
             setPhoto(null);
             setPhotoUrl('');
+        }
+    };
+    const handleSubmit = async () => {
+        const res = await axios.post('http://localhost:5000/posts', {
+            userId: userInfo.id,
+            title: formData.title,
+            description: formData.description,
+            photoUrl: photoUrl,
+            genre: selectedGenre,
+        });
+        if (res.status === 201) {
+            setFormData({
+                title: '',
+                description: '',
+            });
+            setSelectedGenre('');
+            setPhoto(null), setPhotoUrl('');
         }
     };
     return (
@@ -169,6 +189,7 @@ function Create() {
                         </Box>
                         {photoUrl && (
                             <Button
+                                onClick={() => handleSubmit()}
                                 sx={{
                                     borderRadius: '20px',
                                     backgroundColor: 'red !important',
