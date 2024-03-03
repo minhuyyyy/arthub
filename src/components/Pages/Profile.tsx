@@ -58,7 +58,7 @@ export default function ProfilePage() {
     const followerCount = 100;
 
     return (
-        <div style={{ marginTop: '20px', width: '100%' }}>
+        <div style={{ width: '100%' }}>
             <img
                 style={{
                     borderRadius: '50%',
@@ -107,7 +107,11 @@ export default function ProfilePage() {
                 </Popover>
 
                 {userInfo.id === userId ? (
-                    <Button color="info" variant="contained">
+                    <Button
+                        color="info"
+                        variant="contained"
+                        onClick={() => navigate(`/edit-profile/${userInfo.id}`)}
+                    >
                         Edit profile
                     </Button>
                 ) : (

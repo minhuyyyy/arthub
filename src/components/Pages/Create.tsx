@@ -20,6 +20,7 @@ import { ChangeEvent, useState } from 'react';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
+import { toast } from 'react-toastify';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -79,26 +80,31 @@ function Create() {
         }
     };
     const handleSubmit = async () => {
-        const res = await axios.post(`${API_URL}/artwork`, {
-            artistID: userInfo.id,
-            name: formData.title,
-            description: formData.description,
-            image: photoUrl,
-            genre: selectedGenre,
-            isPublic: true,
-            price: formData.price,
-            isBuyAvailable: buyStatus,
-        });
-        if (res.status === 201) {
-            setFormData({
-                title: '',
-                description: '',
-                price: 0,
-            });
-            setSelectedGenre('');
-            canBuy(false);
-            setPhoto(null), setPhotoUrl('');
-        }
+        await axios
+            .post(`${API_URL}/artwork`, {
+                artistID: userInfo.id,
+                name: formData.title,
+                description: formData.description,
+                image: photoUrl,
+                genre: selectedGenre,
+                isPublic: true,
+                price: formData.price,
+                isBuyAvailable: buyStatus,
+            })
+            .then((res) => {
+                if (res.status === 201) {
+                    toast.success('Artwork posted successfully!');
+                    setFormData({
+                        title: '',
+                        description: '',
+                        price: 0,
+                    });
+                    setSelectedGenre('');
+                    canBuy(false);
+                    setPhoto(null), setPhotoUrl('');
+                }
+            })
+            .catch((err) => toast.error(err.response.data.errors.Name[0]));
     };
     const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         canBuy(e.target.checked);
@@ -153,6 +159,7 @@ function Create() {
                                 sx={{ marginLeft: '10px' }}
                                 disableUnderline
                                 fullWidth
+                                required={true}
                             />
                         </Box>
 

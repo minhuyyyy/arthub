@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import useAuth from '../hooks/useAuth';
+import { ToastContainer } from 'react-toastify';
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -39,8 +40,8 @@ interface FormValues {
 
 // inital login credentials
 const initialValues = {
-    email: 'jason@ui-lib.com',
-    password: 'dummyPass',
+    email: '',
+    password: '',
     remember: true,
 };
 
@@ -65,141 +66,147 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await login(values.email, values.password);
+            setLoading(false);
         } catch (e) {
             setLoading(false);
         }
     };
 
     return (
-        <JWTRoot>
-            <Card className='card'>
-                <Grid container>
-                    <Grid
-                        item
-                        sm={6}
-                        xs={12}>
-                        <JustifyBox
-                            p={4}
-                            height='100%'
-                            sx={{ minWidth: 320 }}>
-                            <img
-                                src='/assets/dreamer.svg'
-                                width='100%'
-                                alt=''
-                            />
-                        </JustifyBox>
-                    </Grid>
+        <>
+            <JWTRoot>
+                <Card className="card">
+                    <Grid container>
+                        <Grid item sm={6} xs={12}>
+                            <JustifyBox
+                                p={4}
+                                height="100%"
+                                sx={{ minWidth: 320 }}
+                            >
+                                <img
+                                    src="/assets/dreamer.svg"
+                                    width="100%"
+                                    alt=""
+                                />
+                            </JustifyBox>
+                        </Grid>
 
-                    <Grid
-                        item
-                        sm={6}
-                        xs={12}>
-                        <ContentBox>
-                            <Formik
-                                onSubmit={handleFormSubmit}
-                                initialValues={initialValues}
-                                validationSchema={validationSchema}>
-                                {({
-                                    values,
-                                    errors,
-                                    touched,
-                                    handleChange,
-                                    handleBlur,
-                                    handleSubmit,
-                                }) => (
-                                    <form onSubmit={handleSubmit}>
-                                        <TextField
-                                            fullWidth
-                                            size='small'
-                                            type='email'
-                                            name='email'
-                                            label='Email'
-                                            variant='outlined'
-                                            onBlur={handleBlur}
-                                            value={values.email}
-                                            onChange={handleChange}
-                                            helperText={
-                                                touched.email && errors.email
-                                            }
-                                            error={Boolean(
-                                                errors.email && touched.email,
-                                            )}
-                                            sx={{ mb: 3 }}
-                                        />
+                        <Grid item sm={6} xs={12}>
+                            <ContentBox>
+                                <Formik
+                                    onSubmit={handleFormSubmit}
+                                    initialValues={initialValues}
+                                    validationSchema={validationSchema}
+                                >
+                                    {({
+                                        values,
+                                        errors,
+                                        touched,
+                                        handleChange,
+                                        handleBlur,
+                                        handleSubmit,
+                                    }) => (
+                                        <form onSubmit={handleSubmit}>
+                                            <TextField
+                                                fullWidth
+                                                size="small"
+                                                type="email"
+                                                name="email"
+                                                label="Email"
+                                                variant="outlined"
+                                                onBlur={handleBlur}
+                                                value={values.email}
+                                                onChange={handleChange}
+                                                helperText={
+                                                    touched.email &&
+                                                    errors.email
+                                                }
+                                                error={Boolean(
+                                                    errors.email &&
+                                                        touched.email
+                                                )}
+                                                sx={{ mb: 3 }}
+                                            />
 
-                                        <TextField
-                                            fullWidth
-                                            size='small'
-                                            name='password'
-                                            type='password'
-                                            label='Password'
-                                            variant='outlined'
-                                            onBlur={handleBlur}
-                                            value={values.password}
-                                            onChange={handleChange}
-                                            helperText={
-                                                touched.password &&
-                                                errors.password
-                                            }
-                                            error={Boolean(
-                                                errors.password &&
-                                                    touched.password,
-                                            )}
-                                            sx={{ mb: 1.5 }}
-                                        />
+                                            <TextField
+                                                fullWidth
+                                                size="small"
+                                                name="password"
+                                                type="password"
+                                                label="Password"
+                                                variant="outlined"
+                                                onBlur={handleBlur}
+                                                value={values.password}
+                                                onChange={handleChange}
+                                                helperText={
+                                                    touched.password &&
+                                                    errors.password
+                                                }
+                                                error={Boolean(
+                                                    errors.password &&
+                                                        touched.password
+                                                )}
+                                                sx={{ mb: 1.5 }}
+                                            />
 
-                                        <FlexBox justifyContent='space-between'>
-                                            <FlexBox gap={1}>
-                                                <Checkbox
-                                                    size='small'
-                                                    name='remember'
-                                                    onChange={handleChange}
-                                                    checked={values.remember}
-                                                    sx={{ padding: 0 }}
-                                                />
+                                            <FlexBox justifyContent="space-between">
+                                                <FlexBox gap={1}>
+                                                    <Checkbox
+                                                        size="small"
+                                                        name="remember"
+                                                        onChange={handleChange}
+                                                        checked={
+                                                            values.remember
+                                                        }
+                                                        sx={{ padding: 0 }}
+                                                    />
 
-                                                <h3>Remember Me</h3>
+                                                    <h3>Remember Me</h3>
+                                                </FlexBox>
+
+                                                <NavLink
+                                                    to="/session/forgot-password"
+                                                    style={{
+                                                        color: theme.palette
+                                                            .primary.main,
+                                                    }}
+                                                >
+                                                    Forgot password?
+                                                </NavLink>
                                             </FlexBox>
 
-                                            <NavLink
-                                                to='/session/forgot-password'
-                                                style={{
-                                                    color: theme.palette.primary
-                                                        .main,
-                                                }}>
-                                                Forgot password?
-                                            </NavLink>
-                                        </FlexBox>
+                                            <LoadingButton
+                                                type="submit"
+                                                color="primary"
+                                                loading={loading}
+                                                variant="contained"
+                                                sx={{ my: 2 }}
+                                            >
+                                                Login
+                                            </LoadingButton>
 
-                                        <LoadingButton
-                                            type='submit'
-                                            color='primary'
-                                            loading={loading}
-                                            variant='contained'
-                                            sx={{ my: 2 }}>
-                                            Login
-                                        </LoadingButton>
-
-                                        <h3>
-                                            Don't have an account?
-                                            <NavLink
-                                                to='/session/signup'
-                                                style={{
-                                                    color: theme.palette.primary
-                                                        .main,
-                                                    marginLeft: 5,
-                                                }}>
-                                                Register
-                                            </NavLink>
-                                        </h3>
-                                    </form>
-                                )}
-                            </Formik>
-                        </ContentBox>
+                                            <h3>
+                                                Don't have an account?
+                                                <NavLink
+                                                    to="/session/signup"
+                                                    style={{
+                                                        color: theme.palette
+                                                            .primary.main,
+                                                        marginLeft: 5,
+                                                    }}
+                                                >
+                                                    Register
+                                                </NavLink>
+                                            </h3>
+                                        </form>
+                                    )}
+                                </Formik>
+                            </ContentBox>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Card>
-        </JWTRoot>
+                </Card>
+            </JWTRoot>
+        </>
     );
 };
 

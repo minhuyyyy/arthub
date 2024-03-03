@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
 import CardDetails from './components/ArtworkCard/CardDetails';
 import EditProfilePage from './components/Pages/EditProfile';
+import { Bounce, ToastContainer } from 'react-toastify';
 // import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
@@ -41,9 +42,13 @@ const routes = [
             },
             { path: 'card/:id', element: <CardDetails /> },
             {
-                path: 'profile/:userId',
-                element: <ProfilePage />,
+                path: 'profile',
+                element: <Layout />,
                 children: [
+                    {
+                        path: ':userId',
+                        element: <ProfilePage />,
+                    },
                     {
                         path: 'edit-profile/:userId',
                         element: (

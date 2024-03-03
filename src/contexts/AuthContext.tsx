@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Roles, User } from '../types/user';
 import { decodeToken } from '../hooks/useJWT';
 import { useNavigate } from 'react-router-dom';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState: User = {
     userInfo: {
@@ -63,6 +65,7 @@ const AuthContext = createContext({
     method: 'JWT',
     login: () => {},
     logout: () => {},
+    register: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
@@ -94,23 +97,36 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email: string, password: string) => {
-        const response = await axios.post(`${API_URL}/login`, {
-            emailAddress: email,
-            accountPassword: password,
-        });
-        if (response.status === 200) {
-            const { token } = response.data;
-            const decoded = decodeToken(token);
-            setSession(token);
-            const user = {
-                id: decoded.MemberId,
-                email: decoded.email,
-                role: parseInt(decoded.Role),
-            };
-            console.log(user);
+        try {
+            await axios
+                .post(`${API_URL}/login`, {
+                    emailAddress: email,
+                    accountPassword: password,
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        const { token } = res.data;
+                        const decoded = decodeToken(token);
+                        setSession(token);
+                        const user = {
+                            id: decoded.MemberId,
+                            email: decoded.email,
+                            role: parseInt(decoded.Role),
+                        };
+                        console.log(user);
 
-            dispatch({ type: 'LOGIN', payload: { user } });
-            navigate('/');
+                        toast.success('Login successfully!');
+                        dispatch({ type: 'LOGIN', payload: { user } });
+                        navigate('/');
+                    }
+                })
+                .catch((err) => {
+                    if (err.response.status === 401) {
+                        toast.error('Invalid email or password');
+                    } else toast.error('Something went wrong @@');
+                });
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -126,26 +142,49 @@ export const AuthProvider = ({ children }) => {
         password: string,
         confirmPassword: string
     ) => {
-        const response = await axios.post(`${API_URL}/register`, {
-            emailAddress: email,
-            fullName: fullname,
-            password: password,
-            confirmPassword: confirmPassword,
-        });
-        if (response.status === 200) {
-            navigate('/session/signin');
-        }
+        await axios
+            .post(`${API_URL}/register`, {
+                emailAddress: email,
+                fullName: fullname,
+                password: password,
+                confirmPassword: confirmPassword,
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    toast.success('Account registered successfully!');
+                    navigate('/session/signin');
+                }
+            })
+            .catch((err) => {
+                if (err.response.status === 400) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.response.data);
+                }
+            });
     };
 
-    // SHOW LOADER
-    // if (!state.isInitialised) return <Loading />;
-
     return (
-        <AuthContext.Provider
-            value={{ ...state, method: 'JWT', login, logout, register }}
-        >
-            {children}
-        </AuthContext.Provider>
+        <>
+            <AuthContext.Provider
+                value={{ ...state, method: 'JWT', login, logout, register }}
+            >
+                {children}
+            </AuthContext.Provider>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Bounce}
+            />
+        </>
     );
 };
 

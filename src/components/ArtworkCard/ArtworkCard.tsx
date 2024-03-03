@@ -14,7 +14,7 @@ function ArtworkCard() {
     useEffect(() => {
         loadMoreCards();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+    }, []);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);

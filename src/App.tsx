@@ -1,3 +1,4 @@
+import 'react-toastify/dist/ReactToastify.css';
 import { CssBaseline } from '@mui/material';
 import './App.css';
 import { AuthProvider } from './contexts/AuthContext';
@@ -7,24 +8,11 @@ import './fake-db';
 function App() {
     const content = useRoutes(routes);
     return (
-        <>
+        <div>
             <AuthProvider>
                 <CssBaseline>{content}</CssBaseline>
-
-                {/* <ToastContainer
-                    position='top-right'
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme='light'
-                /> */}
             </AuthProvider>
-        </>
+        </div>
     );
 }
 

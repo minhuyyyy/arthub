@@ -1,6 +1,8 @@
 import { Avatar, Box, Button, Typography, styled } from '@mui/material';
 import useAuth from '../../hooks/useAuth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -14,6 +16,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 function EditProfilePage() {
+    const { userId } = useParams();
     const { userInfo } = useAuth();
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');
@@ -32,6 +35,10 @@ function EditProfilePage() {
             setPhotoUrl('');
         }
     };
+
+    useEffect(() => {
+        toast.error('test');
+    }, []);
 
     return (
         <Box>
