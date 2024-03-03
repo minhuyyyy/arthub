@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {
-    Box,
-    Card,
-    CardActionArea,
-    CardContent,
-    CardMedia,
-    Grid,
-    Typography,
-} from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import './Artwork.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CardType } from '../../types/card';
+import { Masonry } from '@mui/lab';
 
 function ArtworkCard() {
     const [cards, setCards] = useState<CardType[]>([]);
@@ -22,20 +15,17 @@ function ArtworkCard() {
     useEffect(() => {
         loadMoreCards();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [page]);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
     }, []);
 
     const loadMoreCards = async () => {
         setLoading(true);
         try {
             const newCardsResponse = await axios.get(
-                `http://localhost:5000/cards?_page=${page}&_per_page=${pageSize}`,
+                `http://localhost:5000/cards?_page=${page}&_per_page=${pageSize}`
             );
             const newCards = newCardsResponse.data;
             setCards((prevCards) => [...prevCards, ...newCards]);
@@ -57,48 +47,31 @@ function ArtworkCard() {
     };
 
     return (
-        <Box sx={{ marginTop: '20px' }}>
-            <Grid container spacing={1}>
-                {cards.map((card) => (
-                    <Grid
-                        item
-                        sm={4}
-                        md={3}
-                        lg={3}
-                        key={card.id}>
-                        <Card sx={{ maxWidth: 345 }}>
-                            <CardActionArea
-                                onClick={() => navigate(`/card/${card.id}`)}>
-                                <CardMedia
-                                    component="img"
-                                    height="140px"
-                                    image={card.imgLink}
-                                    alt={card.imgDescription}
-                                />
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant='h5'
-                                        component='div'>
-                                        {card?.owner?.name}
-                                    </Typography>
-                                    <Typography
-                                        variant='body2'
-                                        color='text.secondary'>
-                                        {card?.imgDescription}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
-                    </Grid>
-                ))}
+        <div style={{ marginTop: '20px', width: '100%' }}>
+            <Box sx={{ marginTop: '20px', width: '70vw' }}>
+                <Masonry columns={{ xs: 2, md: 3, lg: 4 }} spacing={2}>
+                    {cards.map((card, index) => (
+                        <Link to={`/card/${card.id}`} key={index}>
+                            <img
+                                src={`${card.imgLink}?w=162&auto=format`}
+                                srcSet={`${card.imgLink}?w=162&auto=format`}
+                                loading="lazy"
+                                style={{
+                                    borderRadius: '20px',
+                                    display: 'block',
+                                    width: '100%',
+                                }}
+                            />
+                        </Link>
+                    ))}
+                </Masonry>
                 {loading && (
                     <Grid item xs={12}>
                         <Typography variant="body2">Loading...</Typography>
                     </Grid>
                 )}
-            </Grid>
-        </Box>
+            </Box>
+        </div>
     );
 }
 

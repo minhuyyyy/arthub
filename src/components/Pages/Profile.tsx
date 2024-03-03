@@ -1,17 +1,17 @@
-import { Button, Popover, Typography } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { Box, Button, Grid, Popover, Typography } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
-import React, { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import PreOrderModal from '../Modals/PreOrderModal';
+import { Masonry } from '@mui/lab';
 
 export default function ProfilePage() {
     const { userId } = useParams();
     const { userInfo } = useAuth();
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-        null
-    );
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -32,28 +32,28 @@ export default function ProfilePage() {
             `${import.meta.env.VITE_API_URL}/profile/${userId}`
         );
     };
-    const listIamge = [
+    const listImage = [
         {
+            id: 1,
             url: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
-            title: 'Ảnh 1',
         },
         {
+            id: 2,
             url: 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg',
-            title: 'Ảnh 2',
         },
         {
+            id: 3,
             url: 'https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?$pjpeg$&jpegSize=300&wid=1000',
-            title: 'Ảnh 3',
         },
         {
+            id: 4,
             url: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg',
-            title: 'Ảnh 4',
         },
     ];
     const followerCount = 100;
 
     return (
-        <div style={{ marginTop: '20px' }}>
+        <div style={{ marginTop: '20px', width: '100%' }}>
             <img
                 style={{
                     borderRadius: '50%',
@@ -118,48 +118,33 @@ export default function ProfilePage() {
                     </>
                 )}
             </div>
-            <div>
-                <h2>My cards</h2>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        flexWrap: 'revert-layer',
-                        gap: '15px',
-                        justifyContent: 'center',
-                    }}
-                >
-                    {listIamge.map((item, index) => (
+            <Box sx={{ marginTop: '20px', width: '70vw' }}>
+                <Masonry columns={{ xs: 2, md: 4 }} spacing={2}>
+                    {listImage.map((image, index) => (
                         <div
-                            style={{
-                                backgroundColor: 'whitesmoke',
-                                padding: '0 10px 20px 10px',
-                                borderRadius: '30px',
-                                width: '100%',
-                            }}
+                            key={index}
+                            onClick={() => navigate(`/card/${image.id}`)}
                         >
-                            <p
-                                style={{
-                                    textAlign: 'left',
-                                    fontSize: '20px',
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                {item.title}
-                            </p>
                             <img
-                                key={index}
-                                alt={item.title}
+                                srcSet={`${image.url}?w=162&auto=format&dpr=2 2x`}
+                                src={`${image.url}?w=162&auto=format`}
+                                // alt={image.title}
+                                loading="lazy"
                                 style={{
-                                    height: '500px',
-                                    objectFit: 'cover',
+                                    borderRadius: '20px',
+                                    display: 'block',
+                                    width: '100%',
                                 }}
-                                src={item.url}
                             />
                         </div>
                     ))}
-                </div>
-            </div>
+                </Masonry>
+                {loading && (
+                    <Grid item xs={12}>
+                        <Typography variant="body2">Loading...</Typography>
+                    </Grid>
+                )}
+            </Box>
         </div>
     );
 }
