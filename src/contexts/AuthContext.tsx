@@ -37,7 +37,7 @@ const reducer = (state, action) => {
         case 'INIT':
             return {
                 ...state,
-                isAuthenticated: true,
+                isAuthenticated: action.payload.isAuthenticated,
                 isInitialised: true,
                 userInfo: action.payload.userInfo,
             };
@@ -81,9 +81,15 @@ export const AuthProvider = ({ children }) => {
                 email: decoded.email,
                 role: parseInt(decoded.Role),
             };
-            dispatch({ type: 'INIT', payload: { userInfo: user } });
+            dispatch({
+                type: 'INIT',
+                payload: { userInfo: user, isAuthenticated: true },
+            });
         } else {
-            dispatch({ type: 'LOGOUT' });
+            dispatch({
+                type: 'INIT',
+                payload: { userInfo: initialState, isAuthenticated: false },
+            });
         }
     }, []);
 
@@ -101,21 +107,24 @@ export const AuthProvider = ({ children }) => {
                 email: decoded.email,
                 role: parseInt(decoded.Role),
             };
+            console.log(user);
+
             dispatch({ type: 'LOGIN', payload: { user } });
             navigate('/');
         }
     };
 
     const logout = () => {
-        navigate('/');
+        localStorage.clear();
         dispatch({ type: 'LOGOUT' });
+        navigate('/');
     };
 
     const register = async (
         email: string,
         fullname: string,
         password: string,
-        confirmPassword: string,
+        confirmPassword: string
     ) => {
         const response = await axios.post(`${API_URL}/register`, {
             emailAddress: email,
@@ -133,7 +142,8 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ ...state, method: 'JWT', login, logout, register }}>
+            value={{ ...state, method: 'JWT', login, logout, register }}
+        >
             {children}
         </AuthContext.Provider>
     );

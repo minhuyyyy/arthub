@@ -7,7 +7,7 @@ import { Masonry } from '@mui/lab';
 
 export default function ProfilePage() {
     const { userId } = useParams();
-    const { userInfo } = useAuth();
+    const { isAuthenticated, userInfo } = useAuth();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -23,10 +23,15 @@ export default function ProfilePage() {
     const id = popoverOpen ? 'simple-popover' : undefined;
 
     const [open, isOpen] = useState(false);
+    console.log(isAuthenticated);
 
-    // useEffect(() => {
+    const openModal = () => {
+        if (isAuthenticated) {
+            return isOpen(true);
+        }
+        return navigate('/session/signin');
+    };
 
-    // })
     const copyProfileLink = () => {
         navigator.clipboard.writeText(
             `${import.meta.env.VITE_API_URL}/profile/${userId}`
@@ -108,7 +113,7 @@ export default function ProfilePage() {
                 ) : (
                     <>
                         <Button
-                            onClick={() => isOpen(true)}
+                            onClick={openModal}
                             color="info"
                             variant="contained"
                         >

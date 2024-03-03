@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import './Artwork.scss';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { CardType } from '../../types/card';
 import { Masonry } from '@mui/lab';
 
@@ -11,7 +11,6 @@ function ArtworkCard() {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const pageSize = 10; // Number of items to load per page
-    const navigate = useNavigate();
     useEffect(() => {
         loadMoreCards();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -19,6 +18,9 @@ function ArtworkCard() {
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     const loadMoreCards = async () => {
@@ -66,9 +68,9 @@ function ArtworkCard() {
                     ))}
                 </Masonry>
                 {loading && (
-                    <Grid item xs={12}>
-                        <Typography variant="body2">Loading...</Typography>
-                    </Grid>
+                    // <Grid item xs={12}>
+                    <Typography variant="body2">Loading...</Typography>
+                    // </Grid>
                 )}
             </Box>
         </div>

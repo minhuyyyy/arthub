@@ -9,7 +9,8 @@ import ProfilePage from './components/Pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
 import CardDetails from './components/ArtworkCard/CardDetails';
-import PreOrderModal from './components/Modals/PreOrderModal';
+import EditProfilePage from './components/Pages/EditProfile';
+// import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -39,15 +40,29 @@ const routes = [
                 ),
             },
             { path: 'card/:id', element: <CardDetails /> },
-
             {
-                path: 'pre-order',
-                element: (
-                    <ProtectedRoute role={Roles.user}>
-                        <PreOrderModal />
-                    </ProtectedRoute>
-                ),
+                path: 'profile/:userId',
+                element: <ProfilePage />,
+                children: [
+                    {
+                        path: 'edit-profile/:userId',
+                        element: (
+                            <ProtectedRoute role={Roles.user}>
+                                <EditProfilePage />
+                            </ProtectedRoute>
+                        ),
+                    },
+                ],
             },
+
+            // {
+            //     path: 'pre-order',
+            //     element: (
+            //         <ProtectedRoute role={Roles.user}>
+            //             <PreOrderModal />
+            //         </ProtectedRoute>
+            //     ),
+            // },
         ],
     },
     {
