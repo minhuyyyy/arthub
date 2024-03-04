@@ -1,6 +1,4 @@
-import { CardType } from './types/card';
 
-export const FakeCard: CardType[] = [
     {
         _id: '5cc638ba63908f11ace4cb8e',
         imgDescription: "What's Up Chief?",
@@ -8654,4 +8652,4 @@ export const FakeCard: CardType[] = [
         ],
         AIgenerated: false,
     },
-];
+

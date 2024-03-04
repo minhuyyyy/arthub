@@ -1,39 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import {
-    Box,
-    Card,
-    CardActionArea,
-    CardContent,
-    CardMedia,
-    Grid,
-    Typography,
-} from '@mui/material';
-import { FakeCard } from '../../card';
-import { CardType } from '../../types/card';
+import { useState, useEffect } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
+import axios from 'axios';
 import './Artwork.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { CardType } from '../../types/card';
+import { Masonry } from '@mui/lab';
 
 function ArtworkCard() {
     const [cards, setCards] = useState<CardType[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const pageSize = 10; // Number of items to load per page
-    const navigate = useNavigate();
     useEffect(() => {
         loadMoreCards();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const loadMoreCards = () => {
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const loadMoreCards = async () => {
         setLoading(true);
-        // Simulate loading data from an API, you can replace this with your actual data fetching logic
-        setTimeout(() => {
-            const startIndex = (page - 1) * pageSize;
-            const newCards = FakeCard.slice(startIndex, startIndex + pageSize);
+        try {
+            const newCardsResponse = await axios.get(
+                `http://localhost:5000/cards?_page=${page}&_per_page=${pageSize}`
+            );
+            const newCards = newCardsResponse.data;
             setCards((prevCards) => [...prevCards, ...newCards]);
-            setPage((prevPage) => prevPage + 1);
-            setLoading(false);
-        }, 1000);
+            setPage(page + 1);
+        } catch (error) {
+            console.error('Error loading more cards:', error);
+        } finally {
+            setLoading(false); // Set loading to false after cards are loaded or if there's an error
+        }
     };
 
     const handleScroll = () => {
@@ -45,58 +48,32 @@ function ArtworkCard() {
         }
     };
 
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
-    const handleDoubleClick = (id: string) => {
-        console.log('Tym to:', id);
-    };
-
     return (
-        <Box sx={{ marginTop: '20px' }}>
-            <Grid container spacing={1}>
-                {cards.map((card) => (
-                    <Grid item sm={4} md={3} lg={3} key={card._id}>
-                        <Card sx={{ maxWidth: 345 }}>
-                            <CardActionArea
-                                onClick={() => navigate(`/card/${card._id}`)}
-                            >
-                                <CardMedia
-                                    component="img"
-                                    height="140px"
-                                    image={card.imgLink}
-                                    alt={card.imgDescription}
-                                />
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant="h5"
-                                        component="div"
-                                    >
-                                        {card.owner.name}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                    >
-                                        {card.imgDescription}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
-                    </Grid>
-                ))}
+        <div style={{ marginTop: '20px', width: '100%' }}>
+            <Box sx={{ marginTop: '20px', width: '70vw' }}>
+                <Masonry columns={{ xs: 2, md: 3, lg: 4 }} spacing={2}>
+                    {cards.map((card, index) => (
+                        <Link to={`/card/${card.id}`} key={index}>
+                            <img
+                                src={`${card.imgLink}?w=162&auto=format`}
+                                srcSet={`${card.imgLink}?w=162&auto=format`}
+                                loading="lazy"
+                                style={{
+                                    borderRadius: '20px',
+                                    display: 'block',
+                                    width: '100%',
+                                }}
+                            />
+                        </Link>
+                    ))}
+                </Masonry>
                 {loading && (
-                    <Grid item xs={12}>
-                        <Typography variant="body2">Loading...</Typography>
-                    </Grid>
+                    // <Grid item xs={12}>
+                    <Typography variant="body2">Loading...</Typography>
+                    // </Grid>
                 )}
-            </Grid>
-        </Box>
+            </Box>
+        </div>
     );
 }
 

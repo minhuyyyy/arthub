@@ -9,6 +9,9 @@ import ProfilePage from './components/Pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
 import CardDetails from './components/ArtworkCard/CardDetails';
+import EditProfilePage from './components/Pages/EditProfile';
+import { Bounce, ToastContainer } from 'react-toastify';
+// import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -19,24 +22,52 @@ const routes = [
     {
         path: '/',
         element: (
-            <AuthGuard>
-                <Layout />
-            </AuthGuard>
+            // <AuthGuard>
+            <Layout />
+            // </AuthGuard>
         ),
         children: [
             {
                 path: '',
-                element: (
-                    // <ProtectedRoute role={Roles.user}>
-                    <UserHomePage />
-                    // </ProtectedRoute>
-                ),
+                element: <UserHomePage />,
             },
             {
                 path: 'create',
-                element: <Create />,
+
+                element: (
+                    <ProtectedRoute role={Roles.user}>
+                        <Create />,
+                    </ProtectedRoute>
+                ),
             },
-            { path: 'card/:_id', element: <CardDetails /> },
+            { path: 'card/:id', element: <CardDetails /> },
+            {
+                path: 'profile',
+                element: <Layout />,
+                children: [
+                    {
+                        path: ':userId',
+                        element: <ProfilePage />,
+                    },
+                    {
+                        path: 'edit-profile/:userId',
+                        element: (
+                            <ProtectedRoute role={Roles.user}>
+                                <EditProfilePage />
+                            </ProtectedRoute>
+                        ),
+                    },
+                ],
+            },
+
+            // {
+            //     path: 'pre-order',
+            //     element: (
+            //         <ProtectedRoute role={Roles.user}>
+            //             <PreOrderModal />
+            //         </ProtectedRoute>
+            //     ),
+            // },
         ],
     },
     {

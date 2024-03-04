@@ -1,7 +1,11 @@
+// AuthProvider.js
 import { createContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
-import Loading from '../components/Loading';
 import { Roles, User } from '../types/user';
+import { decodeToken } from '../hooks/useJWT';
+import { useNavigate } from 'react-router-dom';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState: User = {
     userInfo: {
@@ -20,54 +24,37 @@ const initialState: User = {
     isAuthenticated: false,
 };
 
-// const isValidToken = (accessToken) => {
-//   if (!accessToken) return false;
-
-//   const decodedToken = jwtDecode(accessToken);
-//   const currentTime = Date.now() / 1000;
-//   return decodedToken.exp > currentTime;
-// };
-
-// const setSession = (accessToken) => {
-//   if (accessToken) {
-//     localStorage.setItem('accessToken', accessToken);
-//     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-//   } else {
-//     localStorage.removeItem('accessToken');
-//     delete axios.defaults.headers.common.Authorization;
-//   }
-// };
+const setSession = (accessToken: string) => {
+    if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+        axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    } else {
+        localStorage.removeItem('accessToken');
+        delete axios.defaults.headers.common.Authorization;
+    }
+};
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'INIT': {
-            const { email, password } = action.payload;
+        case 'INIT':
+            return {
+                ...state,
+                isAuthenticated: action.payload.isAuthenticated,
+                isInitialised: true,
+                userInfo: action.payload.userInfo,
+            };
+        case 'LOGIN':
             return {
                 ...state,
                 isAuthenticated: true,
-                isInitialised: true,
-                email,
-                password,
+                userInfo: action.payload.user,
             };
-        }
-
-        case 'LOGIN': {
-            const { user } = action.payload;
-            // if (user) {
-            return { ...state, isAuthenticated: true, user };
-            // } else return { ...state };
-        }
-
-        case 'LOGOUT': {
-            return { ...state, isAuthenticated: false, user: null };
-        }
-
-        case 'REGISTER': {
-            const { user } = action.payload;
-
-            return { ...state, isAuthenticated: true, user };
-        }
-
+        case 'LOGOUT':
+            return {
+                ...state,
+                isAuthenticated: false,
+                userInfo: initialState.userInfo,
+            };
         default:
             return state;
     }
@@ -82,64 +69,122 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [state, dispatch] = useReducer(reducer, initialState);
+    const navigate = useNavigate();
+
+    // Check for token in local storage on mount
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+            axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+            const decoded = decodeToken(accessToken);
+            const user = {
+                id: decoded.MemberId,
+                email: decoded.email,
+                role: parseInt(decoded.Role),
+            };
+            dispatch({
+                type: 'INIT',
+                payload: { userInfo: user, isAuthenticated: true },
+            });
+        } else {
+            dispatch({
+                type: 'INIT',
+                payload: { userInfo: initialState, isAuthenticated: false },
+            });
+        }
+    }, []);
 
     const login = async (email: string, password: string) => {
-        // const response = await axios.post('/api/auth/login', {
-        //     email,
-        //     password,
-        // });
-        // // if (response.status === 200) {
-        // const { user } = response.data;
-        dispatch({ type: 'LOGIN', payload: { email, password } });
-        // }
+        try {
+            await axios
+                .post(`${API_URL}/login`, {
+                    emailAddress: email,
+                    accountPassword: password,
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        const { token } = res.data;
+                        const decoded = decodeToken(token);
+                        setSession(token);
+                        const user = {
+                            id: decoded.MemberId,
+                            email: decoded.email,
+                            role: parseInt(decoded.Role),
+                        };
+                        console.log(user);
+
+                        toast.success('Login successfully!');
+                        dispatch({ type: 'LOGIN', payload: { user } });
+                        navigate('/');
+                    }
+                })
+                .catch((err) => {
+                    if (err.response.status === 401) {
+                        toast.error('Invalid email or password');
+                    } else toast.error('Something went wrong @@');
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const logout = () => {
+        localStorage.clear();
+        dispatch({ type: 'LOGOUT' });
+        navigate('/');
     };
 
     const register = async (
         email: string,
-        username: string,
+        fullname: string,
         password: string,
+        confirmPassword: string
     ) => {
-        const response = await axios.post('/api/auth/register', {
-            email,
-            username,
-            password,
-        });
-        const { user } = response.data;
-
-        dispatch({ type: 'REGISTER', payload: { user } });
+        await axios
+            .post(`${API_URL}/register`, {
+                emailAddress: email,
+                fullName: fullname,
+                password: password,
+                confirmPassword: confirmPassword,
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    toast.success('Account registered successfully!');
+                    navigate('/session/signin');
+                }
+            })
+            .catch((err) => {
+                if (err.response.status === 400) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.response.data);
+                }
+            });
     };
-
-    const logout = () => {
-        dispatch({ type: 'LOGOUT' });
-    };
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await axios.get('/api/auth/profile');
-                dispatch({
-                    type: 'INIT',
-                    payload: { isAuthenticated: true, user: data.user },
-                });
-            } catch (err) {
-                console.error(err);
-                dispatch({
-                    type: 'INIT',
-                    payload: { isAuthenticated: false, user: null },
-                });
-            }
-        })();
-    }, []);
-
-    // SHOW LOADER
-    if (!state.isInitialised) return <Loading />;
 
     return (
-        <AuthContext.Provider
-            value={{ ...state, method: 'JWT', login, logout, register }}>
-            {children}
-        </AuthContext.Provider>
+        <>
+            <AuthContext.Provider
+                value={{ ...state, method: 'JWT', login, logout, register }}
+            >
+                {children}
+            </AuthContext.Provider>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Bounce}
+            />
+        </>
     );
 };
 
