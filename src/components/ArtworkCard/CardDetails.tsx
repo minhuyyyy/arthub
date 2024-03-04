@@ -15,6 +15,7 @@ import { Container, StyledInputBase } from '../../utils/InputComponents';
 import axios from 'axios';
 
 function CardDetails() {
+    document.title = 'Details';
     const navigate = useNavigate();
     const [card, setCard] = useState<CardType>({
         id: '',
@@ -41,7 +42,7 @@ function CardDetails() {
         const getCard = async () => {
             try {
                 const res = await axios.get(
-                    `http://localhost:5000/cards/?id=${id}`,
+                    `http://localhost:5000/cards/?id=${id}`
                 );
                 if (res.status === 200) {
                     setCard(res.data[0]); // Assuming the response is an array of cards and you want to set the first one
@@ -75,15 +76,10 @@ function CardDetails() {
                 display: 'flex',
                 flexDirection: 'row',
                 position: 'relative',
-            }}>
-            <Grid
-                container
-                spacing={2}>
-                <Grid
-                    item
-                    sm={12}
-                    md={4}
-                    lg={6}>
+            }}
+        >
+            <Grid container spacing={2}>
+                <Grid item sm={12} md={4} lg={6}>
                     <Box
                         sx={{
                             minWidth: '300px',
@@ -94,7 +90,8 @@ function CardDetails() {
                             maskImage:
                                 '-webkit-radial-gradient(center, white, black)',
                             borderRadius: '32px 0px 0px 32px',
-                        }}>
+                        }}
+                    >
                         <img
                             style={{ width: '100%', height: '100%' }}
                             src={card?.imgLink}
@@ -102,14 +99,8 @@ function CardDetails() {
                         />
                     </Box>
                 </Grid>
-                <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    lg={6}>
-                    <Box
-                        marginTop='20px'
-                        width={400}>
+                <Grid item xs={12} md={8} lg={6}>
+                    <Box marginTop="20px" width={400}>
                         <Button
                             sx={{
                                 position: 'absolute',
@@ -117,28 +108,29 @@ function CardDetails() {
                                 borderRadius: '20px',
                                 backgroundColor: 'red !important',
                                 color: 'white',
-                            }}>
+                            }}
+                        >
                             Share to profile
                         </Button>
-                        <Typography
-                            variant='h4'
-                            textAlign={'left'}>
+                        <Typography variant="h4" textAlign={'left'}>
                             {card.imgDescription}
                         </Typography>
                     </Box>
                     <Box
                         sx={{ position: 'relative' }}
                         textAlign={'left'}
-                        alignContent={'flex-end'}>
+                        alignContent={'flex-end'}
+                    >
                         <IconButton
-                            size='large'
-                            edge='end'
-                            aria-label='account of current user'
-                            aria-haspopup='true'
-                            color='inherit'
+                            size="large"
+                            edge="end"
+                            aria-label="account of current user"
+                            aria-haspopup="true"
+                            color="inherit"
                             onClick={() =>
                                 navigate(`/profile/${card.owner.userId}`)
-                            }>
+                            }
+                        >
                             <Avatar
                                 // src={user.avatar}
                                 alt={card.owner.name}
@@ -147,9 +139,10 @@ function CardDetails() {
                         </IconButton>
                         <Link to={`/profile/${card.owner.userId}`}>
                             <Typography
-                                variant='body2'
+                                variant="body2"
                                 sx={{ color: 'black !important' }}
-                                display='inline'>
+                                display="inline"
+                            >
                                 {card.owner.name}
                             </Typography>
                         </Link>
@@ -161,21 +154,21 @@ function CardDetails() {
                                 borderRadius: '20px',
                                 backgroundColor: '#e1e1e1 !important',
                                 color: 'black',
-                            }}>
+                            }}
+                        >
                             Follow
                         </Button>
                     </Box>
                     <Box textAlign={'left'}>
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                             <strong>Comments</strong>
                         </Typography>
                         {isAuthenticated && (
                             <Box
                                 textAlign={'left'}
-                                sx={{ position: 'absolute', bottom: '0px' }}>
-                                <Typography
-                                    variant='body1'
-                                    display={'inline'}>
+                                sx={{ position: 'absolute', bottom: '0px' }}
+                            >
+                                <Typography variant="body1" display={'inline'}>
                                     {card.comments.length > 0 ? (
                                         <strong>
                                             {card.comments.length} comments
@@ -185,23 +178,23 @@ function CardDetails() {
                                     )}
                                 </Typography>
                                 {liked ? (
-                                    <IconButton
-                                        size='large'
-                                        edge='end'>
+                                    <IconButton size="large" edge="end">
                                         <Favorite />
                                     </IconButton>
                                 ) : (
                                     <IconButton
-                                        size='large'
-                                        edge='end'
-                                        onClick={() => likeCard()}>
+                                        size="large"
+                                        edge="end"
+                                        onClick={() => likeCard()}
+                                    >
                                         <FavoriteBorderOutlined />
                                     </IconButton>
                                 )}
                                 <Box
                                     position={'relative'}
                                     display={'flex'}
-                                    flexDirection={'row'}>
+                                    flexDirection={'row'}
+                                >
                                     <Avatar src={userInfo.imageUrl} />
                                     <Container>
                                         <StyledInputBase
@@ -210,12 +203,11 @@ function CardDetails() {
                                             onChange={(e) =>
                                                 setComment(e.target.value)
                                             }
-                                            placeholder='Add comment'></StyledInputBase>
+                                            placeholder="Add comment"
+                                        ></StyledInputBase>
                                     </Container>
                                     {comment.length > 0 && (
-                                        <IconButton
-                                            size='small'
-                                            edge='end'>
+                                        <IconButton size="small" edge="end">
                                             <Send
                                             // sx={{
                                             //     backgroundColor:

@@ -35,6 +35,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 function Create() {
+    document.title='Create post'
     const API_URL = import.meta.env.VITE_API_URL;
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');

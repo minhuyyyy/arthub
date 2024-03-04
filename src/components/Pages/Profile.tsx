@@ -24,6 +24,7 @@ interface IProfilePageProps {
 }
 
 export default function ProfilePage() {
+    document.title = 'Profile';
     const API_URL = import.meta.env.VITE_API_URL;
     const { userId } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
