@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Card, Checkbox, Grid, TextField, styled } from '@mui/material';
 import * as Yup from 'yup';
 import useAuth from '../hooks/useAuth';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
 import { Formik } from 'formik';
 import { ThemeProvider, useTheme } from '@emotion/react';
@@ -67,7 +67,6 @@ const validationSchema = Yup.object().shape({
 const RegisterPage = () => {
     const theme = useTheme();
     const { register } = useAuth();
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
     const handleFormSubmit = async (values: FormValues) => {

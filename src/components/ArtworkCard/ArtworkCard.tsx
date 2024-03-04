@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import './Artwork.scss';
 import { Link } from 'react-router-dom';

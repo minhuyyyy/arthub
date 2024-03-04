@@ -124,7 +124,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
         >
             <MenuItem
                 onClick={() => {
-                    navigate('/profile/asdfas');
+                    navigate(`/profile/${userInfo.id}`);
                     handleMenuClose();
                 }}
             >

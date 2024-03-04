@@ -104,14 +104,18 @@ function Create() {
                     setPhoto(null), setPhotoUrl('');
                 }
             })
-            .catch((err) => toast.error(err.response.data.errors.Name[0]));
+            .catch((err) => {
+                if (err.response.status === 400) {
+                    toast.error(err.response.data.errors.Name[0]);
+                } else toast.error('Something went wrong @@');
+            });
     };
     const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         canBuy(e.target.checked);
     };
 
     return (
-        <Box>
+        <Box position={'relative'}>
             <Grid container>
                 <Grid item xs={12} sm={12} md={4} lg={6}>
                     <Box>
@@ -159,7 +163,6 @@ function Create() {
                                 sx={{ marginLeft: '10px' }}
                                 disableUnderline
                                 fullWidth
-                                required={true}
                             />
                         </Box>
 
@@ -209,7 +212,7 @@ function Create() {
                                 </Select>
                             </FormControl>
                         </Box>
-                        <Box>
+                        <Box position={'relative'}>
                             <FormGroup>
                                 <FormControlLabel
                                     control={
@@ -220,55 +223,58 @@ function Create() {
                                     }
                                     label="Available to buy"
                                 />
-                                <Box
-                                    sx={{
-                                        // borderRadius: '20px',
-                                        width: '550px',
-                                        // border: 1,
-                                        // borderColor: '#a5a5a5',
-                                        marginTop: '20px',
-                                        textAlign: 'left',
-                                    }}
-                                >
-                                    <TextField
+                                {buyStatus === true && (
+                                    <Box
                                         sx={{
-                                            marginLeft: '10px',
-                                        }}
-                                        label="Enter price"
-                                        // fullWidth
-                                        id="price"
-                                        name="price"
-                                        inputProps={{
-                                            inputMode: 'numeric',
-                                            pattern: '[0-9]*',
-                                        }}
-                                        value={formData.price}
-                                        onChange={(e) => handleChange(e)}
-                                        placeholder="Enter price"
-                                    />
-                                    <Typography
-                                        sx={{
-                                            marginLeft: '20px',
-                                            display: 'inline',
+                                            // borderRadius: '20px',
+                                            width: '550px',
+                                            // border: 1,
+                                            // borderColor: '#a5a5a5',
+                                            marginTop: '20px',
+                                            textAlign: 'left',
                                         }}
                                     >
-                                        {`Price: ${formData.price.toLocaleString(
-                                            'vi-VN',
-                                            {
-                                                style: 'currency',
-                                                currency: 'VND',
-                                            }
-                                        )}`}
-                                    </Typography>
+                                        <TextField
+                                            sx={{
+                                                marginLeft: '10px',
+                                            }}
+                                            label="Enter price"
+                                            // fullWidth
+                                            id="price"
+                                            name="price"
+                                            inputProps={{
+                                                inputMode: 'numeric',
+                                                pattern: '[0-9]*',
+                                            }}
+                                            value={formData.price}
+                                            onChange={(e) => handleChange(e)}
+                                            placeholder="Enter price"
+                                        />
+                                        <Typography
+                                            sx={{
+                                                marginLeft: '20px',
+                                                display: 'inline',
+                                            }}
+                                        >
+                                            {`Price: ${formData.price.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}`}
+                                        </Typography>
 
-                                    {/* {buyStatus == true && } */}
-                                </Box>
+                                        {/* {buyStatus == true && } */}
+                                    </Box>
+                                )}
                             </FormGroup>
                         </Box>
                         {photoUrl && (
                             <Button
                                 onClick={() => handleSubmit()}
                                 sx={{
+                                    position: 'absolute',
                                     borderRadius: '20px',
                                     backgroundColor: 'red !important',
                                     color: 'white',

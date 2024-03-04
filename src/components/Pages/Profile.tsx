@@ -1,16 +1,61 @@
 import { Box, Button, Grid, Popover, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import PreOrderModal from '../Modals/PreOrderModal';
 import { Masonry } from '@mui/lab';
+import axios from 'axios';
+import NotFound from '../../auth/NotFound';
+import { toast } from 'react-toastify';
+
+type ImageType = {
+    artworkId: number;
+    image: string;
+    name: string;
+    description: string;
+};
+
+interface IProfilePageProps {
+    accountId: number;
+    avatar?: string;
+    followerCount?: number;
+    fullName: string;
+    artworks: ImageType[];
+}
 
 export default function ProfilePage() {
+    const API_URL = import.meta.env.VITE_API_URL;
     const { userId } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [profile, setProfile] = useState<IProfilePageProps>();
+    const [imgList, setImgList] = useState<ImageType[]>([]);
+    const getProfile = async () => {
+        setLoading(true);
+        try {
+            await axios
+                .get(`${API_URL}/profile/${userId}`)
+                .then((res) => {
+                    if (res.status === 200) {
+                        setProfile(res.data);
+                        setImgList(res.data.artworks);
+                    }
+                })
+                .catch((error) => {
+                    if (error.response.status === 404) {
+                        return <NotFound />;
+                    } else toast.error('Something went wrong');
+                });
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
+        getProfile();
+    }, []);
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -34,41 +79,59 @@ export default function ProfilePage() {
 
     const copyProfileLink = () => {
         navigator.clipboard.writeText(
-            `${import.meta.env.VITE_API_URL}/profile/${userId}`
+            `${import.meta.env.VITE_API_URL}/profile/${profile?.accountId}`
         );
     };
-    const listImage = [
-        {
-            id: 1,
-            url: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
-        },
-        {
-            id: 2,
-            url: 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg',
-        },
-        {
-            id: 3,
-            url: 'https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?$pjpeg$&jpegSize=300&wid=1000',
-        },
-        {
-            id: 4,
-            url: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg',
-        },
-    ];
-    const followerCount = 100;
+    // const listImage: ImageType[] = [
+    //     {
+    //         artworkId: 1,
+    //         image: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
+    //         name: 'Ảnh 1',
+    //         description: 'Ảnh này được chụp bằng điện thoại di động',
+    //     },
+    //     {
+    //         artworkId: 2,
+    //         image: 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg',
+    //         name: 'Ảnh 2',
+    //         description: 'Ảnh này được chụp bằng điện thoại di động',
+    //     },
+    //     {
+    //         artworkId: 3,
+    //         image: 'https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?$pjpeg$&jpegSize=300&wid=1000',
+    //         name: 'Ảnh 3',
+    //         description: 'Ảnh này được chụp bằng điện thoại di động',
+    //     },
+    //     {
+    //         artworkId: 4,
+    //         image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg',
+    //         name: 'Ảnh 4',
+    //         description: 'Ảnh này được chụp bằng điện thoại di động',
+    //     },
+    // ];
+    // const followerCount = 100;
+
+    // const handleDoubleClick = (imageId: number) => {
+    //     console.log('Tym to:', imageId);
+    // };
 
     return (
-        <div style={{ width: '100%' }}>
+        <div
+            style={{
+                marginTop: '30px',
+                width: '100%',
+            }}
+        >
             <img
                 style={{
                     borderRadius: '50%',
                 }}
                 alt="avatar"
                 height={120}
-                src="https://scontent.fsgn2-6.fna.fbcdn.net/v/t1.6435-9/90110224_2567536326818648_5739247854275264512_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=7a1959&_nc_eui2=AeFQzEvlYN2ixkzLcG_IWZdvygL0wfG9NZTKAvTB8b01lE26Nt05MwEVYvip2V31i3Vdio97PFojigHUZAlG5bso&_nc_ohc=VhdAaa53bmgAX9GnKDn&_nc_ht=scontent.fsgn2-6.fna&oh=00_AfAQni4Lemk46uHXpSCkMGZFB0x_imA7StqfJRiRQmfr7Q&oe=6607C24E"
+                src={profile?.avatar}
             />
-            <h2>Quyet Anh Le</h2>
-            <p>{followerCount} followers</p>
+            <h2>{profile?.fullName}</h2>
+            <p>ID:{profile?.accountId}</p>
+            <p>{profile?.followerCount} followers</p>
             <div
                 style={{
                     gap: '5px',
@@ -110,7 +173,9 @@ export default function ProfilePage() {
                     <Button
                         color="info"
                         variant="contained"
-                        onClick={() => navigate(`/edit-profile/${userInfo.id}`)}
+                        onClick={() =>
+                            navigate(`/profile/edit-profile/${userInfo.id}`)
+                        }
                     >
                         Edit profile
                     </Button>
@@ -121,7 +186,7 @@ export default function ProfilePage() {
                             color="info"
                             variant="contained"
                         >
-                            Pre-order from Quyet Anh Le
+                            Pre-order from {profile?.fullName}
                         </Button>
                         <PreOrderModal open={open} isOpen={isOpen} />
                     </>
@@ -129,15 +194,16 @@ export default function ProfilePage() {
             </div>
             <Box sx={{ marginTop: '20px', width: '70vw' }}>
                 <Masonry columns={{ xs: 2, md: 4 }} spacing={2}>
-                    {listImage.map((image, index) => (
+                    {imgList.map((image, index) => (
                         <div
                             key={index}
-                            onClick={() => navigate(`/card/${image.id}`)}
+                            onClick={() => navigate(`/card/${image.artworkId}`)}
                         >
                             <img
-                                srcSet={`${image.url}?w=162&auto=format&dpr=2 2x`}
-                                src={`${image.url}?w=162&auto=format`}
-                                // alt={image.title}
+                                key={index}
+                                srcSet={`${image.image}`}
+                                src={`${image.image}`}
+                                alt={image.description}
                                 loading="lazy"
                                 style={{
                                     borderRadius: '20px',
