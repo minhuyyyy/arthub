@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Popover, Typography } from '@mui/material';
+import { Avatar, Box, Button, Grid, Popover, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -118,21 +118,17 @@ export default function ProfilePage() {
     return (
         <div
             style={{
-                marginTop: '30px',
+                // marginTop: '30px',
+                position: 'relative',
                 width: '100%',
             }}
         >
-            <img
-                style={{
-                    borderRadius: '50%',
-                }}
-                alt="avatar"
-                height={120}
-                src={profile?.avatar}
-            />
-            <h2>{profile?.fullName}</h2>
-            <p>ID:{profile?.accountId}</p>
-            <p>{profile?.followerCount} followers</p>
+            <Box position={'relative'} alignItems={'center'}>
+                <Avatar src={profile?.avatar} sx={{ left: '50%' }} />
+                <h2>{profile?.fullName}</h2>
+                <p>ID:{profile?.accountId}</p>
+                <p>{profile?.followerCount} followers</p>
+            </Box>
             <div
                 style={{
                     gap: '5px',
@@ -171,15 +167,24 @@ export default function ProfilePage() {
                 </Popover>
 
                 {userInfo.id === userId ? (
-                    <Button
-                        color="info"
-                        variant="contained"
-                        onClick={() =>
-                            navigate(`/profile/edit-profile/${userInfo.id}`)
-                        }
-                    >
-                        Edit profile
-                    </Button>
+                    <>
+                        <Button
+                            color="info"
+                            variant="contained"
+                            onClick={() =>
+                                navigate(`/profile/edit-profile/${userInfo.id}`)
+                            }
+                        >
+                            Edit profile
+                        </Button>
+                        <Button
+                            color="info"
+                            variant="contained"
+                            onClick={() => navigate(`/profile/pre-orders`)}
+                        >
+                            Pre-orders
+                        </Button>
+                    </>
                 ) : (
                     <>
                         <Button

@@ -13,26 +13,31 @@ import { Favorite, FavoriteBorderOutlined, Send } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
 import { Container, StyledInputBase } from '../../utils/InputComponents';
 import axios from 'axios';
+import { MOCK_API_URL } from '../../utils/urls';
 
 function CardDetails() {
     document.title = 'Details';
     const navigate = useNavigate();
     const [card, setCard] = useState<CardType>({
-        id: '',
-        imgDescription: '',
-        imgLink: '',
+        artworkId: 0,
+        description: '',
         owner: {
-            name: '',
-            userId: '',
+            artistId: 0,
+            artistName: '',
+            artistAvatar: '',
         },
+        name: '',
+        image: '',
+        price: 0,
+        isBuyAvailable: false,
         savedBy: [],
-        owns: false,
-        hasSaved: false,
         comments: [],
         likes: [],
-        createdAt: '',
-        tags: [],
-        AIgenerated: false,
+        purchasedBy: {
+            userId: 0,
+        },
+        artworkDate: '',
+        genres: [],
     });
     const [comment, setComment] = useState('');
     const [liked, isLiked] = useState(false);
@@ -42,7 +47,7 @@ function CardDetails() {
         const getCard = async () => {
             try {
                 const res = await axios.get(
-                    `http://localhost:5000/cards/?id=${id}`
+                    `${MOCK_API_URL}/artworks/?id=${id}`
                 );
                 if (res.status === 200) {
                     setCard(res.data[0]); // Assuming the response is an array of cards and you want to set the first one
@@ -55,7 +60,7 @@ function CardDetails() {
     }, [id]);
 
     const likeCard = async () => {
-        const res = await axios.put(`http://localhost:5000/cards/${id}`, {
+        const res = await axios.put(`${MOCK_API_URL}/artworks/${id}`, {
             likes: {
                 userId: userInfo.id,
             },
@@ -64,6 +69,10 @@ function CardDetails() {
             isLiked(true);
         }
     };
+
+    // const handleComment = async() => {
+    //     await
+    // }
 
     return (
         <Box
@@ -94,8 +103,8 @@ function CardDetails() {
                     >
                         <img
                             style={{ width: '100%', height: '100%' }}
-                            src={card?.imgLink}
-                            alt={card?.imgDescription}
+                            src={card?.image}
+                            alt={card?.description}
                         />
                     </Box>
                 </Grid>
@@ -113,7 +122,10 @@ function CardDetails() {
                             Share to profile
                         </Button>
                         <Typography variant="h4" textAlign={'left'}>
-                            {card.imgDescription}
+                            {card.name}
+                        </Typography>
+                        <Typography variant="h4" textAlign={'left'}>
+                            {card.description}
                         </Typography>
                     </Box>
                     <Box
@@ -128,22 +140,22 @@ function CardDetails() {
                             aria-haspopup="true"
                             color="inherit"
                             onClick={() =>
-                                navigate(`/profile/${card.owner.userId}`)
+                                navigate(`/profile/${card.owner.artistId}`)
                             }
                         >
                             <Avatar
                                 // src={user.avatar}
-                                alt={card.owner.name}
-                                src={card.imgLink}
+                                alt={card.owner.artistName}
+                                src={card.owner.artistAvatar}
                             />
                         </IconButton>
-                        <Link to={`/profile/${card.owner.userId}`}>
+                        <Link to={`/profile/${card.owner.artistId}`}>
                             <Typography
                                 variant="body2"
                                 sx={{ color: 'black !important' }}
                                 display="inline"
                             >
-                                {card.owner.name}
+                                {card.owner.artistName}
                             </Typography>
                         </Link>
                         <Button
@@ -169,7 +181,7 @@ function CardDetails() {
                                 sx={{ position: 'absolute', bottom: '0px' }}
                             >
                                 <Typography variant="body1" display={'inline'}>
-                                    {card.comments.length > 0 ? (
+                                    {card?.comments?.length > 0 ? (
                                         <strong>
                                             {card.comments.length} comments
                                         </strong>

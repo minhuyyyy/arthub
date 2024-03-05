@@ -9,12 +9,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
 import CardDetails from './components/ArtworkCard/CardDetails';
 import EditProfilePage from './components/Pages/EditProfile';
+import PreOrdersPage from './components/Pages/PreOrders';
 // import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
 const UserTable = Loadable(
-    lazy(() => import('./components/Tables/UsersTable'))
+    lazy(() => import('./components/Tables/Table'))
 );
 const routes = [
     {
@@ -52,6 +53,14 @@ const routes = [
                         element: (
                             <ProtectedRoute role={Roles.user}>
                                 <EditProfilePage />
+                            </ProtectedRoute>
+                        ),
+                    },
+                    {
+                        path: 'pre-orders',
+                        element: (
+                            <ProtectedRoute role={Roles.user}>
+                                <PreOrdersPage />
                             </ProtectedRoute>
                         ),
                     },
