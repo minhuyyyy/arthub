@@ -16,11 +16,12 @@ import {
     styled,
 } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
+import { MOCK_API_URL } from '../../utils/urls';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -35,7 +36,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 function Create() {
-    const API_URL = import.meta.env.VITE_API_URL;
+    // const API_URL = import.meta.env.VITE_API_URL;
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');
     // const [genres, setGenres] = useState(null);
@@ -79,17 +80,26 @@ function Create() {
             setPhotoUrl('');
         }
     };
+    useEffect(() => {
+        console.log(userInfo);
+    }, []);
     const handleSubmit = async () => {
         await axios
-            .post(`${API_URL}/artwork`, {
-                artistID: userInfo.id,
+            .post(`${MOCK_API_URL}/artworks`, {
+                id: 3,
+                artworkId: 3,
                 name: formData.title,
                 description: formData.description,
                 image: photoUrl,
-                genre: selectedGenre,
-                isPublic: true,
+                owner: {
+                    artistId: userInfo.id,
+                    artistName: userInfo.username,
+                    artistAvatar: userInfo.imageUrl,
+                },
                 price: formData.price,
                 isBuyAvailable: buyStatus,
+                genre: selectedGenre,
+                // isPublic: true,
             })
             .then((res) => {
                 if (res.status === 201) {

@@ -1,17 +1,22 @@
 export type CardType = {
-    id: string;
-    imgDescription: string;
-    imgLink: string;
+    artworkId: number;
+    description: string;
+    name: string;
+    image: string;
     owner: {
-        name: string;
-        userId: string;
+        artistId: number;
+        artistName: string;
+        artistAvatar: string;
     };
+    price: number;
+    isBuyAvailable: boolean;
     savedBy: {
         name: string | null;
-        userId: string;
+        userId: number;
     }[];
-    owns: boolean;
-    hasSaved: boolean;
+    purchasedBy: {
+        userId: number;
+    };
     comments: {
         id: string;
         displayName: string;
@@ -20,12 +25,12 @@ export type CardType = {
         userId: string;
     }[];
     likes: {
-        userId: string;
+        userId: number;
+        name: string;
     }[];
-    createdAt: string;
-    tags: {
+    artworkDate: string;
+    genres: {
         id: string;
-        tag?: string;
+        genre?: string;
     }[];
-    AIgenerated: boolean;
 };
