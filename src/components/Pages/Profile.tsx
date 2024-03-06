@@ -7,6 +7,7 @@ import { Masonry } from '@mui/lab';
 import axios from 'axios';
 import NotFound from '../../auth/NotFound';
 import { toast } from 'react-toastify';
+import CreatePost from './CreatePost';
 
 type ImageType = {
     artworkId: number;
@@ -24,6 +25,7 @@ interface IProfilePageProps {
 }
 
 export default function ProfilePage() {
+    // const path = useLocation();
     const API_URL = import.meta.env.VITE_API_URL;
     const { userId } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
@@ -78,9 +80,7 @@ export default function ProfilePage() {
     };
 
     const copyProfileLink = () => {
-        navigator.clipboard.writeText(
-            `${import.meta.env.VITE_API_URL}/profile/${profile?.accountId}`
-        );
+        navigator.clipboard.writeText(`${location.host}${location.pathname}`);
     };
     // const listImage: ImageType[] = [
     //     {
@@ -122,11 +122,97 @@ export default function ProfilePage() {
                 width: '100%',
             }}
         >
-            <Box position={'relative'} alignItems={'center'}>
-                <Avatar src={profile?.avatar} sx={{ left: '50%' }} />
-                <h2>{profile?.fullName}</h2>
-                <p>ID:{profile?.accountId}</p>
-                <p>{profile?.followerCount} followers</p>
+            <Box
+                borderRadius={10}
+                border={1}
+                borderColor={'white'}
+                sx={{
+                    backgroundColor: '#fff',
+                    display: 'flex',
+                    height: '170px',
+                    marginRight: '50px',
+                }}
+            >
+                <Avatar
+                    src={profile?.avatar}
+                    sx={{
+                        marginLeft: '5%',
+                        marginTop: '2%',
+                        width: '100px',
+                        height: '100px',
+                    }}
+                />
+                <div>
+                    <h2 style={{ width: '200px', textAlign: 'left' }}>
+                        {profile?.fullName}
+                    </h2>
+                    <p style={{ textAlign: 'left' }}>
+                        {profile?.followerCount} followers
+                    </p>
+                    <Button
+                        onClick={(e) => {
+                            copyProfileLink();
+                            handleClick(e);
+                        }}
+                        color="success"
+                        variant="contained"
+                    >
+                        Share profile
+                    </Button>
+                    <Popover
+                        id={id}
+                        open={popoverOpen}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                p: 2,
+                                backgroundColor: 'dimgray',
+                            }}
+                        >
+                            Profile link coppied!
+                        </Typography>
+                    </Popover>
+
+                    {userInfo.id === userId ? (
+                        <>
+                            <Button
+                                color="info"
+                                variant="contained"
+                                onClick={() =>
+                                    navigate(
+                                        `/profile/edit-profile/${userInfo.id}`
+                                    )
+                                }
+                            >
+                                Edit profile
+                            </Button>
+                            <Button
+                                color="info"
+                                variant="contained"
+                                onClick={() => navigate(`/profile/pre-orders`)}
+                            >
+                                Pre-orders
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                onClick={openModal}
+                                color="info"
+                                variant="contained"
+                            >
+                                Pre-order from {profile?.fullName}
+                            </Button>
+                            <PreOrderModal open={open} isOpen={isOpen} />
+                        </>
+                    )}
+                </div>
             </Box>
             <div
                 style={{
@@ -134,69 +220,10 @@ export default function ProfilePage() {
                     display: 'flex',
                     justifyContent: 'center',
                 }}
-            >
-                <Button
-                    onClick={(e) => {
-                        copyProfileLink();
-                        handleClick(e);
-                    }}
-                    color="success"
-                    variant="contained"
-                >
-                    Share profile
-                </Button>
-                <Popover
-                    id={id}
-                    open={popoverOpen}
-                    anchorEl={anchorEl}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                >
-                    <Typography
-                        sx={{
-                            p: 2,
-                            backgroundColor: 'dimgray',
-                        }}
-                    >
-                        Profile link coppied!
-                    </Typography>
-                </Popover>
-
-                {userInfo.id === userId ? (
-                    <>
-                        <Button
-                            color="info"
-                            variant="contained"
-                            onClick={() =>
-                                navigate(`/profile/edit-profile/${userInfo.id}`)
-                            }
-                        >
-                            Edit profile
-                        </Button>
-                        <Button
-                            color="info"
-                            variant="contained"
-                            onClick={() => navigate(`/profile/pre-orders`)}
-                        >
-                            Pre-orders
-                        </Button>
-                    </>
-                ) : (
-                    <>
-                        <Button
-                            onClick={openModal}
-                            color="info"
-                            variant="contained"
-                        >
-                            Pre-order from {profile?.fullName}
-                        </Button>
-                        <PreOrderModal open={open} isOpen={isOpen} />
-                    </>
-                )}
-            </div>
+            ></div>
+            <Box display={'flex'} justifyContent={'center'}>
+                <CreatePost />
+            </Box>
             <Box sx={{ marginTop: '20px', width: '70vw' }}>
                 <Masonry columns={{ xs: 2, md: 4 }} spacing={2}>
                     {imgList.map((image, index) => (

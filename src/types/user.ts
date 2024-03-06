@@ -3,7 +3,7 @@ export type User = {
     isInitialised: boolean;
     userInfo: {
         id: string;
-        username?: string;
+        fullName?: string;
         email: string;
         firstName?: string;
         lastName?: string;
@@ -16,7 +16,7 @@ export type User = {
 };
 
 export enum Roles {
-    user = 0,
+    user = 2,
     admin = 1,
-    guest = 2,
+    guest = 0,
 }

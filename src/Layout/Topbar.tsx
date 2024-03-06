@@ -14,7 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CustomButton from '../components/Link';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
@@ -90,16 +90,17 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
-    useEffect(() => {
-        const getAvatar = async () => {
-            await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
-                if (res.status === 200) {
-                    setAvatar(res.data.avatar);
-                }
-            });
-        };
-        getAvatar();
-    }, [userInfo]);
+    const [balance, setBalance] = useState(100000000000);
+    // useEffect(() => {
+    //     const getAvatar = async () => {
+    //         await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
+    //             if (res.status === 200) {
+    //                 setAvatar(res.data.avatar);
+    //             }
+    //         });
+    //     };
+    //     getAvatar();
+    // }, [userInfo.id]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -244,23 +245,17 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                             ) : (
                                 <>
                                     {/* <Box alignContent={'start'}> */}
-                                    <Typography
-                                        display={'inline'}
-                                        noWrap
-                                        variant="h5"
-                                        mr={2}
-                                    >
-                                        Arthub
-                                    </Typography>
-                                    <CustomButton main={true} destination="/">
-                                        Home
-                                    </CustomButton>
-                                    <CustomButton
-                                        main={true}
-                                        destination="/create-post"
-                                    >
-                                        Post
-                                    </CustomButton>
+                                    <Link to={'/'}>
+                                        <Typography
+                                            display={'inline'}
+                                            noWrap
+                                            variant="h5"
+                                            mr={2}
+                                        >
+                                            Arthub
+                                        </Typography>
+                                    </Link>
+
                                     <CustomButton
                                         main={true}
                                         destination="/upload-artwork"
@@ -306,7 +301,10 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         textAlign={'center'}
                                     > */}
                                     Balance:
-                                    <strong>10000000000</strong>
+                                    <strong>{`${balance.toLocaleString(
+                                        'vi-VN',
+                                        { style: 'currency', currency: 'VND' }
+                                    )}`}</strong>
                                     {/* </Typography> */}
                                 </div>
                                 <IconButton
@@ -335,7 +333,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         {`Hi `}
                                         <strong>
                                             {/* {user.fullName} */}
-                                            {userInfo.fullName}
+                                            {userInfo.username}
                                         </strong>
                                     </Typography>
                                     <IconButton
