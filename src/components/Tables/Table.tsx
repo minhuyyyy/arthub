@@ -94,7 +94,7 @@ const subscribersList = [
     },
 ];
 
-const UsersTable = () => {
+const BaseTable = ({ headers, content }) => {
     document.title = 'Users table';
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -104,7 +104,7 @@ const UsersTable = () => {
     };
 
     const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement>,
+        event: React.ChangeEvent<HTMLInputElement>
     ) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
@@ -112,55 +112,54 @@ const UsersTable = () => {
 
     return (
         <>
-            <Box
-                marginTop='40px'
-                textAlign='left'>
-                <Typography variant='h5'>Users table</Typography>
+            <Box marginTop="40px" textAlign="left">
+                <Typography variant="h5">Users table</Typography>
             </Box>
             <Box
-                width='60vw'
-                marginBottom='30px'
-                marginTop='10px'
-                className='table-container'
+                width="60vw"
+                marginBottom="30px"
+                marginTop="10px"
+                className="table-container"
                 sx={{ maxHeight: 440 }}
-                overflow='auto'>
+                overflow="auto"
+            >
                 <StyledTable stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell align='left'>Name</TableCell>
-                            <TableCell align='center'>Company</TableCell>
-                            <TableCell align='center'>Start Date</TableCell>
-                            <TableCell align='left'>Status</TableCell>
-                            <TableCell align='left'>Amount</TableCell>
-                            <TableCell align='center'>Action</TableCell>
+                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="center">Company</TableCell>
+                            <TableCell align="center">Start Date</TableCell>
+                            <TableCell align="left">Status</TableCell>
+                            <TableCell align="left">Amount</TableCell>
+                            <TableCell align="center">Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {subscribersList
                             .slice(
                                 page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
                             )
                             .map((subscriber, index) => (
                                 <TableRow key={index}>
-                                    <TableCell align='left'>
+                                    <TableCell align="left">
                                         {subscriber.name}
                                     </TableCell>
-                                    <TableCell align='center'>
+                                    <TableCell align="center">
                                         {subscriber.company}
                                     </TableCell>
-                                    <TableCell align='center'>
+                                    <TableCell align="center">
                                         {subscriber.date}
                                     </TableCell>
-                                    <TableCell align='left'>
+                                    <TableCell align="left">
                                         {subscriber.status}
                                     </TableCell>
-                                    <TableCell align='left'>
+                                    <TableCell align="left">
                                         ${subscriber.amount}
                                     </TableCell>
-                                    <TableCell align='center'>
+                                    <TableCell align="center">
                                         <IconButton>
-                                            <CloseIcon color='error' />
+                                            <CloseIcon color="error" />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
@@ -171,7 +170,7 @@ const UsersTable = () => {
                 <TablePagination
                     sx={{ px: 2 }}
                     page={page}
-                    component='div'
+                    component="div"
                     rowsPerPage={rowsPerPage}
                     count={subscribersList.length}
                     onPageChange={handleChangePage}
@@ -185,4 +184,4 @@ const UsersTable = () => {
     );
 };
 
-export default UsersTable;
+export default BaseTable;

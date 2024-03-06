@@ -14,12 +14,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomButton from '../components/Link';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
 import Sidebar from './Sidebar';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 const drawerWidth = 240;
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
@@ -71,7 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
-        width: '100%',
+        width: '80%',
         [theme.breakpoints.up('md')]: {
             width: '20ch',
         },
@@ -79,15 +80,28 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Topbar({ children }: { children: JSX.Element }) {
-    const [open, setOpen] = React.useState(false);
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const API_URL = import.meta.env.VITE_API_URL;
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-        React.useState<null | HTMLElement>(null);
+        useState<null | HTMLElement>(null);
+    const [avatar, setAvatar] = useState('');
     const { logout, isAuthenticated, userInfo } = useAuth();
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
+    useEffect(() => {
+        console.log(userInfo);
 
+        const getAvatar = async () => {
+            await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
+                if (res.status === 200) {
+                    setAvatar(res.data.avatar);
+                }
+            });
+        };
+        getAvatar();
+    }, [userInfo]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -124,7 +138,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
         >
             <MenuItem
                 onClick={() => {
-                    navigate('/profile/asdfas');
+                    navigate(`/profile/${userInfo.id}`);
                     handleMenuClose();
                 }}
             >
@@ -299,13 +313,10 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         variant="body2"
                                         display="inline"
                                     >
-                                        Hi
+                                        {`Hi `}
                                         <strong>
                                             {/* {user.fullName} */}
-                                            {
-                                                (userInfo.firstName,
-                                                userInfo.lastName)
-                                            }
+                                            {userInfo.username}
                                         </strong>
                                     </Typography>
                                     <IconButton
@@ -320,7 +331,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         <Avatar
                                             // src={user.avatar}
                                             alt={`${userInfo.firstName} ${userInfo.lastName}`}
-                                            src={userInfo.imageUrl}
+                                            src={avatar}
                                         />
                                     </IconButton>
                                 </Box>

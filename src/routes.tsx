@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import Layout from './Layout/Layout';
-import AuthGuard from './auth/AuthGuard';
 import LoginPage from './auth/Login';
 import Loadable from './components/Loadable';
 import Create from './components/Pages/Create';
@@ -10,13 +9,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
 import CardDetails from './components/ArtworkCard/CardDetails';
 import EditProfilePage from './components/Pages/EditProfile';
-import { Bounce, ToastContainer } from 'react-toastify';
+import PreOrdersPage from './components/Pages/PreOrders';
 // import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
 const UserTable = Loadable(
-    lazy(() => import('./components/Tables/UsersTable'))
+    lazy(() => import('./components/Tables/Table'))
 );
 const routes = [
     {
@@ -57,17 +56,16 @@ const routes = [
                             </ProtectedRoute>
                         ),
                     },
+                    {
+                        path: 'pre-orders',
+                        element: (
+                            <ProtectedRoute role={Roles.user}>
+                                <PreOrdersPage />
+                            </ProtectedRoute>
+                        ),
+                    },
                 ],
             },
-
-            // {
-            //     path: 'pre-order',
-            //     element: (
-            //         <ProtectedRoute role={Roles.user}>
-            //             <PreOrderModal />
-            //         </ProtectedRoute>
-            //     ),
-            // },
         ],
     },
     {
@@ -84,20 +82,20 @@ const routes = [
             },
         ],
     },
-    {
-        path: 'profile',
-        element: (
-            <AuthGuard>
-                <Layout />
-            </AuthGuard>
-        ),
-        children: [
-            {
-                path: ':userId',
-                element: <ProfilePage />,
-            },
-        ],
-    },
+    // {
+    //     path: 'profile',
+    //     element: (
+    //         <AuthGuard>
+    //             <Layout />
+    //         </AuthGuard>
+    //     ),
+    //     children: [
+    //         {
+    //             path: ':userId',
+    //             element: <ProfilePage />,
+    //         },
+    //     ],
+    // },
 
     { path: '/session/signup', element: <Register /> },
     { path: '/session/signin', element: <LoginPage /> },

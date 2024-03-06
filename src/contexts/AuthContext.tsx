@@ -18,10 +18,10 @@ const initialState: User = {
         phone: '',
         address: '',
         imageUrl: '',
-        role: Roles.guest,
+        role: Roles.admin,
     },
     isInitialised: false,
-    isAuthenticated: false,
+    isAuthenticated: true,
 };
 
 const setSession = (accessToken: string) => {
@@ -39,9 +39,10 @@ const reducer = (state, action) => {
         case 'INIT':
             return {
                 ...state,
-                isAuthenticated: action.payload.isAuthenticated,
+                isAuthenticated: true,
                 isInitialised: true,
-                userInfo: action.payload.userInfo,
+                role: Roles.admin,
+                // userInfo: action.payload.userInfo,
             };
         case 'LOGIN':
             return {
@@ -63,9 +64,14 @@ const reducer = (state, action) => {
 const AuthContext = createContext({
     ...initialState,
     method: 'JWT',
-    login: () => {},
+    login: (email: string, password: string) => {},
     logout: () => {},
-    register: () => {},
+    register: (
+        email: string,
+        fullname: string,
+        password: string,
+        confirmPassword: string
+    ) => {},
 });
 
 export const AuthProvider = ({ children }) => {
@@ -82,7 +88,8 @@ export const AuthProvider = ({ children }) => {
             const user = {
                 id: decoded.MemberId,
                 email: decoded.email,
-                role: parseInt(decoded.Role),
+                // role: parseInt(decoded.Role),
+                username: decoded.FullName,
             };
             dispatch({
                 type: 'INIT',
@@ -108,10 +115,12 @@ export const AuthProvider = ({ children }) => {
                         const { token } = res.data;
                         const decoded = decodeToken(token);
                         setSession(token);
+
                         const user = {
                             id: decoded.MemberId,
                             email: decoded.email,
                             role: parseInt(decoded.Role),
+                            username: decoded.FullName,
                         };
                         console.log(user);
 
