@@ -3,20 +3,20 @@ export type CardType = {
     description: string;
     name: string;
     image: string;
-    owner: {
-        artistId: number;
-        artistName: string;
-        artistAvatar: string;
-    };
+    artistID: number;
+    // owner: {
+    //     artistName: string;
+    //     artistAvatar: string;
+    // };
     price: number;
     isBuyAvailable: boolean;
-    savedBy: {
-        name: string | null;
-        userId: number;
-    }[];
-    purchasedBy: {
-        userId: number;
-    };
+    // savedBy: {
+    //     name: string | null;
+    //     userId: number;
+    // }[];
+    // purchasedBy: {
+    //     userId: number;
+    // };
     comments: {
         id: string;
         displayName: string;
@@ -29,8 +29,8 @@ export type CardType = {
         name: string;
     }[];
     artworkDate: string;
-    genres: {
-        id: string;
-        genre?: string;
-    }[];
+    // genres: {
+    //     id: string;
+    //     genre?: string;
+    // }[];
 };
