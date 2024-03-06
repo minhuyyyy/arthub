@@ -18,10 +18,10 @@ const initialState: User = {
         phone: '',
         address: '',
         imageUrl: '',
-        role: Roles.admin,
+        role: Roles.guest,
     },
     isInitialised: false,
-    isAuthenticated: true,
+    isAuthenticated: false,
 };
 
 const setSession = (accessToken: string) => {
@@ -39,10 +39,9 @@ const reducer = (state, action) => {
         case 'INIT':
             return {
                 ...state,
-                isAuthenticated: true,
+                isAuthenticated: action.payload.isAuthenticated,
                 isInitialised: true,
-                role: Roles.admin,
-                // userInfo: action.payload.userInfo,
+                userInfo: action.payload.userInfo,
             };
         case 'LOGIN':
             return {
@@ -88,8 +87,8 @@ export const AuthProvider = ({ children }) => {
             const user = {
                 id: decoded.MemberId,
                 email: decoded.email,
-                // role: parseInt(decoded.Role),
-                username: decoded.FullName,
+                role: parseInt(decoded.Role),
+                fullName: decoded.FullName,
             };
             dispatch({
                 type: 'INIT',
@@ -115,12 +114,11 @@ export const AuthProvider = ({ children }) => {
                         const { token } = res.data;
                         const decoded = decodeToken(token);
                         setSession(token);
-
                         const user = {
                             id: decoded.MemberId,
                             email: decoded.email,
                             role: parseInt(decoded.Role),
-                            username: decoded.FullName,
+                            fullName: decoded.FullName,
                         };
                         console.log(user);
 

@@ -21,7 +21,7 @@ import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
-import { MOCK_API_URL } from '../../utils/urls';
+import { API_URL } from '../../utils/urls';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -35,9 +35,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function Create() {
-        document.title = 'Create post';
-
+function UploadArtwork() {
     // const API_URL = import.meta.env.VITE_API_URL;
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');
@@ -87,18 +85,17 @@ function Create() {
     }, []);
     const handleSubmit = async () => {
         await axios
-            .post(`${MOCK_API_URL}/artworks`, {
-                id: 3,
-                artworkId: 3,
+            .post(`${API_URL}/artwork`, {
                 name: formData.title,
                 description: formData.description,
                 image: photoUrl,
-                owner: {
-                    artistId: userInfo.id,
-                    artistName: userInfo.username,
-                    artistAvatar: userInfo.imageUrl,
-                },
                 price: formData.price,
+                artistId: userInfo.id,
+                // owner: {
+                //     artistName: userInfo.username,
+                //     artistAvatar: userInfo.imageUrl,
+                // },
+                isPublic: true,
                 isBuyAvailable: buyStatus,
                 genre: selectedGenre,
                 // isPublic: true,
@@ -128,6 +125,9 @@ function Create() {
 
     return (
         <Box position={'relative'}>
+            <Typography variant="h4" textAlign={'left'}>
+                <strong>Upload artwork </strong>
+            </Typography>
             <Grid container>
                 <Grid item xs={12} sm={12} md={4} lg={6}>
                     <Box>
@@ -303,4 +303,4 @@ function Create() {
     );
 }
 
-export default Create;
+export default UploadArtwork;

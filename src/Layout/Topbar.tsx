@@ -48,10 +48,10 @@ const Search = styled('div')(({ theme }) => ({
     backgroundColor: '#e1e1e1',
     // marginRight: theme.spacing(2),
     marginLeft: 0,
-    width: '50%',
+    width: '30%',
     [theme.breakpoints.up('lg')]: {
         marginLeft: theme.spacing(3),
-        width: '50%',
+        width: '30%',
     },
 }));
 
@@ -72,7 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
-        width: '80%',
+        width: '100%',
         [theme.breakpoints.up('md')]: {
             width: '20ch',
         },
@@ -91,8 +91,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     useEffect(() => {
-        console.log(userInfo);
-
         const getAvatar = async () => {
             await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
                 if (res.status === 200) {
@@ -259,9 +257,15 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     </CustomButton>
                                     <CustomButton
                                         main={true}
-                                        destination="/create"
+                                        destination="/create-post"
                                     >
-                                        Create
+                                        Post
+                                    </CustomButton>
+                                    <CustomButton
+                                        main={true}
+                                        destination="/upload-artwork"
+                                    >
+                                        Upload artwork
                                     </CustomButton>
                                     {/* </Box> */}
                                 </>
@@ -287,9 +291,24 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                             <Box sx={{ flexGrow: 1 }} />
                             <Box
                                 sx={{
-                                    display: { xs: 'none', md: 'flex' },
+                                    display: {
+                                        xs: 'none',
+                                        md: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    },
                                 }}
                             >
+                                <div>
+                                    {/* <Typography
+                                        variant="body2"
+                                        display="inline"
+                                        textAlign={'center'}
+                                    > */}
+                                    Balance:
+                                    <strong>10000000000</strong>
+                                    {/* </Typography> */}
+                                </div>
                                 <IconButton
                                     size="large"
                                     aria-label="show 4 new mails"
@@ -316,7 +335,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         {`Hi `}
                                         <strong>
                                             {/* {user.fullName} */}
-                                            {userInfo.username}
+                                            {userInfo.fullName}
                                         </strong>
                                     </Typography>
                                     <IconButton
