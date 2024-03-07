@@ -1,4 +1,12 @@
-import { Avatar, Box, Button, Grid, Popover, Typography } from '@mui/material';
+import {
+    Avatar,
+    Box,
+    Button,
+    Grid,
+    Link,
+    Popover,
+    Typography,
+} from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -8,9 +16,10 @@ import axios from 'axios';
 import NotFound from '../../auth/NotFound';
 import { toast } from 'react-toastify';
 import CreatePost from './CreatePost';
+import ViewArtworkModal from '../Modals/ViewArtworkModal';
 
 type ImageType = {
-    artworkId: number;
+    artworkId: number | null;
     image: string;
     name: string;
     description: string;
@@ -34,6 +43,9 @@ export default function ProfilePage() {
     const navigate = useNavigate();
     const [profile, setProfile] = useState<IProfilePageProps>();
     const [imgList, setImgList] = useState<ImageType[]>([]);
+    const [open, isOpen] = useState(false);
+    const [openPreOrder, isOpenPreOrder] = useState(false);
+    const [selectedArtworkId, setSelectedArtworkId] = useState(null);
     const getProfile = async () => {
         setLoading(true);
         try {
@@ -69,12 +81,11 @@ export default function ProfilePage() {
     const popoverOpen = Boolean(anchorEl);
     const id = popoverOpen ? 'simple-popover' : undefined;
 
-    const [open, isOpen] = useState(false);
     console.log(isAuthenticated);
 
     const openModal = () => {
         if (isAuthenticated) {
-            return isOpen(true);
+            return isOpenPreOrder(true);
         }
         return navigate('/session/signin');
     };
@@ -131,6 +142,7 @@ export default function ProfilePage() {
                     display: 'flex',
                     height: '170px',
                     marginRight: '50px',
+                    marginBottom: '30px',
                 }}
             >
                 <Avatar
@@ -209,43 +221,120 @@ export default function ProfilePage() {
                             >
                                 Pre-order from {profile?.fullName}
                             </Button>
-                            <PreOrderModal open={open} isOpen={isOpen} />
+                            <PreOrderModal
+                                open={openPreOrder}
+                                isOpen={isOpenPreOrder}
+                            />
                         </>
                     )}
                 </div>
             </Box>
-            <div
-                style={{
-                    gap: '5px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                }}
-            ></div>
-            <Box display={'flex'} justifyContent={'center'}>
-                <CreatePost />
+            <Box>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} md={4} lg={6}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#fff',
+                                width: '380px',
+                                minHeight: '200px',
+                                paddingTop: '20px',
+                                border: 1,
+                                borderRadius: '20px',
+                                borderColor: '#fff',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                position: 'relative',
+                            }}
+                        >
+                            <Typography textAlign={'start'} marginLeft={'20px'}>
+                                Artworks
+                            </Typography>
+                            {imgList.length > 0 ? (
+                                <>
+                                    <Link
+                                        href="/"
+                                        underline="none"
+                                        color="#6095d2"
+                                        position={'absolute'}
+                                        right={'20px'}
+                                    >
+                                        View all artworks
+                                    </Link>
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            display: 'flex',
+                                            flexWrap: 'wrap',
+                                            justifyContent: 'flex-start',
+                                            marginTop: '40px',
+                                            width: '100%',
+                                            borderRadius: '10px',
+                                        }}
+                                    >
+                                        {imgList.slice(0, 8).map(
+                                            (
+                                                image // Adjust mapping logic to limit to 9 images
+                                            ) => (
+                                                <>
+                                                    <Box
+                                                        key={image.artworkId} // Added key prop to Box component
+                                                        sx={{
+                                                            cursor: 'pointer',
+                                                            boxSizing:
+                                                                'border-box',
+                                                            width: '80px',
+                                                            height: '80px',
+                                                            marginRight: '5px',
+                                                            marginBottom:
+                                                                '20px',
+                                                        }}
+                                                        onClick={() => {
+                                                            isOpen(true);
+                                                            setSelectedArtworkId(
+                                                                image.artworkId
+                                                            );
+                                                        }}
+                                                    >
+                                                        <img
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit:
+                                                                    'cover',
+                                                            }}
+                                                            src={image.image}
+                                                            alt={image.name}
+                                                        />
+                                                    </Box>
+                                                    <ViewArtworkModal
+                                                        open={open}
+                                                        isOpen={isOpen}
+                                                        artworkId={
+                                                            selectedArtworkId
+                                                        }
+                                                    />
+                                                </>
+                                            )
+                                        )}
+                                    </Box>
+                                </>
+                            ) : (
+                                <Typography
+                                    variant="body1"
+                                    position={'absolute'}
+                                    right={'20px'}
+                                >
+                                    No artwork yet
+                                </Typography>
+                            )}
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={8} lg={6}>
+                        <CreatePost />
+                    </Grid>
+                </Grid>
             </Box>
             <Box sx={{ marginTop: '20px', width: '70vw' }}>
-                <Masonry columns={{ xs: 2, md: 4 }} spacing={2}>
-                    {imgList.map((image, index) => (
-                        <div
-                            key={index}
-                            onClick={() => navigate(`/card/${image.artworkId}`)}
-                        >
-                            <img
-                                key={index}
-                                srcSet={`${image.image}`}
-                                src={`${image.image}`}
-                                alt={image.description}
-                                loading="lazy"
-                                style={{
-                                    borderRadius: '20px',
-                                    display: 'block',
-                                    width: '100%',
-                                }}
-                            />
-                        </div>
-                    ))}
-                </Masonry>
                 {loading && (
                     <Grid item xs={12}>
                         <Typography variant="body2">Loading...</Typography>

@@ -102,6 +102,8 @@ function CardDetails() {
                     display: 'flex',
                     flexDirection: 'row',
                     position: 'relative',
+                    backgroundColor: 'white',
+                    top: '80px',
                 }}
             >
                 <Grid container spacing={2}>

@@ -86,21 +86,22 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         useState<null | HTMLElement>(null);
     const [avatar, setAvatar] = useState('');
+    const [profile, setProfile] = useState({});
     const { logout, isAuthenticated, userInfo } = useAuth();
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const [balance, setBalance] = useState(100000000000);
-    // useEffect(() => {
-    //     const getAvatar = async () => {
-    //         await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
-    //             if (res.status === 200) {
-    //                 setAvatar(res.data.avatar);
-    //             }
-    //         });
-    //     };
-    //     getAvatar();
-    // }, [userInfo.id]);
+    useEffect(() => {
+        const getAvatar = async () => {
+            await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
+                if (res.status === 200) {
+                    setProfile(res.data);
+                }
+            });
+        };
+        getAvatar();
+    }, [userInfo.id]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -333,7 +334,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         {`Hi `}
                                         <strong>
                                             {/* {user.fullName} */}
-                                            {userInfo.username}
+                                            {profile.fullName}
                                         </strong>
                                     </Typography>
                                     <IconButton
@@ -348,7 +349,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         <Avatar
                                             // src={user.avatar}
                                             alt={`${userInfo.firstName} ${userInfo.lastName}`}
-                                            src={avatar}
+                                            src={profile.avatar}
                                         />
                                     </IconButton>
                                 </Box>
