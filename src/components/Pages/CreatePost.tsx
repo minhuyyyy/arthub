@@ -5,19 +5,28 @@ import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../utils/urls';
+import AddArtworkModal from '../Modals/AddArtworkModal';
+import { ArtworkType } from '../../types/artwork';
 
 function CreatePost() {
-    // const API_URL = import.meta.env.VITE_API_URL;
-    const [photo, setPhoto] = useState<File | null>(null);
-    const [photoUrl, setPhotoUrl] = useState<string>('');
-    // const [genres, setGenres] = useState(null);
     const { userInfo } = useAuth();
+    const [openSelectArtwork, isOpenSelectArtwork] = useState(false);
+    const [selectedArtwork, setSelectedArtwork] = useState<ArtworkType>({
+        artworkId: 0,
+        name: '',
+        description: '',
+        image: '',
+        price: 0,
+        artistID: 0,
+        isBuyAvailable: true,
+        artworkRating: 0,
+        artworkDate: new Date(),
+        genre: '',
+    });
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        price: 0,
     });
-    const [buyStatus, canBuy] = useState(false);
 
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,27 +36,19 @@ function CreatePost() {
             const price = handleBudgetChange(e);
             setFormData((prev) => ({
                 ...prev,
-                [name]: price, // Convert to number before setting state
+                [name]: price,
             }));
         } else setFormData((prevState) => ({ ...prevState, [name]: value }));
     };
 
     const handleSubmit = async () => {
         await axios
-            .post(`${API_URL}/artwork`, {
-                name: formData.title,
+            .post(`${API_URL}/post/post`, {
+                title: formData.title,
                 description: formData.description,
-                image: photoUrl,
-                price: formData.price,
-                artistId: userInfo.id,
-                // owner: {
-                //     artistName: userInfo.username,
-                //     artistAvatar: userInfo.imageUrl,
-                // },
-                isPublic: true,
-                isBuyAvailable: buyStatus,
-                genre: selectedGenre,
-                // isPublic: true,
+                memberId: userInfo.id,
+                image: selectedArtwork.image,
+                artworkId: selectedArtwork.artworkId,
             })
             .then((res) => {
                 if (res.status === 201) {
@@ -55,11 +56,8 @@ function CreatePost() {
                     setFormData({
                         title: '',
                         description: '',
-                        price: 0,
                     });
-                    setSelectedGenre('');
-                    canBuy(false);
-                    setPhoto(null), setPhotoUrl('');
+                    setSelectedArtwork(null);
                 }
             })
             .catch((err) => {
@@ -68,9 +66,6 @@ function CreatePost() {
                 } else toast.error('Something went wrong @@');
             });
     };
-    const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-        canBuy(e.target.checked);
-    };
 
     return (
         <Box>
@@ -78,13 +73,23 @@ function CreatePost() {
                 sx={{
                     backgroundColor: '#fff',
                     width: '350px',
-                    height: '150px',
+                    height: '100%',
                     paddingTop: '20px',
                     border: 1,
                     borderRadius: '20px',
                     borderColor: '#fff',
                 }}
             >
+                {selectedArtwork.image && (
+                    <img
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            // objectFit: 'cover',
+                        }}
+                        src={selectedArtwork.image}
+                    />
+                )}
                 <Box
                     sx={{
                         borderRadius: '20px',
@@ -129,7 +134,7 @@ function CreatePost() {
                     />
                 </Box>
                 <Button
-                    onClick={() => handleSubmit()}
+                    onClick={() => isOpenSelectArtwork(true)}
                     sx={{
                         borderRadius: '20px',
                         backgroundColor: '#e1e1e1 !important',
@@ -151,6 +156,12 @@ function CreatePost() {
                 >
                     Post
                 </Button>
+                <AddArtworkModal
+                    open={openSelectArtwork}
+                    isOpen={isOpenSelectArtwork}
+                    selectedArtwork={selectedArtwork}
+                    setSelectedArtwork={setSelectedArtwork}
+                />
             </Box>
         </Box>
     );

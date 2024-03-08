@@ -11,7 +11,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { MouseEvent, useEffect, useState } from 'react';
 import PreOrderModal from '../Modals/PreOrderModal';
-import { Masonry } from '@mui/lab';
 import axios from 'axios';
 import NotFound from '../../auth/NotFound';
 import { toast } from 'react-toastify';
@@ -19,7 +18,7 @@ import CreatePost from './CreatePost';
 import ViewArtworkModal from '../Modals/ViewArtworkModal';
 
 type ImageType = {
-    artworkId: number | null;
+    artworkId?: number;
     image: string;
     name: string;
     description: string;
@@ -34,7 +33,6 @@ interface IProfilePageProps {
 }
 
 export default function ProfilePage() {
-    // const path = useLocation();
     const API_URL = import.meta.env.VITE_API_URL;
     const { userId } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
@@ -45,6 +43,7 @@ export default function ProfilePage() {
     const [imgList, setImgList] = useState<ImageType[]>([]);
     const [open, isOpen] = useState(false);
     const [openPreOrder, isOpenPreOrder] = useState(false);
+
     const [selectedArtworkId, setSelectedArtworkId] = useState(null);
     const getProfile = async () => {
         setLoading(true);
@@ -93,37 +92,6 @@ export default function ProfilePage() {
     const copyProfileLink = () => {
         navigator.clipboard.writeText(`${location.host}${location.pathname}`);
     };
-    // const listImage: ImageType[] = [
-    //     {
-    //         artworkId: 1,
-    //         image: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
-    //         name: 'Ảnh 1',
-    //         description: 'Ảnh này được chụp bằng điện thoại di động',
-    //     },
-    //     {
-    //         artworkId: 2,
-    //         image: 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg',
-    //         name: 'Ảnh 2',
-    //         description: 'Ảnh này được chụp bằng điện thoại di động',
-    //     },
-    //     {
-    //         artworkId: 3,
-    //         image: 'https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?$pjpeg$&jpegSize=300&wid=1000',
-    //         name: 'Ảnh 3',
-    //         description: 'Ảnh này được chụp bằng điện thoại di động',
-    //     },
-    //     {
-    //         artworkId: 4,
-    //         image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg',
-    //         name: 'Ảnh 4',
-    //         description: 'Ảnh này được chụp bằng điện thoại di động',
-    //     },
-    // ];
-    // const followerCount = 100;
-
-    // const handleDoubleClick = (imageId: number) => {
-    //     console.log('Tym to:', imageId);
-    // };
 
     return (
         <div
