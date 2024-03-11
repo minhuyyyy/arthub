@@ -2,7 +2,7 @@ export type User = {
     isAuthenticated: boolean;
     isInitialised: boolean;
     userInfo: {
-        id: string;
+        id: number;
         fullName?: string;
         email: string;
         firstName?: string;

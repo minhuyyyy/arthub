@@ -75,7 +75,7 @@ export default function AddArtworkModal({
                                     objectFit: 'cover',
                                     marginTop: '10px',
                                 }}
-                            />{' '}
+                            />
                         </Box>
                     ))}
                 </Box>

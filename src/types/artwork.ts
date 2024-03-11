@@ -9,4 +9,7 @@ export type ArtworkType = {
     artworkRating: number;
     artworkDate?: Date;
     genre: string;
+    likes?: {
+        name: string;
+    }[];
 };

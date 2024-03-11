@@ -43,11 +43,10 @@ function CreatePost() {
 
     const handleSubmit = async () => {
         await axios
-            .post(`${API_URL}/post/post`, {
+            .post(`${API_URL}/post`, {
                 title: formData.title,
                 description: formData.description,
-                memberId: userInfo.id,
-                image: selectedArtwork.image,
+                memberId: parseInt(userInfo.id),
                 artworkId: selectedArtwork.artworkId,
             })
             .then((res) => {
@@ -57,7 +56,7 @@ function CreatePost() {
                         title: '',
                         description: '',
                     });
-                    setSelectedArtwork(null);
+                    setSelectedArtwork({});
                 }
             })
             .catch((err) => {
@@ -80,7 +79,7 @@ function CreatePost() {
                     borderColor: '#fff',
                 }}
             >
-                {selectedArtwork.image && (
+                {selectedArtwork.image !== '' && (
                     <img
                         style={{
                             width: '100%',

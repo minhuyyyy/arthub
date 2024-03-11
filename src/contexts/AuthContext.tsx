@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const initialState: User = {
     userInfo: {
-        id: '',
+        id: 0,
         fullName: '',
         email: '',
         firstName: '',

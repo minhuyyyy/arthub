@@ -45,6 +45,7 @@ export default function ViewArtworkModal({
         isBuyAvailable: false,
         artworkRating: 0,
         genre: '',
+        likes: [],
     });
 
     const getArtwork = async () => {
@@ -112,13 +113,15 @@ export default function ViewArtworkModal({
                             alt={artwork.name}
                             style={{
                                 maxWidth: '100%',
-                                maxHeight: '300px',
+                                height: '200px',
                                 marginTop: '10px',
                             }}
                         />
-                        <IconButton>
-                            <FavoriteOutlined />
-                        </IconButton>
+                        <Box>
+                            <IconButton>
+                                <FavoriteOutlined />
+                            </IconButton>
+                        </Box>
                     </Box>
                 </Modal>
             )}

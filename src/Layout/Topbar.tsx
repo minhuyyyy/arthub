@@ -85,7 +85,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         useState<null | HTMLElement>(null);
-    const [avatar, setAvatar] = useState('');
     const [profile, setProfile] = useState({});
     const { logout, isAuthenticated, userInfo } = useAuth();
     const isMenuOpen = Boolean(anchorEl);
@@ -101,7 +100,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             });
         };
         getAvatar();
-    }, [userInfo.id]);
+    }, [userInfo]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -144,8 +143,14 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             >
                 Profile
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={logout}>Logout</MenuItem>
+            <MenuItem
+                onClick={() => {
+                    logout();
+                    handleMenuClose();
+                }}
+            >
+                Logout
+            </MenuItem>
         </Menu>
     );
 
@@ -277,13 +282,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     }}
                                 />
                             </Search>
-                            {/* </Grid>
-                                <Grid
-                                    item
-                                    sm={4}
-                                    md={4}
-                                    // display={'inline'}
-                                    lg={4}> */}
                             <Box sx={{ flexGrow: 1 }} />
                             <Box
                                 sx={{
