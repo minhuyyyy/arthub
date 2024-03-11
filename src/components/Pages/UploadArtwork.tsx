@@ -10,7 +10,6 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectChangeEvent,
     TextField,
     Typography,
     styled,
@@ -21,7 +20,7 @@ import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
-import { MOCK_API_URL } from '../../utils/urls';
+import { API_URL } from '../../utils/urls';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -35,15 +34,14 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function Create() {
+function UploadArtwork() {
     // const API_URL = import.meta.env.VITE_API_URL;
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');
-    // const [genres, setGenres] = useState(null);
+    const [genre, setGenre] = useState('');
+    const [showNewGenreInput, setShowNewGenreInput] = useState(false);
+    const [newGenre, setNewGenre] = useState('');
     const [selectedGenre, setSelectedGenre] = useState<string>('');
-    const handleGenreChange = (e: SelectChangeEvent) => {
-        setSelectedGenre(e.target.value as string);
-    };
     const { userInfo } = useAuth();
     const [formData, setFormData] = useState({
         title: '',
@@ -52,6 +50,16 @@ function Create() {
     });
     const [buyStatus, canBuy] = useState(false);
 
+    const handleGenreChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        if (value === 'add-new-genre') {
+            setGenre('');
+            setShowNewGenreInput(true);
+        } else {
+            setGenre(value);
+            setShowNewGenreInput(false);
+        }
+    };
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -85,20 +93,19 @@ function Create() {
     }, []);
     const handleSubmit = async () => {
         await axios
-            .post(`${MOCK_API_URL}/artworks`, {
-                id: 3,
-                artworkId: 3,
+            .post(`${API_URL}/artwork`, {
                 name: formData.title,
                 description: formData.description,
                 image: photoUrl,
-                owner: {
-                    artistId: userInfo.id,
-                    artistName: userInfo.username,
-                    artistAvatar: userInfo.imageUrl,
-                },
                 price: formData.price,
+                artistId: userInfo.id,
+                // owner: {
+                //     artistName: userInfo.username,
+                //     artistAvatar: userInfo.imageUrl,
+                // },
+                isPublic: true,
                 isBuyAvailable: buyStatus,
-                genre: selectedGenre,
+                genreName: selectedGenre.toString() || newGenre.toString(),
                 // isPublic: true,
             })
             .then((res) => {
@@ -125,8 +132,24 @@ function Create() {
     };
 
     return (
-        <Box position={'relative'}>
-            <Grid container>
+        <Box
+            position={'relative'}
+            marginTop={10}
+            sx={{
+                backgroundColor: 'white',
+                border: 1,
+                borderRadius: 15,
+                borderColor: 'white',
+                paddingTop: '10px',
+                maxHeight: '600px',
+                minHeight: '500px',
+                width: '900px',
+            }}
+        >
+            <Typography variant="h4">
+                <strong>Upload artwork </strong>
+            </Typography>
+            <Grid container spacing={5}>
                 <Grid item xs={12} sm={12} md={4} lg={6}>
                     <Box>
                         {/* <input
@@ -136,7 +159,7 @@ function Create() {
                         /> */}
 
                         {photoUrl && (
-                            <img width="200px" height="300px" src={photoUrl} />
+                            <img width="300px" height="300px" src={photoUrl} />
                         )}
                     </Box>
                     <Button
@@ -159,7 +182,7 @@ function Create() {
                         <Box
                             sx={{
                                 borderRadius: '20px',
-                                width: '550px',
+                                width: '400px',
                                 border: 1,
                                 borderColor: '#a5a5a5',
                             }}
@@ -179,7 +202,7 @@ function Create() {
                         <Box
                             sx={{
                                 borderRadius: '20px',
-                                width: '550px',
+                                width: '400px',
                                 border: 1,
                                 borderColor: '#a5a5a5',
                                 marginTop: '20px',
@@ -200,7 +223,7 @@ function Create() {
                         <Box
                             sx={{
                                 borderRadius: '20px',
-                                width: '550px',
+                                width: '400px',
                                 border: 1,
                                 borderColor: '#a5a5a5',
                                 marginTop: '20px',
@@ -214,12 +237,34 @@ function Create() {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     value={selectedGenre}
-                                    label="Age"
+                                    label="Genre"
                                     sx={{ borderRadius: '20px' }}
-                                    onChange={handleGenreChange}
+                                    onChange={(e) => handleGenreChange(e)}
                                 >
                                     <MenuItem value={10}>10</MenuItem>
+                                    <MenuItem value="add-new-genre">
+                                        Add another genre
+                                    </MenuItem>
                                 </Select>
+                                {showNewGenreInput && (
+                                    <div>
+                                        <FormControl sx={{ width: '80%' }}>
+                                            <label>Artwork Genre:</label>
+                                            <Input
+                                                id="genre"
+                                                name="category"
+                                                variant="standard"
+                                                value={newGenre}
+                                                onChange={(e) => {
+                                                    setNewGenre(e.target.value);
+                                                }}
+                                            />
+                                            <br />
+                                        </FormControl>
+                                    </div>
+                                )}
+                                {genre && <p>You selected {genre}</p>}
+                                <br />
                             </FormControl>
                         </Box>
                         <Box position={'relative'}>
@@ -237,7 +282,7 @@ function Create() {
                                     <Box
                                         sx={{
                                             // borderRadius: '20px',
-                                            width: '550px',
+                                            width: '400px',
                                             // border: 1,
                                             // borderColor: '#a5a5a5',
                                             marginTop: '20px',
@@ -260,6 +305,7 @@ function Create() {
                                             onChange={(e) => handleChange(e)}
                                             placeholder="Enter price"
                                         />
+
                                         <Typography
                                             sx={{
                                                 marginLeft: '20px',
@@ -274,26 +320,25 @@ function Create() {
                                                 }
                                             )}`}
                                         </Typography>
-
                                         {/* {buyStatus == true && } */}
                                     </Box>
                                 )}
                             </FormGroup>
+                            {photoUrl && (
+                                <Button
+                                    onClick={() => handleSubmit()}
+                                    sx={{
+                                        position: 'absolute',
+                                        borderRadius: '20px',
+                                        backgroundColor: 'red !important',
+                                        color: 'white',
+                                        marginTop: '20px',
+                                    }}
+                                >
+                                    Post
+                                </Button>
+                            )}
                         </Box>
-                        {photoUrl && (
-                            <Button
-                                onClick={() => handleSubmit()}
-                                sx={{
-                                    position: 'absolute',
-                                    borderRadius: '20px',
-                                    backgroundColor: 'red !important',
-                                    color: 'white',
-                                    marginTop: '20px',
-                                }}
-                            >
-                                Post
-                            </Button>
-                        )}
                     </Box>
                 </Grid>
             </Grid>
@@ -301,4 +346,4 @@ function Create() {
     );
 }
 
-export default Create;
+export default UploadArtwork;

@@ -51,7 +51,9 @@ function PreOrderModal({
         } else setBudget(numericValue);
     };
     useEffect(() => {
-        getProfile();
+        if (open) {
+            getProfile();
+        }
     }, []);
     useEffect(() => {
         if (open) {

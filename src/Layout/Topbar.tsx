@@ -14,7 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CustomButton from '../components/Link';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
@@ -48,10 +48,10 @@ const Search = styled('div')(({ theme }) => ({
     backgroundColor: '#e1e1e1',
     // marginRight: theme.spacing(2),
     marginLeft: 0,
-    width: '50%',
+    width: '30%',
     [theme.breakpoints.up('lg')]: {
         marginLeft: theme.spacing(3),
-        width: '50%',
+        width: '30%',
     },
 }));
 
@@ -72,7 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
-        width: '80%',
+        width: '100%',
         [theme.breakpoints.up('md')]: {
             width: '20ch',
         },
@@ -85,18 +85,17 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         useState<null | HTMLElement>(null);
-    const [avatar, setAvatar] = useState('');
+    const [profile, setProfile] = useState({});
     const { logout, isAuthenticated, userInfo } = useAuth();
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
+    const [balance, setBalance] = useState(100000000000);
     useEffect(() => {
-        console.log(userInfo);
-
         const getAvatar = async () => {
             await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
                 if (res.status === 200) {
-                    setAvatar(res.data.avatar);
+                    setProfile(res.data);
                 }
             });
         };
@@ -144,8 +143,14 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             >
                 Profile
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={logout}>Logout</MenuItem>
+            <MenuItem
+                onClick={() => {
+                    logout();
+                    handleMenuClose();
+                }}
+            >
+                Logout
+            </MenuItem>
         </Menu>
     );
 
@@ -246,22 +251,22 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                             ) : (
                                 <>
                                     {/* <Box alignContent={'start'}> */}
-                                    <Typography
-                                        display={'inline'}
-                                        noWrap
-                                        variant="h5"
-                                        mr={2}
-                                    >
-                                        Arthub
-                                    </Typography>
-                                    <CustomButton main={true} destination="/">
-                                        Home
-                                    </CustomButton>
+                                    <Link to={'/'}>
+                                        <Typography
+                                            display={'inline'}
+                                            noWrap
+                                            variant="h5"
+                                            mr={2}
+                                        >
+                                            Arthub
+                                        </Typography>
+                                    </Link>
+
                                     <CustomButton
                                         main={true}
-                                        destination="/create"
+                                        destination="/upload-artwork"
                                     >
-                                        Create
+                                        Upload artwork
                                     </CustomButton>
                                     {/* </Box> */}
                                 </>
@@ -277,19 +282,30 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     }}
                                 />
                             </Search>
-                            {/* </Grid>
-                                <Grid
-                                    item
-                                    sm={4}
-                                    md={4}
-                                    // display={'inline'}
-                                    lg={4}> */}
                             <Box sx={{ flexGrow: 1 }} />
                             <Box
                                 sx={{
-                                    display: { xs: 'none', md: 'flex' },
+                                    display: {
+                                        xs: 'none',
+                                        md: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    },
                                 }}
                             >
+                                <div>
+                                    {/* <Typography
+                                        variant="body2"
+                                        display="inline"
+                                        textAlign={'center'}
+                                    > */}
+                                    Balance:
+                                    <strong>{`${balance.toLocaleString(
+                                        'vi-VN',
+                                        { style: 'currency', currency: 'VND' }
+                                    )}`}</strong>
+                                    {/* </Typography> */}
+                                </div>
                                 <IconButton
                                     size="large"
                                     aria-label="show 4 new mails"
@@ -316,7 +332,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         {`Hi `}
                                         <strong>
                                             {/* {user.fullName} */}
-                                            {userInfo.username}
+                                            {profile.fullName}
                                         </strong>
                                     </Typography>
                                     <IconButton
@@ -331,7 +347,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         <Avatar
                                             // src={user.avatar}
                                             alt={`${userInfo.firstName} ${userInfo.lastName}`}
-                                            src={avatar}
+                                            src={profile.avatar}
                                         />
                                     </IconButton>
                                 </Box>
