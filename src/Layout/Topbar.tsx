@@ -14,7 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CustomButton from '../components/Link';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
@@ -85,16 +85,17 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         useState<null | HTMLElement>(null);
-    const [avatar, setAvatar] = useState('');
+    const [profile, setProfile] = useState({});
     const { logout, isAuthenticated, userInfo } = useAuth();
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
+    const [balance, setBalance] = useState(100000000000);
     useEffect(() => {
         const getAvatar = async () => {
             await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
                 if (res.status === 200) {
-                    setAvatar(res.data.avatar);
+                    setProfile(res.data);
                 }
             });
         };
@@ -142,8 +143,14 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             >
                 Profile
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={logout}>Logout</MenuItem>
+            <MenuItem
+                onClick={() => {
+                    logout();
+                    handleMenuClose();
+                }}
+            >
+                Logout
+            </MenuItem>
         </Menu>
     );
 
@@ -244,23 +251,17 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                             ) : (
                                 <>
                                     {/* <Box alignContent={'start'}> */}
-                                    <Typography
-                                        display={'inline'}
-                                        noWrap
-                                        variant="h5"
-                                        mr={2}
-                                    >
-                                        Arthub
-                                    </Typography>
-                                    <CustomButton main={true} destination="/">
-                                        Home
-                                    </CustomButton>
-                                    <CustomButton
-                                        main={true}
-                                        destination="/create-post"
-                                    >
-                                        Post
-                                    </CustomButton>
+                                    <Link to={'/'}>
+                                        <Typography
+                                            display={'inline'}
+                                            noWrap
+                                            variant="h5"
+                                            mr={2}
+                                        >
+                                            Arthub
+                                        </Typography>
+                                    </Link>
+
                                     <CustomButton
                                         main={true}
                                         destination="/upload-artwork"
@@ -281,13 +282,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     }}
                                 />
                             </Search>
-                            {/* </Grid>
-                                <Grid
-                                    item
-                                    sm={4}
-                                    md={4}
-                                    // display={'inline'}
-                                    lg={4}> */}
                             <Box sx={{ flexGrow: 1 }} />
                             <Box
                                 sx={{
@@ -306,7 +300,10 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         textAlign={'center'}
                                     > */}
                                     Balance:
-                                    <strong>10000000000</strong>
+                                    <strong>{`${balance.toLocaleString(
+                                        'vi-VN',
+                                        { style: 'currency', currency: 'VND' }
+                                    )}`}</strong>
                                     {/* </Typography> */}
                                 </div>
                                 <IconButton
@@ -335,7 +332,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         {`Hi `}
                                         <strong>
                                             {/* {user.fullName} */}
-                                            {userInfo.fullName}
+                                            {profile.fullName}
                                         </strong>
                                     </Typography>
                                     <IconButton
@@ -350,7 +347,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                         <Avatar
                                             // src={user.avatar}
                                             alt={`${userInfo.firstName} ${userInfo.lastName}`}
-                                            src={avatar}
+                                            src={profile.avatar}
                                         />
                                     </IconButton>
                                 </Box>

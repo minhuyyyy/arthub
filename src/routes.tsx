@@ -2,7 +2,6 @@ import { lazy } from 'react';
 import Layout from './Layout/Layout';
 import LoginPage from './auth/Login';
 import Loadable from './components/Loadable';
-import Create from './components/Pages/UploadArtwork';
 import UserHomePage from './components/Pages/Home';
 import ProfilePage from './components/Pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -13,11 +12,12 @@ import PreOrdersPage from './components/Pages/PreOrders';
 import BuyArtworkPage from './components/Pages/BuyArtwork';
 import UploadArtwork from './components/Pages/UploadArtwork';
 import CreatePost from './components/Pages/CreatePost';
-// import PreOrderModal from './components/Modals/PreOrderModal';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
-const UserTable = Loadable(lazy(() => import('./components/Tables/Table')));
+const UserTable = Loadable(
+    lazy(() => import('./components/Tables/OrderTable'))
+);
 const routes = [
     {
         path: '/',

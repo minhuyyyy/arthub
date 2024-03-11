@@ -108,7 +108,19 @@ function EditProfilePage() {
     return (
         <AppSuspense>
             {profile ? (
-                <Box className="edit-profile-container" position={'relative'}>
+                <Box
+                    className="edit-profile-container"
+                    position={'relative'}
+                    sx={{
+                        border: 1,
+                        borderRadius: '20px',
+                        backgroundColor: '#fff',
+                        borderColor: '#fff',
+                        paddingBottom: '10px',
+                        paddingRight: '20px',
+                        paddingLeft: '20px',
+                    }}
+                >
                     <Grid container>
                         <Grid item xs={12}>
                             <Box className="avatar-section">

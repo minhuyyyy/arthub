@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
     Box,
-    Button,
     Card,
-    CardActionArea,
-    CardActions,
     CardContent,
-    CardHeader,
     CardMedia,
     Grid,
     Typography,
@@ -15,12 +11,12 @@ import axios from 'axios';
 import './Artwork.scss';
 import { Link } from 'react-router-dom';
 import { CardType } from '../../types/card';
-import { Masonry } from '@mui/lab';
-import { API_URL, MOCK_API_URL } from '../../utils/urls';
+import { API_URL } from '../../utils/urls';
 import { formatDateShort } from '../../utils/helper/format.helper';
+import { ArtworkType } from '../../types/artwork';
 
 function ArtworkCard() {
-    const [cards, setCards] = useState<CardType[]>([]);
+    const [cards, setCards] = useState<ArtworkType[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const pageSize = 10; // Number of items to load per page
@@ -39,9 +35,6 @@ function ArtworkCard() {
     const loadMoreCards = async () => {
         setLoading(true);
         try {
-            // const newCardsResponse = await axios.get(
-            //     `${API_URL}/artwork?Page=${page}&PageSize=${pageSize}`
-            // );
             const newCardsResponse = await axios.get(
                 `${API_URL}/artwork?Page=${page}&PageSize=${pageSize}`
             );
@@ -73,7 +66,7 @@ function ArtworkCard() {
                             <Link to={`/card/${card.artworkId}`} key={index}>
                                 <Card
                                     sx={{
-                                        backgroundColor: '#e1e1e1',
+                                        backgroundColor: '#fff',
                                     }}
                                 >
                                     <CardMedia

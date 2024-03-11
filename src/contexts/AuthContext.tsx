@@ -9,8 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const initialState: User = {
     userInfo: {
-        id: '',
-        username: '',
+        id: 0,
+        fullName: '',
         email: '',
         firstName: '',
         lastName: '',
@@ -88,7 +88,6 @@ export const AuthProvider = ({ children }) => {
                 id: decoded.MemberId,
                 email: decoded.email,
                 role: parseInt(decoded.Role),
-                fullName: decoded.FullName,
             };
             dispatch({
                 type: 'INIT',

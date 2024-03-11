@@ -103,6 +103,8 @@ function CardDetails() {
                     display: 'flex',
                     flexDirection: 'row',
                     position: 'relative',
+                    backgroundColor: 'white',
+                    top: '80px',
                 }}
             >
                 <Grid container spacing={2}>
@@ -111,7 +113,7 @@ function CardDetails() {
                             sx={{
                                 minWidth: '300px',
                                 maxWidth: '500px',
-                                height: '100%',
+                                height: '358px',
                                 position: 'relative',
                                 boxSizing: 'border-box',
                                 maskImage:
@@ -220,26 +222,11 @@ function CardDetails() {
                             </Button>
                         </Box>
                         <Box textAlign={'left'}>
-                            <Typography variant="body1">
-                                <strong>Comments</strong>
-                            </Typography>
                             {isAuthenticated && (
                                 <Box
                                     textAlign={'left'}
                                     sx={{ position: 'absolute', bottom: '0px' }}
                                 >
-                                    <Typography
-                                        variant="body1"
-                                        display={'inline'}
-                                    >
-                                        {card?.comments?.length > 0 ? (
-                                            <strong>
-                                                {card.comments.length} comments
-                                            </strong>
-                                        ) : (
-                                            <strong>What do you think?</strong>
-                                        )}
-                                    </Typography>
                                     {liked ? (
                                         <IconButton size="large" edge="end">
                                             <Favorite />
@@ -253,33 +240,6 @@ function CardDetails() {
                                             <FavoriteBorderOutlined />
                                         </IconButton>
                                     )}
-                                    <Box
-                                        position={'relative'}
-                                        display={'flex'}
-                                        flexDirection={'row'}
-                                    >
-                                        <Avatar src={userInfo.imageUrl} />
-                                        <Container>
-                                            <StyledInputBase
-                                                multiline
-                                                value={comment}
-                                                onChange={(e) =>
-                                                    setComment(e.target.value)
-                                                }
-                                                placeholder="Add comment"
-                                            ></StyledInputBase>
-                                        </Container>
-                                        {comment.length > 0 && (
-                                            <IconButton size="small" edge="end">
-                                                <Send
-                                                // sx={{
-                                                //     backgroundColor:
-                                                //         'red !important',
-                                                // }}
-                                                />
-                                            </IconButton>
-                                        )}
-                                    </Box>
                                 </Box>
                             )}
                         </Box>

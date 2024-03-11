@@ -34,7 +34,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function UploadArtwork() {
+function UpdateArtwork() {
     // const API_URL = import.meta.env.VITE_API_URL;
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');
@@ -346,4 +346,4 @@ function UploadArtwork() {
     );
 }
 
-export default UploadArtwork;
+export default UpdateArtwork;
