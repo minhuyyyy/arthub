@@ -6,10 +6,8 @@ import {
     Input,
     Typography,
 } from '@mui/material';
-import MenuButton from '../Menu/Menu';
-import AppSuspense from '../Suspense';
-import { useState } from 'react';
 import { Send } from '@mui/icons-material';
+import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
@@ -41,21 +39,19 @@ function Post({
 }) {
     const [content, setContent] = useState('');
     const { userInfo } = useAuth();
+
     const handlePostComment = async () => {
-        await axios
-            .post(`${API_URL}/comment`, {
-                content: content,
-                postId: postId,
-                memberId: userInfo.id,
-            })
-            .then((res) => {
-                if (res.status === 201) {
-                    window.location.reload();
-                }
-            });
+        await axios.post(`${API_URL}/comment`, {
+            content: content,
+            postId: postId,
+            memberId: userInfo.id,
+        });
+        // Refresh comments after posting
+        window.location.reload();
     };
+
     return (
-        <AppSuspense>
+        <div>
             <Box sx={{ minHeight: '500px' }}>
                 <Grid container>
                     <Grid item lg={12}>
@@ -74,12 +70,6 @@ function Post({
                             >
                                 {fullName}
                             </Typography>
-                            <Box position={'absolute'} right={50}>
-                                <MenuButton
-                                    postId={postId}
-                                    artistId={accountId}
-                                />
-                            </Box>
                         </Box>
                     </Grid>
                     <Grid item lg={12} textAlign={'left'}>
@@ -99,49 +89,46 @@ function Post({
                                 <Typography>Comments</Typography>
                                 <Box
                                     sx={{
-                                        height: '60px',
+                                        height: '120px',
                                         overflowY: 'scroll',
                                         position: 'relative',
-                                        // display: 'flex',
                                         width: '100%',
                                     }}
                                 >
                                     {comments.map((comment) => (
-                                        <>
-                                            <Box
-                                                key={comment.commentId}
+                                        <Box
+                                            key={comment.commentId}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                marginBottom: '10px',
+                                            }}
+                                        >
+                                            <Avatar
+                                                src={avatar}
                                                 sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center', // Align items vertically
-                                                    marginBottom: '10px', // Add some margin between comments
+                                                    width: '30px',
+                                                    height: '30px',
+                                                    marginRight: '10px',
                                                 }}
+                                            />
+                                            <Typography
+                                                sx={{ marginRight: '10px' }}
                                             >
-                                                <Avatar
-                                                    src={avatar} // Assuming each comment has an avatar URL
-                                                    sx={{
-                                                        width: '30px',
-                                                        height: '30px',
-                                                        marginRight: '10px',
-                                                    }}
-                                                />
-                                                <Typography
-                                                    sx={{ marginRight: '10px' }}
-                                                >
-                                                    {comment.memberName}:
-                                                </Typography>
-                                                <Typography>
-                                                    {comment.content}
-                                                </Typography>
-                                                <CommentMenu
-                                                    artistId={accountId}
-                                                    postId={postId}
-                                                    commentId={
-                                                        comment.commentId
-                                                    }
-                                                    content={comment.content}
-                                                />
-                                            </Box>
-                                        </>
+                                                {comment.memberName}:
+                                            </Typography>
+                                            <Typography>
+                                                {comment.content}
+                                            </Typography>
+                                            <CommentMenu
+                                                ownComment={
+                                                    comment.memberId ===
+                                                    accountId
+                                                }
+                                                commentId={comment.commentId}
+                                                content={comment.content}
+                                            />
+                                        </Box>
                                     ))}
                                 </Box>
                             </>
@@ -192,7 +179,7 @@ function Post({
                     </Grid>
                 </Grid>
             </Box>
-        </AppSuspense>
+        </div>
     );
 }
 

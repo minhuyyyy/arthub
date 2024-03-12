@@ -7,13 +7,16 @@ import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
 import ReportArtworkModal from '../Modals/ReportModal';
+import UpdateArtworkModal from '../Modals/UpdateArtworkModal';
 
 function MenuButton({
     artistId,
     postId,
+    type,
 }: {
     artistId: number;
     postId: number;
+    type: string;
 }) {
     const [open, isOpen] = useState<boolean>(false);
     const [openModal, isModalOpen] = useState<boolean>(false);
@@ -36,7 +39,19 @@ function MenuButton({
             .then((res) => {
                 if (res.status === 200) {
                     toast.success('Post deleted successfully!');
-                    location.reload();
+                    isOpen(false);
+                }
+            })
+            .catch((err) => toast.error(err.response.data));
+    };
+
+    const handleDeleteArtwork = async () => {
+        await axios
+            .delete(`${API_URL}/artwork/${postId}`)
+            .then((res) => {
+                if (res.status === 200) {
+                    toast.success('Post deleted successfully!');
+                    isOpen(false);
                 }
             })
             .catch((err) => toast.error(err.response.data));
@@ -59,17 +74,38 @@ function MenuButton({
                 <Edit />
             </IconButton>
             <p>Update </p>
-            <UpdatePostModal postId={postId} open={open} isOpen={isOpen} />
-        </MenuItem>,
-        <MenuItem key="delete" onClick={() => handleDeletePost()}>
-            <IconButton
-                size="small"
-                aria-label="show 17 new notifications"
-                color="inherit"
-            >
-                <Delete />
-            </IconButton>
-            <p>Delete </p>
+            {type === 'post' ? (
+                <>
+                    <UpdatePostModal
+                        postId={postId}
+                        open={open}
+                        isOpen={isOpen}
+                    />
+                    <MenuItem key="delete" onClick={() => handleDeletePost()}>
+                        <IconButton size="small" color="inherit">
+                            <Delete />
+                        </IconButton>
+                        <p>Delete </p>
+                    </MenuItem>
+                </>
+            ) : (
+                <>
+                    <UpdateArtworkModal
+                        artworkId={postId}
+                        open={open}
+                        isOpen={isOpen}
+                    />
+                    <MenuItem
+                        key="delete"
+                        onClick={() => handleDeleteArtwork()}
+                    >
+                        <IconButton size="small" color="inherit">
+                            <Delete />
+                        </IconButton>
+                        <p>Delete </p>
+                    </MenuItem>
+                </>
+            )}
         </MenuItem>,
     ];
 

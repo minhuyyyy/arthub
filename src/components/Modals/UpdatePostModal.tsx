@@ -7,11 +7,8 @@ import {
     useState,
 } from 'react';
 import axios from 'axios';
-import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../utils/urls';
-import AddArtworkModal from './AddArtworkModal';
-import { ArtworkType } from '../../types/artwork';
 import { PostType } from '../../types/post';
 
 function UpdatePostModal({
@@ -23,21 +20,7 @@ function UpdatePostModal({
     isOpen: Dispatch<SetStateAction<boolean>>;
     postId: number;
 }) {
-    const { userInfo } = useAuth();
     const [post, setPost] = useState<PostType>();
-    const [openSelectArtwork, isOpenSelectArtwork] = useState(false);
-    const [selectedArtwork, setSelectedArtwork] = useState<ArtworkType>({
-        artworkId: 0,
-        name: '',
-        description: '',
-        image: '',
-        price: 0,
-        artistID: 0,
-        isBuyAvailable: true,
-        artworkRating: 0,
-        artworkDate: new Date(),
-        genre: '',
-    });
 
     const style = {
         position: 'absolute',
@@ -158,12 +141,6 @@ function UpdatePostModal({
                     >
                         Post
                     </Button>
-                    <AddArtworkModal
-                        open={openSelectArtwork}
-                        isOpen={isOpenSelectArtwork}
-                        selectedArtwork={selectedArtwork}
-                        setSelectedArtwork={setSelectedArtwork}
-                    />
                 </Box>
             </Modal>
         </Box>

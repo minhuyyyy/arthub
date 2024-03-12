@@ -13,6 +13,8 @@ import {
 import { useState } from 'react';
 import './tables.scss';
 import { OrderType, Status } from '../../types/order';
+import axios from 'axios';
+import { API_URL, MOCK_API_URL } from '../../utils/urls';
 const StyledTable = styled(Table)(() => ({
     whiteSpace: 'pre',
     '& thead': {
@@ -50,6 +52,18 @@ const BaseTable = ({
         setPage(0);
     };
 
+    const acceptOrder = async (orderId: number) => {
+        await axios.patch(`${MOCK_API_URL}/pre-orders/${orderId}`, {
+            status: Status.processing,
+        });
+    };
+
+    const denyOrder = async (orderId: number) => {
+        await axios.put(`${MOCK_API_URL}/pre-orders/${orderId}`, {
+            status: Status.denied,
+        });
+    };
+
     return (
         <>
             <Box marginTop="40px" textAlign="left">
@@ -82,7 +96,7 @@ const BaseTable = ({
                             )
                             .map((data, index) => (
                                 <TableRow key={index}>
-                                    <TableCell align="left">
+                                    <TableCell align="center">
                                         {data.senderName}
                                     </TableCell>
                                     <TableCell align="center">
@@ -95,11 +109,14 @@ const BaseTable = ({
                                         })}
                                     </TableCell>
                                     <TableCell align="center">
-                                        {data.status}
+                                        {Status[data.status]}
                                     </TableCell>
                                     {data.status === Status.pending ? (
                                         <TableCell align="right">
                                             <Button
+                                                onClick={() =>
+                                                    acceptOrder(data.id)
+                                                }
                                                 variant="contained"
                                                 sx={{
                                                     backgroundColor:
@@ -110,6 +127,9 @@ const BaseTable = ({
                                                 Accept order
                                             </Button>
                                             <Button
+                                                onClick={() =>
+                                                    denyOrder(data.orderId)
+                                                }
                                                 variant="contained"
                                                 sx={{
                                                     backgroundColor:
@@ -120,7 +140,7 @@ const BaseTable = ({
                                             </Button>
                                         </TableCell>
                                     ) : (
-                                        <TableCell>
+                                        <TableCell align="center">
                                             <Button>Deliver product</Button>
                                         </TableCell>
                                     )}

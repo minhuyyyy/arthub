@@ -5,7 +5,9 @@ import { API_URL } from '../../utils/urls';
 import { ArtworkType } from '../../types/artwork';
 import { ArtistType } from '../../types/artist';
 import { formatDateShort } from '../../utils/helper/format.helper';
-import { FavoriteOutlined } from '@mui/icons-material';
+import { Favorite, FavoriteOutlined } from '@mui/icons-material';
+import MenuButton from '../Menu/Menu';
+import useAuth from '../../hooks/useAuth';
 
 const style = {
     position: 'relative',
@@ -15,6 +17,7 @@ const style = {
     width: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
+    borderColor: '#fff',
     boxShadow: 24,
     p: 4,
     textAlign: 'left',
@@ -44,10 +47,14 @@ export default function ViewArtworkModal({
         artistID: 0,
         isBuyAvailable: false,
         artworkRating: 0,
-        genre: '',
-        likes: [],
+        genre: {
+            genreId: 0,
+            name: '',
+        },
+        membersRated: [],
     });
-
+    const [liked, isLiked] = useState<boolean>(false);
+    const { userInfo } = useAuth();
     const getArtwork = async () => {
         try {
             const artworkRes = await axios.get(
@@ -60,13 +67,22 @@ export default function ViewArtworkModal({
                 );
                 if (artistRes.status === 200) {
                     setArtist(artistRes.data);
-                    isOpen(true); // Open the modal after fetching data
+                    isOpen(true);
                 }
             }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
+    useEffect(() => {
+        const liked = artwork.membersRated.find(
+            (member) => member === userInfo.id
+        );
+        if (liked) {
+            isLiked(true);
+        }
+    }, [artwork, userInfo.id, isLiked]);
 
     useEffect(() => {
         if (open) {
@@ -76,6 +92,34 @@ export default function ViewArtworkModal({
 
     const handleClose = () => {
         isOpen(false);
+    };
+
+    const likeCard = async () => {
+        const res = await axios.post(`${API_URL}/rating`, {
+            userId: userInfo.id,
+            rating: 1,
+            artworkId: artwork.artworkId,
+        });
+        if (res.status === 200) {
+            isLiked(true);
+        }
+    };
+
+    const unlikeCard = async () => {
+        try {
+            const res = await axios.delete(`${API_URL}/rating`, {
+                data: {
+                    userId: userInfo.id,
+                    rating: 0,
+                    artworkId: artwork.artworkId,
+                },
+            });
+            if (res.status === 200) {
+                isLiked(false);
+            }
+        } catch (error) {
+            console.error('Error unliking card:', error);
+        }
     };
 
     return (
@@ -88,16 +132,30 @@ export default function ViewArtworkModal({
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={style}>
-                        <Avatar src={artist.avatar} />
-                        <Box
-                            sx={{ display: 'inline-block', marginLeft: '10px' }}
-                        >
-                            <Typography variant="body1">
+                        <Box sx={{ display: 'flex' }}>
+                            <Avatar src={artist.avatar} />
+                            <Box sx={{ position: 'absolute', right: '50px' }}>
+                                <MenuButton
+                                    type="artwork"
+                                    artistId={artist.accountId}
+                                    postId={artwork.artworkId}
+                                />
+                            </Box>
+                            <Typography
+                                variant="body1"
+                                component={'h2'}
+                                sx={{ marginLeft: '10px' }}
+                            >
                                 {artist.fullName}
                             </Typography>
                             <Typography
                                 variant="body2"
-                                sx={{ color: 'text.secondary' }}
+                                sx={{
+                                    color: 'text.secondary',
+                                    position: 'absolute',
+                                    top: '50px',
+                                    left: '80px',
+                                }}
                             >
                                 {formatDateShort(artwork.artworkDate)}
                             </Typography>
@@ -117,10 +175,24 @@ export default function ViewArtworkModal({
                                 marginTop: '10px',
                             }}
                         />
-                        <Box>
-                            <IconButton>
-                                <FavoriteOutlined />
-                            </IconButton>
+                        <Box sx={{ display: 'flex' }}>
+                            <Typography
+                                sx={{
+                                    position: 'absolute',
+                                    bottom: '42px',
+                                }}
+                            >
+                                {artwork.membersRated.length}
+                            </Typography>
+                            {liked ? (
+                                <IconButton onClick={() => unlikeCard()}>
+                                    <FavoriteOutlined />
+                                </IconButton>
+                            ) : (
+                                <IconButton onClick={() => likeCard()}>
+                                    <Favorite />
+                                </IconButton>
+                            )}
                         </Box>
                     </Box>
                 </Modal>

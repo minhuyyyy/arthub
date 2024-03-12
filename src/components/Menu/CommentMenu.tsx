@@ -7,18 +7,16 @@ import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
 
 function CommentMenu({
-    artistId,
+    ownComment,
     commentId,
     content,
 }: {
-    artistId: number;
-    postId: number;
+    ownComment: boolean;
     commentId: number;
     content: string;
 }) {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [updatedContent, setUpdatedContent] = useState<string>(content);
-    const { userInfo } = useAuth();
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         useState<null | HTMLElement>(null);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -88,7 +86,7 @@ function CommentMenu({
                     },
                 }}
             >
-                {artistId == userInfo.id && (
+                {ownComment == true ? (
                     <>
                         <MenuItem
                             onClick={() => {
@@ -104,6 +102,11 @@ function CommentMenu({
                             <p>Delete</p>
                         </MenuItem>
                     </>
+                ) : (
+                    <MenuItem onClick={handleDeleteComment}>
+                        <Delete />
+                        <p>Delete</p>
+                    </MenuItem>
                 )}
             </Menu>
             {isEditing && (
