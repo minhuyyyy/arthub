@@ -1,4 +1,11 @@
-import { Box, Typography, Modal, Avatar, IconButton } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Modal,
+    Avatar,
+    IconButton,
+    Button,
+} from '@mui/material';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
@@ -160,6 +167,33 @@ export default function ViewArtworkModal({
                                 {formatDateShort(artwork.artworkDate)}
                             </Typography>
                         </Box>
+                        {artwork.isBuyAvailable && (
+                            <>
+                                <Typography
+                                    variant="body2"
+                                    component="strong"
+                                    sx={{ color: 'text.secondary' }}
+                                >
+                                    {`For sale - `}
+                                    {artwork.price.toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND',
+                                    })}
+                                </Typography>
+                                <Button
+                                    sx={{
+                                        backgroundColor: 'red !important',
+                                        borderRadius: '20px',
+                                        color: 'white',
+                                        position: 'absolute',
+                                        right:'30px',
+                                        top:'65px'
+                                    }}
+                                >
+                                    Buy
+                                </Button>
+                            </>
+                        )}
                         <Typography variant="body1" component="p">
                             {artwork.name}
                         </Typography>

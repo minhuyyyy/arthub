@@ -1,5 +1,3 @@
-import { GenreType } from './genre';
-
 export type ArtworkType = {
     artworkId: number;
     name: string;
@@ -10,7 +8,7 @@ export type ArtworkType = {
     isBuyAvailable: boolean;
     artworkRating: number;
     artworkDate?: Date;
-    genre: GenreType;
+    genreId: number;
     likes?: {
         name: string;
     }[];

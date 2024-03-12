@@ -14,4 +14,5 @@ export enum Status {
     'In progress' = 1,
     'Completed' = 2,
     'Denied' = 3,
+    'Waiting for deposit' = 4,
 }

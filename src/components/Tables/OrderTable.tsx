@@ -54,13 +54,13 @@ const BaseTable = ({
 
     const acceptOrder = async (orderId: number) => {
         await axios.patch(`${MOCK_API_URL}/pre-orders/${orderId}`, {
-            status: Status.processing,
+            status: Status['Waiting for deposit'],
         });
     };
 
     const denyOrder = async (orderId: number) => {
-        await axios.put(`${MOCK_API_URL}/pre-orders/${orderId}`, {
-            status: Status.denied,
+        await axios.patch(`${MOCK_API_URL}/pre-orders/${orderId}`, {
+            status: Status.Denied,
         });
     };
 
@@ -111,7 +111,7 @@ const BaseTable = ({
                                     <TableCell align="center">
                                         {Status[data.status]}
                                     </TableCell>
-                                    {data.status === Status.pending ? (
+                                    {data.status === Status.Pending ? (
                                         <TableCell align="right">
                                             <Button
                                                 onClick={() =>

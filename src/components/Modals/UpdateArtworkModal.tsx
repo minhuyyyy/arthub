@@ -85,7 +85,8 @@ function UpdateArtworkModal({
                 if (res.status === 200) {
                     setArtwork(res.data);
                     setPhotoUrl(res.data.image);
-                    setSelectedGenre(res.data.genreId);
+                    canBuy(res.data.isBuyAvailable);
+                    // setSelectedGenre(res.data.genreId);
                 }
             })
             .catch((err) => toast.error(err.response.data.title));
@@ -93,16 +94,23 @@ function UpdateArtworkModal({
     const getGenres = () => {
         axios.get(`${API_URL}/genres`).then((res) => {
             if (res.status === 200) {
-                setGenres(res.data);
+                setGenres(res.data); // Update genres state
             }
         });
+    };
+    const setName = () => {
+        const genreName = genres.find(
+            (genre: GenreType) => genre.genreId === artwork.genreId
+        );
+        if (genreName) {
+            setSelectedGenre(genreName.name);
+        }
     };
     useEffect(() => {
         getGenres();
         getArtwork();
-        console.log(artwork);
+        setName();
     }, []);
-
     const handleGenreChange = (e: SelectChangeEvent<string>) => {
         const { value } = e.target;
         if (value === 'add-new-genre') {
@@ -144,11 +152,12 @@ function UpdateArtworkModal({
 
     const handleSubmit = async () => {
         await axios
-            .post(`${API_URL}/artwork`, {
+            .put(`${API_URL}/artwork/${artworkId}`, {
                 name: artwork?.name,
                 description: artwork?.description,
                 image: photoUrl,
                 price: artwork?.price,
+                artworkId: artworkId,
                 artistId: userInfo.id,
                 // owner: {
                 //     artistName: userInfo.username,
@@ -156,7 +165,7 @@ function UpdateArtworkModal({
                 // },
                 isPublic: true,
                 isBuyAvailable: buyStatus,
-                genreName: selectedGenre.toString() || newGenre.toString(),
+                // genreName: selectedGenre.toString() || newGenre.toString(),
                 // isPublic: true,
             })
             .then((res) => {
@@ -404,7 +413,7 @@ function UpdateArtworkModal({
                                                 marginTop: '20px',
                                             }}
                                         >
-                                            Post
+                                            Update
                                         </Button>
                                     )}
                                 </Box>

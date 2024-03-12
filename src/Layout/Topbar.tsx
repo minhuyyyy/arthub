@@ -90,7 +90,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
-    const [balance, setBalance] = useState(100000000000);
+    const [balance, setBalance] = useState(0);
     useEffect(() => {
         const getAvatar = async () => {
             await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
@@ -99,7 +99,16 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                 }
             });
         };
+
+        const getBalance = async () => {
+            await axios.get(`${API_URL}/balance/${userInfo.id}`).then((res) => {
+                if (res.status === 200) {
+                    setBalance(res.data.balance);
+                }
+            });
+        };
         getAvatar();
+        getBalance();
     }, [userInfo]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
