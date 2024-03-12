@@ -4,7 +4,7 @@ import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import UpdatePostModal from '../Modals/UpdatePostModal';
 import axios from 'axios';
-import { API_URL, MOCK_API_URL } from '../../utils/urls';
+import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
 import ReportArtworkModal from '../Modals/ReportModal';
 

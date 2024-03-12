@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
                             role: parseInt(decoded.Role),
                             fullName: decoded.FullName,
                         };
-                        console.log(user);
+                        user;
 
                         toast.success('Login successfully!');
                         dispatch({ type: 'LOGIN', payload: { user } });

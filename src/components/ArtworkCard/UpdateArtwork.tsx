@@ -89,7 +89,7 @@ function UpdateArtwork() {
         }
     };
     useEffect(() => {
-        console.log(userInfo);
+        userInfo;
     }, []);
     const handleSubmit = async () => {
         await axios

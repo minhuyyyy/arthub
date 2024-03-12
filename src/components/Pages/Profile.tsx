@@ -11,7 +11,7 @@ import ViewArtworkModal from '../Modals/ViewArtworkModal';
 import Post from '../Posts/Post';
 import { PostType } from '../../types/post';
 import AppSuspense from '../Suspense';
-// import { MOCK_API_URL } from '../../utils/urls';
+import { ArtworkType } from '../../types/artwork';
 
 type ImageType = {
     artworkId?: number;
@@ -22,7 +22,7 @@ type ImageType = {
 
 interface IProfilePageProps {
     accountId: number;
-    avatar?: string;
+    avatar: string;
     followerCount?: number;
     fullName: string;
     artworks: ImageType[];
@@ -33,14 +33,13 @@ export default function ProfilePage() {
     const { userId } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [profile, setProfile] = useState<IProfilePageProps>({});
-    const [imgList, setImgList] = useState<ImageType[]>([]);
+    const [imgList, setImgList] = useState<ArtworkType[]>([]);
     const [open, isOpen] = useState(false);
     const [openPreOrder, isOpenPreOrder] = useState(false);
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [selectedArtworkId, setSelectedArtworkId] = useState(null);
+    const [selectedArtworkId, setSelectedArtworkId] = useState(0);
     const getProfile = async () => {
         // setLoading(true);
         try {
@@ -49,7 +48,7 @@ export default function ProfilePage() {
                 .then((res) => {
                     if (res.status === 200) {
                         setProfile(res.data);
-                        setImgList(res.data.artworks);
+                        setImgList(res.data.viewArtworks);
                         // setLoading(false);
                     }
                 })
@@ -69,19 +68,41 @@ export default function ProfilePage() {
 
             if (postResponse.status === 200) {
                 const postData = postResponse.data.items;
-                const artworkPromises = postData.map(async (item) => {
-                    // Add a 2-second delay before making the artwork API call
+                const artworkPromises = postData.map(
+                    async (item: ArtworkType) => {
+                        // Add a 2-second delay before making the artwork API call
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 500)
+                        );
+                        return axios.get(
+                            `${API_URL}/artwork/${item.artworkId}`
+                        );
+                    }
+                );
+
+                const commentPromises = postData.map(async (item: PostType) => {
+                    // Add a delay before making the comment API call
                     await new Promise((resolve) => setTimeout(resolve, 500));
-                    return axios.get(`${API_URL}/artwork/${item.artworkId}`);
+                    return axios.get(`${API_URL}/comment/post/${item.postId}`);
                 });
-                const artworkResponses = await Promise.all(artworkPromises);
+
+                const [artworkResponses, commentResponses] = await Promise.all([
+                    Promise.all(artworkPromises),
+                    Promise.all(commentPromises),
+                ]);
+
                 const artworkImages = artworkResponses.map(
                     (response) => response.data.image
                 );
-                const postsWithImages = postData.map((item, index) => ({
-                    ...item,
-                    image: artworkImages[index],
-                }));
+
+                const postsWithImages = postData.map(
+                    (item: PostType, index: number) => ({
+                        ...item,
+                        image: artworkImages[index],
+                        comments: commentResponses[index].data, // Assuming comments are stored in data property of the response
+                    })
+                );
+
                 setPosts(postsWithImages);
             } else {
                 throw new Error('Failed to fetch post data');
@@ -91,10 +112,43 @@ export default function ProfilePage() {
         }
     };
 
+    // const getUserName = async () => {
+    //     const updatedPosts = await Promise.all(
+    //         posts.map(async (post) => {
+    //             const updatedComments = await Promise.all(
+    //                 post.comments.map(async (comment) => {
+    //                     try {
+    //                         const res = await axios.get(
+    //                             `${API_URL}/profile/user/${comment.memberId}`
+    //                         );
+    //                         if (res.status === 200) {
+    //                             return {
+    //                                 ...comment,
+    //                                 userName: res.data.fullName,
+    //                             };
+    //                         }
+    //                     } catch (error) {
+    //                         console.error(
+    //                             `Error fetching username for comment ${comment.commentId}: ${error}`
+    //                         );
+    //                     }
+    //                     return comment; // Return original comment if fetching fails or status is not 200
+    //                 })
+    //             );
+    //             return { ...post, comments: updatedComments };
+    //         })
+    //     );
+    //     setPosts(updatedPosts);
+    // };
+
     useEffect(() => {
         getProfile();
         getPosts();
     }, []);
+
+    useEffect(() => {
+        console.log(posts);
+    }, [posts]);
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -107,7 +161,7 @@ export default function ProfilePage() {
     const popoverOpen = Boolean(anchorEl);
     const id = popoverOpen ? 'simple-popover' : undefined;
 
-    console.log(isAuthenticated);
+    isAuthenticated;
 
     const openModal = () => {
         if (isAuthenticated) {
@@ -187,7 +241,7 @@ export default function ProfilePage() {
                             </Typography>
                         </Popover>
 
-                        {userInfo.id === userId ? (
+                        {userInfo.id.toString() === userId ? (
                             <>
                                 <Button
                                     color="info"
@@ -344,14 +398,15 @@ export default function ProfilePage() {
                                         }}
                                     >
                                         <Post
-                                            key={post.postId} // Add key prop
-                                            title={post.title} // Access properties from post object
-                                            description={post.description} // Access properties from post object
-                                            image={post.image} // Access properties from post object
-                                            postId={post.postId} // Access properties from post object
-                                            accountId={profile.accountId} // Access properties from post object
-                                            avatar={profile?.avatar}
+                                            key={post.postId}
+                                            title={post.title}
+                                            description={post.description}
+                                            image={post.image}
+                                            postId={post.postId}
+                                            accountId={profile.accountId}
+                                            avatar={profile.avatar}
                                             fullName={profile.fullName}
+                                            comments={post.comments}
                                         />
                                     </Box>
                                 ))}

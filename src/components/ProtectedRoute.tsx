@@ -9,7 +9,7 @@ function ProtectedRoute({
     children: unknown;
 }) {
     const { isAuthenticated, userInfo } = useAuth();
-    console.log(userInfo.role, role);
+    userInfo.role, role;
 
     if (isAuthenticated && userInfo.role === role) return <>{children}</>;
     return <div>Unauthorized</div>;

@@ -8,13 +8,12 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { CardType } from '../../types/card';
-import { Favorite, FavoriteBorderOutlined, Send } from '@mui/icons-material';
+import { Favorite, FavoriteBorderOutlined } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
-import { Container, StyledInputBase } from '../../utils/InputComponents';
 import axios from 'axios';
-import { API_URL, MOCK_API_URL } from '../../utils/urls';
+import { API_URL } from '../../utils/urls';
 import AppSuspense from '../Suspense';
+import { ArtworkType } from '../../types/artwork';
 
 function CardDetails() {
     const navigate = useNavigate();
@@ -23,7 +22,7 @@ function CardDetails() {
         avatar: '',
         fullName: '',
     });
-    const [card, setCard] = useState<CardType>({
+    const [card, setCard] = useState<ArtworkType>({
         artworkId: 0,
         name: '',
         description: '',
@@ -31,16 +30,12 @@ function CardDetails() {
         artistID: 0,
         price: 0,
         isBuyAvailable: false,
-        // savedBy: [],
-        comments: [],
         likes: [],
-        // purchasedBy: {
-        //     userId: 0,
-        // },
-        artworkDate: '',
-        // genres: [],
+        artworkDate: new Date(),
+        genreId: 0,
+        membersRated: [],
+        artworkRating: 0,
     });
-    const [comment, setComment] = useState('');
     const [liked, isLiked] = useState(false);
     const { id } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
@@ -71,24 +66,39 @@ function CardDetails() {
             });
     };
 
+    const setLikedCard = () => {
+        const rated = card.membersRated.find((member) => member == userInfo.id);
+        console.log(rated);
+
+        if (rated) isLiked(true);
+    };
+
     useEffect(() => {
         getCard();
-    }, [id]);
+        setLikedCard();
+    }, []);
 
     const likeCard = async () => {
-        const res = await axios.put(`${MOCK_API_URL}/artworks/${id}`, {
-            likes: {
-                userId: userInfo.id,
-            },
+        const res = await axios.post(`${API_URL}/rating`, {
+            userId: userInfo.id,
+            rating: 1,
+            artworkId: card.artworkId,
         });
         if (res.status === 200) {
             isLiked(true);
         }
     };
 
-    // const handleComment = async() => {
-    //     await
-    // }
+    const unlikeCard = async () => {
+        const res = await axios.delete(`${API_URL}/rating`, {
+            userId: userInfo.id,
+            rating: 0,
+            artworkId: card.artworkId,
+        });
+        if (res.status === 200) {
+            isLiked(false);
+        }
+    };
 
     return (
         <AppSuspense>
@@ -136,44 +146,55 @@ function CardDetails() {
                                         // right={300}
                                         // position={'absolute'}
                                     >
-                                        For sale -
+                                        {`For sale - `}
                                         {card.price.toLocaleString('vi-VN', {
                                             style: 'currency',
                                             currency: 'VND',
                                         })}
                                     </Typography>
-                                    <Button
-                                        onClick={() =>
-                                            navigate(`/buy/${card.artworkId}`)
-                                        }
-                                        sx={{
-                                            position: 'absolute',
-                                            right: '30px',
-                                            borderRadius: '20px',
-                                            backgroundColor: 'red !important',
-                                            top: '0',
-                                            color: 'white',
-                                        }}
-                                    >
-                                        Buy
-                                    </Button>
+                                    {userInfo.id != card.artistID && (
+                                        <Button
+                                            onClick={() =>
+                                                navigate(
+                                                    `/buy/${card.artworkId}`
+                                                )
+                                            }
+                                            sx={{
+                                                position: 'absolute',
+                                                right: '30px',
+                                                borderRadius: '20px',
+                                                backgroundColor:
+                                                    'red !important',
+                                                top: '0',
+                                                color: 'white',
+                                            }}
+                                        >
+                                            Buy
+                                        </Button>
+                                    )}
                                 </>
                             )}
-                            <Button
-                                sx={{
-                                    position: 'absolute',
-                                    right: '30px',
-                                    borderRadius: '20px',
-                                    backgroundColor: 'red !important',
-                                    color: 'white',
-                                }}
-                            >
-                                Share to profile
-                            </Button>
+                            {userInfo.id != card.artistID && (
+                                <Button
+                                    sx={{
+                                        position: 'absolute',
+                                        right: '30px',
+                                        borderRadius: '20px',
+                                        backgroundColor: 'red !important',
+                                        color: 'white',
+                                    }}
+                                >
+                                    Share to profile
+                                </Button>
+                            )}
                             <Typography variant="h4" textAlign={'left'}>
                                 {card.name}
                             </Typography>
-                            <Typography variant="h4" textAlign={'left'}>
+                            <Typography
+                                variant="body1"
+                                component={'article'}
+                                textAlign={'left'}
+                            >
                                 {card.description}
                             </Typography>
                         </Box>
@@ -207,27 +228,41 @@ function CardDetails() {
                                     {owner.fullName}
                                 </Typography>
                             </Link>
-                            <Button
-                                sx={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    right: '30px',
-                                    borderRadius: '20px',
-                                    backgroundColor: '#e1e1e1 !important',
-                                    color: 'black',
-                                }}
-                            >
-                                Follow
-                            </Button>
+                            {userInfo.id != card.artistID && (
+                                <Button
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '15px',
+                                        right: '30px',
+                                        borderRadius: '20px',
+                                        backgroundColor: '#e1e1e1 !important',
+                                        color: 'black',
+                                    }}
+                                >
+                                    Follow
+                                </Button>
+                            )}
                         </Box>
                         <Box textAlign={'left'}>
                             {isAuthenticated && (
                                 <Box
                                     textAlign={'left'}
-                                    sx={{ position: 'absolute', bottom: '0px' }}
+                                    sx={{
+                                        position: 'absolute',
+                                        bottom: '0px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
                                 >
+                                    <Typography component={'p'} variant="body2">
+                                        {card.artworkRating}
+                                    </Typography>
                                     {liked ? (
-                                        <IconButton size="large" edge="end">
+                                        <IconButton
+                                            size="large"
+                                            edge="end"
+                                            onClick={() => unlikeCard()}
+                                        >
                                             <Favorite />
                                         </IconButton>
                                     ) : (
