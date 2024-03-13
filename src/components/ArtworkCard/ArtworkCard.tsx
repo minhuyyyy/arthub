@@ -10,7 +10,6 @@ import {
 import axios from 'axios';
 import './Artwork.scss';
 import { Link } from 'react-router-dom';
-import { CardType } from '../../types/card';
 import { API_URL } from '../../utils/urls';
 import { formatDateShort } from '../../utils/helper/format.helper';
 import { ArtworkType } from '../../types/artwork';
@@ -88,7 +87,9 @@ function ArtworkCard() {
                                             variant="body2"
                                             color="text.secondary"
                                         >
-                                            {formatDateShort(card.artworkDate)}
+                                            {formatDateShort(
+                                                card.artworkDate as Date
+                                            )}
                                         </Typography>
                                     </CardContent>
                                 </Card>

@@ -381,7 +381,7 @@ export default function ProfilePage() {
                                 )}
                             </Box>
 
-                            <BoughtArtworks profileId={userId} />
+                            <BoughtArtworks profileId={userId!} />
                         </Grid>
                         <Grid item xs={12} sm={12} md={8} lg={6}>
                             <Box position={'relative'}>

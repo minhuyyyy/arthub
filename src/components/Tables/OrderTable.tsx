@@ -14,7 +14,7 @@ import { useState } from 'react';
 import './tables.scss';
 import { OrderType, Status } from '../../types/order';
 import axios from 'axios';
-import { API_URL, MOCK_API_URL } from '../../utils/urls';
+import { MOCK_API_URL } from '../../utils/urls';
 const StyledTable = styled(Table)(() => ({
     whiteSpace: 'pre',
     '& thead': {

@@ -1,9 +1,10 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import ViewArtworkModal from '../Modals/ViewArtworkModal';
-import { ArtworkType } from '../../types/artwork';
+
 import axios from 'axios';
+import { ArtworkType } from '../../types/artwork';
 import { API_URL } from '../../utils/urls';
+import ViewArtworkModal from '../Modals/ViewArtworkModal';
 
 function BoughtArtworks({ profileId }: { profileId: string }) {
     const [open, isOpen] = useState<boolean>(false);
@@ -115,6 +116,7 @@ function BoughtArtworks({ profileId }: { profileId: string }) {
                 </Grid>
             </Box>
             <ViewArtworkModal
+                bought
                 open={open}
                 isOpen={isOpen}
                 artworkId={selectedArtworkId}

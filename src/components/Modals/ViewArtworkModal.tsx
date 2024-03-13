@@ -35,8 +35,10 @@ export default function ViewArtworkModal({
     open,
     isOpen,
     artworkId,
+    bought,
 }: {
     open: boolean;
+    bought: boolean;
     isOpen: Dispatch<SetStateAction<boolean>>;
     artworkId: number | null;
 }) {
@@ -54,10 +56,7 @@ export default function ViewArtworkModal({
         artistID: 0,
         isBuyAvailable: false,
         artworkRating: 0,
-        genre: {
-            genreId: 0,
-            name: '',
-        },
+        genreId: 0,
         membersRated: [],
     });
     const [liked, isLiked] = useState<boolean>(false);
@@ -164,10 +163,10 @@ export default function ViewArtworkModal({
                                     left: '80px',
                                 }}
                             >
-                                {formatDateShort(artwork.artworkDate)}
+                                {formatDateShort(artwork.artworkDate as Date)}
                             </Typography>
                         </Box>
-                        {artwork.isBuyAvailable && (
+                        {bought != true && artwork.isBuyAvailable && (
                             <>
                                 <Typography
                                     variant="body2"
@@ -186,8 +185,8 @@ export default function ViewArtworkModal({
                                         borderRadius: '20px',
                                         color: 'white',
                                         position: 'absolute',
-                                        right:'30px',
-                                        top:'65px'
+                                        right: '30px',
+                                        top: '65px',
                                     }}
                                 >
                                     Buy
