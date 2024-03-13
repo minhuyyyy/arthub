@@ -14,3 +14,7 @@ export type ArtworkType = {
     }[];
     membersRated: number[];
 };
+
+// export type Status={
+    
+// }
