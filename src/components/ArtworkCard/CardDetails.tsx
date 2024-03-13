@@ -62,7 +62,7 @@ function CardDetails() {
                 }
             })
             .catch((error) => {
-                console.error('Error fetching card details:', error);
+                // console.error('Error fetching card details:', error);
             });
     };
 
@@ -139,42 +139,7 @@ function CardDetails() {
                     </Grid>
                     <Grid item xs={12} md={8} lg={6}>
                         <Box marginTop="20px" width={400}>
-                            {card.isBuyAvailable && (
-                                <>
-                                    <Typography
-                                        textAlign={'left'}
-                                        // right={300}
-                                        // position={'absolute'}
-                                    >
-                                        {`For sale - `}
-                                        {card.price.toLocaleString('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND',
-                                        })}
-                                    </Typography>
-                                    {userInfo.id != card.artistID && (
-                                        <Button
-                                            onClick={() =>
-                                                navigate(
-                                                    `/buy/${card.artworkId}`
-                                                )
-                                            }
-                                            sx={{
-                                                position: 'absolute',
-                                                right: '30px',
-                                                borderRadius: '20px',
-                                                backgroundColor:
-                                                    'red !important',
-                                                top: '0',
-                                                color: 'white',
-                                            }}
-                                        >
-                                            Buy
-                                        </Button>
-                                    )}
-                                </>
-                            )}
-                            {userInfo.id != card.artistID && (
+                            {userInfo && userInfo.id != card.artistID && (
                                 <Button
                                     sx={{
                                         position: 'absolute',
@@ -277,6 +242,38 @@ function CardDetails() {
                                 </Box>
                             )}
                         </Box>
+                        {card.isBuyAvailable && (
+                            <>
+                                <Typography
+                                    textAlign={'left'}
+                                    top={160}
+                                    position={'absolute'}
+                                >
+                                    {`For sale - `}
+                                    {card.price.toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND',
+                                    })}
+                                </Typography>
+                                {userInfo.id != card.artistID && (
+                                    <Button
+                                        onClick={() =>
+                                            navigate(`/buy/${card.artworkId}`)
+                                        }
+                                        sx={{
+                                            position: 'absolute',
+                                            right: '30px',
+                                            borderRadius: '20px',
+                                            backgroundColor: 'red !important',
+                                            // top: '0',
+                                            color: 'white',
+                                        }}
+                                    >
+                                        Buy
+                                    </Button>
+                                )}
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Box>

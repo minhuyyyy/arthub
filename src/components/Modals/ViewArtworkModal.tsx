@@ -78,7 +78,7 @@ export default function ViewArtworkModal({
                 }
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
+            // console.error('Error fetching data:', error);
         }
     };
 
@@ -125,7 +125,7 @@ export default function ViewArtworkModal({
                 isLiked(false);
             }
         } catch (error) {
-            console.error('Error unliking card:', error);
+            // console.error('Error unliking card:', error);
         }
     };
 

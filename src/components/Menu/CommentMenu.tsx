@@ -34,7 +34,7 @@ function CommentMenu({
             toast.success('Comment deleted successfully!');
             window.location.reload();
         } catch (error) {
-            console.error('Error deleting comment:', error);
+            // console.error('Error deleting comment:', error);
             toast.error('Failed to delete comment');
         }
     };
@@ -49,7 +49,7 @@ function CommentMenu({
             setIsEditing(false);
             window.location.reload();
         } catch (error) {
-            console.error('Error updating comment:', error);
+            // console.error('Error updating comment:', error);
             toast.error('Failed to update comment');
         }
     };

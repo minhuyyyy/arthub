@@ -10,8 +10,8 @@ function PreOrdersPage() {
     const getOrders = async () => {
         try {
             const orderRes = await axios.get(`${MOCK_API_URL}/pre-orders`);
-            if (orderRes.status === 200) {
-                const ordersData:OrderType[] = orderRes.data;
+            if (orderRes.status === 200 || orderRes.status === 304) {
+                const ordersData: OrderType[] = orderRes.data;
                 const updatedOrders = await Promise.all(
                     ordersData.map(async (order: OrderType) => {
                         // Call the profile API to get the sender's fullName
@@ -19,21 +19,18 @@ function PreOrdersPage() {
                             `${API_URL}/profile/${order.senderId}`
                         );
                         if (profileRes.data) {
-                            // Update the senderName of the order with the fullName from profile API
                             return {
                                 ...order,
                                 senderName: profileRes.data.fullName,
                             };
                         }
-                        // If profile API call fails, return the order as is
                         return order;
                     })
                 );
-                // Set the updated orders with senderName to state
                 setOrders(updatedOrders);
             }
         } catch (error) {
-            console.error('Error fetching pre-orders:', error);
+            // console.error('Error fetching pre-orders:', error);
         }
     };
     useEffect(() => {

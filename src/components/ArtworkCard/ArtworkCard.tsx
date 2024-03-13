@@ -42,7 +42,7 @@ function ArtworkCard() {
             setCards((prevCards) => [...prevCards, ...newCards]);
             setPage(page + 1);
         } catch (error) {
-            console.error('Error loading more cards:', error);
+            // console.error('Error loading more cards:', error);
         } finally {
             setLoading(false); // Set loading to false after cards are loaded or if there's an error
         }

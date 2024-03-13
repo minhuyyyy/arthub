@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }) => {
                     } else toast.error('Something went wrong @@');
                 });
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 

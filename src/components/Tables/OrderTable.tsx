@@ -111,7 +111,7 @@ const BaseTable = ({
                                     <TableCell align="center">
                                         {Status[data.status]}
                                     </TableCell>
-                                    {data.status === Status.Pending ? (
+                                    {data.status == Status.Pending ? (
                                         <TableCell align="right">
                                             <Button
                                                 onClick={() =>

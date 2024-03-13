@@ -12,6 +12,7 @@ import Post from '../Posts/Post';
 import { PostType } from '../../types/post';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
+import BoughtArtworks from '../ArtworkCard/BoughtArtworks';
 
 type ImageType = {
     artworkId?: number;
@@ -108,7 +109,7 @@ export default function ProfilePage() {
                 throw new Error('Failed to fetch post data');
             }
         } catch (error) {
-            console.error('Error fetching posts and artwork:', error);
+            // console.error('Error fetching posts and artwork:', error);
         }
     };
 
@@ -379,6 +380,8 @@ export default function ProfilePage() {
                                     </Typography>
                                 )}
                             </Box>
+
+                            <BoughtArtworks profileId={userId} />
                         </Grid>
                         <Grid item xs={12} sm={12} md={8} lg={6}>
                             <Box position={'relative'}>
@@ -414,13 +417,6 @@ export default function ProfilePage() {
                         </Grid>
                     </Grid>
                 </Box>
-                {/* <Box sx={{ marginTop: '20px', width: '70vw' }}>
-                    {loading && (
-                        <Grid item xs={12}>
-                            <Typography variant="body2">Loading...</Typography>
-                        </Grid>
-                    )}
-                </Box> */}
             </div>
         </AppSuspense>
     );
