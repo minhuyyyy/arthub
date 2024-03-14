@@ -16,6 +16,7 @@ import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
 
 function CardDetails() {
+    document.title = 'Details';
     const navigate = useNavigate();
     const [owner, setOwner] = useState({
         accountId: 0,
@@ -60,9 +61,6 @@ function CardDetails() {
                 if (profileRes.status === 200) {
                     setOwner(profileRes.data);
                 }
-            })
-            .catch((error) => {
-                // console.error('Error fetching card details:', error);
             });
     };
 
@@ -91,9 +89,11 @@ function CardDetails() {
 
     const unlikeCard = async () => {
         const res = await axios.delete(`${API_URL}/rating`, {
-            userId: userInfo.id,
-            rating: 0,
-            artworkId: card.artworkId,
+            data: {
+                userId: userInfo.id,
+                rating: 0,
+                artworkId: card.artworkId,
+            },
         });
         if (res.status === 200) {
             isLiked(false);

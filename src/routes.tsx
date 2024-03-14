@@ -12,6 +12,9 @@ import PreOrdersPage from './components/Pages/PreOrders';
 import BuyArtworkPage from './components/Pages/BuyArtwork';
 import UploadArtwork from './components/Pages/UploadArtwork';
 import CreatePost from './components/Pages/CreatePost';
+import ChangePassword from './components/Pages/ChangePassword';
+import NewPassword from './components/Pages/NewPassword';
+import BalancePage from './components/Pages/Balance';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -67,6 +70,22 @@ const routes = [
                         ),
                     },
                     {
+                        path: 'change-password',
+                        element: (
+                            <ProtectedRoute role={Roles.user}>
+                                <ChangePassword />
+                            </ProtectedRoute>
+                        ),
+                    },
+                    {
+                        path: 'new-password',
+                        element: (
+                            <ProtectedRoute role={Roles.user}>
+                                <NewPassword />
+                            </ProtectedRoute>
+                        ),
+                    },
+                    {
                         path: 'pre-orders',
                         element: (
                             <ProtectedRoute role={Roles.user}>
@@ -114,6 +133,16 @@ const routes = [
     //         },
     //     ],
     // },
+    {
+        path: 'balance',
+        element: <Layout />,
+        children: [
+            {
+                path: '',
+                element: <BalancePage />,
+            },
+        ],
+    },
 
     { path: '/session/signup', element: <Register /> },
     { path: '/session/signin', element: <LoginPage /> },

@@ -21,6 +21,7 @@ export default function CheckOut() {
             isSufficient(true);
         } else isSufficient(false);
     };
+
     const getBalance = async () => {
         const res = await axios.get(`${API_URL}/balance/${userInfo.id}`);
         if (res.status === 200) {
@@ -185,7 +186,7 @@ export default function CheckOut() {
                                             sx={{
                                                 textTransform: 'none',
                                                 fontWeight: 'bold',
-                                                borderRadius:'20px'
+                                                borderRadius: '20px',
                                             }}
                                             onClick={handleConfirm}
                                             disabled={!sufficient}

@@ -182,6 +182,14 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             </MenuItem>
             <MenuItem
                 onClick={() => {
+                    navigate('/profile/change-password');
+                    handleMenuClose();
+                }}
+            >
+                Change Password
+            </MenuItem>
+            <MenuItem
+                onClick={() => {
                     logout();
                     handleMenuClose();
                 }}
