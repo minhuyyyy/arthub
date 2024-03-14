@@ -79,7 +79,7 @@ const RegisterPage = () => {
                 values.confirmPassword
             );
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         } finally {
             setLoading(false);
         }

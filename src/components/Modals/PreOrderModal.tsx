@@ -44,7 +44,7 @@ function PreOrderModal({
         // Remove non-numeric characters from the value
         const numericValue = parseFloat(value.replace(/\D/g, ''));
         // Update the budget state
-        // console.log(value, numericValue);
+        //  (value, numericValue);
 
         if (isNaN(numericValue)) {
             setBudget(0);

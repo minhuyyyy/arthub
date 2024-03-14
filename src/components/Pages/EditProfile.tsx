@@ -54,7 +54,7 @@ function EditProfilePage() {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                err;
                 if (err.response.status === 404) {
                     toast.error('Profile not found');
                 }

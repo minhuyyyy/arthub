@@ -8,8 +8,13 @@ export type ArtworkType = {
     isBuyAvailable: boolean;
     artworkRating: number;
     artworkDate?: Date;
-    genre: string;
+    genreId: number;
     likes?: {
         name: string;
     }[];
+    membersRated: number[];
 };
+
+// export type Status={
+    
+// }

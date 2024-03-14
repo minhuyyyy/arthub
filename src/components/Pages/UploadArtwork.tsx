@@ -21,6 +21,7 @@ import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../utils/urls';
+import { GenreType } from '../../types/genre';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -38,7 +39,7 @@ function UploadArtwork() {
     // const API_URL = import.meta.env.VITE_API_URL;
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string>('');
-    const [genre, setGenre] = useState('');
+    const [genres, setGenres] = useState<GenreType[]>([]);
     const [showNewGenreInput, setShowNewGenreInput] = useState(false);
     const [newGenre, setNewGenre] = useState('');
     const [selectedGenre, setSelectedGenre] = useState<string>('');
@@ -50,13 +51,21 @@ function UploadArtwork() {
     });
     const [buyStatus, canBuy] = useState(false);
 
+    const fetchGenres = async () => {
+        await axios.get(`${API_URL}/genres`).then((res) => {
+            if (res.status === 200) {
+                setGenres(res.data);
+            }
+        });
+    };
+
     const handleGenreChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         if (value === 'add-new-genre') {
-            setGenre('');
+            setSelectedGenre('');
             setShowNewGenreInput(true);
         } else {
-            setGenre(value);
+            setSelectedGenre(value);
             setShowNewGenreInput(false);
         }
     };
@@ -88,9 +97,7 @@ function UploadArtwork() {
             setPhotoUrl('');
         }
     };
-    useEffect(() => {
-        console.log(userInfo);
-    }, []);
+
     const handleSubmit = async () => {
         await axios
             .post(`${API_URL}/artwork`, {
@@ -109,7 +116,7 @@ function UploadArtwork() {
                 // isPublic: true,
             })
             .then((res) => {
-                if (res.status === 201) {
+                if (res.status == 201) {
                     toast.success('Artwork posted successfully!');
                     setFormData({
                         title: '',
@@ -118,7 +125,8 @@ function UploadArtwork() {
                     });
                     setSelectedGenre('');
                     canBuy(false);
-                    setPhoto(null), setPhotoUrl('');
+                    setPhoto(null);
+                    setPhotoUrl('');
                 }
             })
             .catch((err) => {
@@ -130,6 +138,10 @@ function UploadArtwork() {
     const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         canBuy(e.target.checked);
     };
+
+    useEffect(() => {
+        fetchGenres();
+    }, []);
 
     return (
         <Box
@@ -241,29 +253,36 @@ function UploadArtwork() {
                                     sx={{ borderRadius: '20px' }}
                                     onChange={(e) => handleGenreChange(e)}
                                 >
-                                    <MenuItem value={10}>10</MenuItem>
+                                    {genres.map((genre) => (
+                                        <MenuItem
+                                            key={genre.genreId}
+                                            value={genre.name}
+                                        >
+                                            {genre.name}
+                                        </MenuItem>
+                                    ))}
                                     <MenuItem value="add-new-genre">
                                         Add another genre
                                     </MenuItem>
                                 </Select>
                                 {showNewGenreInput && (
-                                    <div>
-                                        <FormControl sx={{ width: '80%' }}>
-                                            <label>Artwork Genre:</label>
-                                            <Input
-                                                id="genre"
-                                                name="category"
-                                                variant="standard"
-                                                value={newGenre}
-                                                onChange={(e) => {
-                                                    setNewGenre(e.target.value);
-                                                }}
-                                            />
-                                            <br />
-                                        </FormControl>
-                                    </div>
+                                    <FormControl sx={{ width: '80%' }}>
+                                        <label>Artwork Genre:</label>
+                                        <Input
+                                            id="genre"
+                                            name="category"
+                                            disableUnderline
+                                            value={newGenre}
+                                            onChange={(e) => {
+                                                setNewGenre(e.target.value);
+                                            }}
+                                        />
+                                        <br />
+                                    </FormControl>
                                 )}
-                                {genre && <p>You selected {genre}</p>}
+                                {selectedGenre && (
+                                    <p>You selected {selectedGenre}</p>
+                                )}
                                 <br />
                             </FormControl>
                         </Box>

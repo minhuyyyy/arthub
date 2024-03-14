@@ -10,7 +10,6 @@ import {
 import axios from 'axios';
 import './Artwork.scss';
 import { Link } from 'react-router-dom';
-import { CardType } from '../../types/card';
 import { API_URL } from '../../utils/urls';
 import { formatDateShort } from '../../utils/helper/format.helper';
 import { ArtworkType } from '../../types/artwork';
@@ -42,7 +41,7 @@ function ArtworkCard() {
             setCards((prevCards) => [...prevCards, ...newCards]);
             setPage(page + 1);
         } catch (error) {
-            console.error('Error loading more cards:', error);
+            // console.error('Error loading more cards:', error);
         } finally {
             setLoading(false); // Set loading to false after cards are loaded or if there's an error
         }
@@ -88,7 +87,9 @@ function ArtworkCard() {
                                             variant="body2"
                                             color="text.secondary"
                                         >
-                                            {formatDateShort(card.artworkDate)}
+                                            {formatDateShort(
+                                                card.artworkDate as Date
+                                            )}
                                         </Typography>
                                     </CardContent>
                                 </Card>

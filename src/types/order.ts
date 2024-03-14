@@ -10,7 +10,9 @@ export type OrderType = {
 };
 
 export enum Status {
-    pending = 0,
-    processing = 1,
-    completed = 2,
+    'Pending' = 0,
+    'In progress' = 1,
+    'Completed' = 2,
+    'Denied' = 3,
+    'Waiting for deposit' = 4,
 }

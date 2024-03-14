@@ -4,6 +4,13 @@ export type PostType = {
     description: string;
     image: string;
     memberId?: number;
+    isPublic?: boolean;
     artworkId: number;
-    comments: [];
+    comments: {
+        memberName: string;
+        commentId: number;
+        content: string;
+        memberId: number;
+        memberAvatar: string;
+    }[];
 };
