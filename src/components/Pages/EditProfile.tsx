@@ -8,12 +8,13 @@ import {
     styled,
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { redirect, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AppSuspense from '../Suspense';
 import axios from 'axios';
 import { CloudUpload } from '@mui/icons-material';
 import NotFound from '../../auth/NotFound';
+import useAuth from '../../hooks/useAuth';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -35,7 +36,6 @@ interface IProfilePageProps {
     emailAddress: string;
 }
 function EditProfilePage() {
-    const { userId } = useParams();
     // const [photo, setPhoto] = useState<File | null>(null);
     const [profile, setProfile] = useState<IProfilePageProps>({
         avatar: '',

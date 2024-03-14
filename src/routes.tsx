@@ -14,6 +14,7 @@ import UploadArtwork from './components/Pages/UploadArtwork';
 import CreatePost from './components/Pages/CreatePost';
 import ChangePassword from './components/Pages/ChangePassword';
 import NewPassword from './components/Pages/NewPassword';
+import BalancePage from './components/Pages/Balance';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -132,6 +133,16 @@ const routes = [
     //         },
     //     ],
     // },
+    {
+        path: 'balance',
+        element: <Layout />,
+        children: [
+            {
+                path: '',
+                element: <BalancePage />,
+            },
+        ],
+    },
 
     { path: '/session/signup', element: <Register /> },
     { path: '/session/signin', element: <LoginPage /> },
