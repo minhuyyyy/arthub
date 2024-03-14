@@ -22,8 +22,6 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Wallet } from '@mui/icons-material';
 import useDebounce from '../hooks/useDebounce';
-import SearchResult from '../components/Pages/SearchResult';
-import { ArtworkType } from '../types/artwork';
 const drawerWidth = 240;
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { ArtworkType } from '../../types/artwork';
 import { API_URL } from '../../utils/urls';
 import ViewArtworkModal from '../Modals/ViewArtworkModal';
+import { toast } from 'react-toastify';
 
 function BoughtArtworks({ profileId }: { profileId: string }) {
     const [open, isOpen] = useState<boolean>(false);
@@ -29,7 +30,7 @@ function BoughtArtworks({ profileId }: { profileId: string }) {
                 setImgList(artworks);
             }
         } catch (error) {
-            console.error('Error fetching bought artworks:', error);
+            toast.error('Error fetching bought artworks');
         }
     };
 

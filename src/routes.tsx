@@ -13,7 +13,7 @@ import BuyArtworkPage from './components/Pages/BuyArtwork';
 import UploadArtwork from './components/Pages/UploadArtwork';
 import CreatePost from './components/Pages/CreatePost';
 import ChangePassword from './components/Pages/ChangePassword';
-import NewPassword from './components/Pages/NewPassword';
+// import NewPassword from './components/Pages/NewPassword';
 import BalancePage from './components/Pages/balance';
 import AdminBalancePage from './components/Pages/AdminBalancePage';
 import SearchResult from './components/Pages/SearchResult';
@@ -75,14 +75,14 @@ const routes = [
                             </ProtectedRoute>
                         ),
                     },
-                    {
-                        path: 'new-password',
-                        element: (
-                            <ProtectedRoute role={Roles.user}>
-                                <NewPassword />
-                            </ProtectedRoute>
-                        ),
-                    },
+                    // {
+                    //     path: 'new-password',
+                    //     element: (
+                    //         <ProtectedRoute role={Roles.user}>
+                    //             <NewPassword />
+                    //         </ProtectedRoute>
+                    //     ),
+                    // },
                     {
                         path: 'pre-orders',
                         element: (
