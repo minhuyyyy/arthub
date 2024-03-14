@@ -13,6 +13,7 @@ import { PostType } from '../../types/post';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
 import BoughtArtworks from '../ArtworkCard/BoughtArtworks';
+import { Roles } from '../../types/user';
 
 type ImageType = {
     artworkId?: number;
@@ -381,12 +382,14 @@ export default function ProfilePage() {
                                     </Typography>
                                 )}
                             </Box>
-
                             <BoughtArtworks profileId={userId!} />
                         </Grid>
                         <Grid item xs={12} sm={12} md={8} lg={6}>
                             <Box position={'relative'}>
-                                <CreatePost />
+                                {userInfo.role !== Roles.admin &&
+                                    userInfo.id == parseInt(userId) && (
+                                        <CreatePost />
+                                    )}
                                 {posts.map((post) => (
                                     <Box
                                         key={post.postId} // Add key prop

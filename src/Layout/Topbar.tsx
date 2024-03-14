@@ -18,9 +18,12 @@ import CustomButton from '../components/Link';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
 import Sidebar from './Sidebar';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Wallet } from '@mui/icons-material';
+import useDebounce from '../hooks/useDebounce';
+import SearchResult from '../components/Pages/SearchResult';
+import { ArtworkType } from '../types/artwork';
 const drawerWidth = 240;
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
@@ -91,7 +94,31 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0);
-    const [showWalletSection, setShowWalletSection] = useState(false);
+    const DebounceInput = () => {
+        const [searchStr, setSearchStr] = useState<string>('');
+        useDebounce(
+            () => {
+                if (searchStr) {
+                    navigate(`/search/${searchStr}`);
+                }
+            },
+            [searchStr],
+            500
+        );
+        const handleSearch = (
+            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            setSearchStr(e.target.value);
+        };
+        return (
+            <>
+                <StyledInputBase
+                    onChange={(e) => handleSearch(e)}
+                    placeholder="Search for artworks"
+                />
+            </>
+        );
+    };
     useEffect(() => {
         const getAvatar = async () => {
             await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
@@ -190,11 +217,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             onClose={handleMobileMenuClose}
         >
             <MenuItem>
-                <IconButton
-                    size="large"
-                    color="inherit"
-                    onClick={() => navigate('balance')}
-                >
+                <IconButton size="large" color="inherit">
                     <Badge badgeContent={4} color="error">
                         <Wallet />
                     </Badge>
@@ -293,12 +316,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                 <SearchIconWrapper>
                                     <SearchIcon />
                                 </SearchIconWrapper>
-                                <StyledInputBase
-                                    placeholder="Search…"
-                                    inputProps={{
-                                        'aria-label': 'search',
-                                    }}
-                                />
+                                <DebounceInput />
                             </Search>
                             <Box sx={{ flexGrow: 1 }} />
                             <Box
@@ -311,29 +329,39 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     },
                                 }}
                             >
-                                <div>
-                                    {/* <Typography
+                                {userInfo.role !== Roles.admin && (
+                                    <>
+                                        <div>
+                                            {/* <Typography
                                         variant="body2"
                                         display="inline"
                                         textAlign={'center'}
                                     > */}
-                                    Balance:
-                                    <strong>{`${balance.toLocaleString(
-                                        'vi-VN',
-                                        { style: 'currency', currency: 'VND' }
-                                    )}`}</strong>
-                                    {/* </Typography> */}
-                                </div>
-                                <IconButton
-                                    onClick={() => navigate('balance')}
-                                    size="large"
-                                    aria-label="show 4 new mails"
-                                    color="inherit"
-                                >
-                                    <Badge badgeContent={4} color="error">
-                                        <Wallet />
-                                    </Badge>
-                                </IconButton>
+                                            Balance:
+                                            <strong>{`${balance.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}`}</strong>
+                                            {/* </Typography> */}
+                                        </div>
+                                        <IconButton
+                                            onClick={() => navigate('/balance')}
+                                            size="large"
+                                            aria-label="show 4 new mails"
+                                            color="inherit"
+                                        >
+                                            <Badge
+                                                badgeContent={4}
+                                                color="error"
+                                            >
+                                                <Wallet />
+                                            </Badge>
+                                        </IconButton>
+                                    </>
+                                )}
                                 <IconButton
                                     size="large"
                                     aria-label="show 17 new notifications"

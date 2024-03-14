@@ -15,6 +15,8 @@ import CreatePost from './components/Pages/CreatePost';
 import ChangePassword from './components/Pages/ChangePassword';
 import NewPassword from './components/Pages/NewPassword';
 import BalancePage from './components/Pages/balance';
+import AdminBalancePage from './components/Pages/AdminBalancePage';
+import SearchResult from './components/Pages/SearchResult';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -24,11 +26,7 @@ const UserTable = Loadable(
 const routes = [
     {
         path: '/',
-        element: (
-            // <AuthGuard>
-            <Layout />
-            // </AuthGuard>
-        ),
+        element: <Layout />,
         children: [
             {
                 path: '',
@@ -111,6 +109,10 @@ const routes = [
                     </ProtectedRoute>
                 ),
             },
+            {
+                path: 'search/:searchStr',
+                element: <SearchResult />,
+            },
         ],
     },
     {
@@ -124,6 +126,10 @@ const routes = [
             {
                 path: 'dashboard/user',
                 element: <UserTable />,
+            },
+            {
+                path: 'balance',
+                element: <AdminBalancePage />,
             },
         ],
     },
