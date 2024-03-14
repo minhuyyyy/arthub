@@ -123,7 +123,9 @@ export const AuthProvider = ({ children }) => {
 
                         toast.success('Login successfully!');
                         dispatch({ type: 'LOGIN', payload: { user } });
-                        navigate('/');
+                        if (user.role === Roles.admin) {
+                            navigate('/admin');
+                        } else navigate('/');
                     }
                 })
                 .catch((err) => {
