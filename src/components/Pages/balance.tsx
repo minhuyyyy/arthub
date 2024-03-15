@@ -56,7 +56,7 @@ export default function BalancePage() {
     const [balance, setBalance] = useState<Balance | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const fetchBalance = async () => {
-        const response = await axios.get(`${API_URL}/balance/` + userId);
+        const response = await axios.get(`${API_URL}/balance/${userId}`);
         setBalance(response.data);
     };
     const fetchTransactions = async () => {
@@ -182,6 +182,7 @@ const ModalDepositWithdraw = ({
                         {transType === TransactionType.Withdraw &&
                             'Enter amount to withdraw'}
                     </h4>
+                    <h4>Amount:{formatCurrency(amount)}</h4>
                     <input
                         type="number"
                         placeholder="Enter amount"

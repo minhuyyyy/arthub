@@ -10,7 +10,7 @@ import {
     TableRow,
 } from '@mui/material';
 import axios from 'axios';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { redirect } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import {
@@ -19,6 +19,7 @@ import {
 } from '../../utils/helper/format.helper';
 import { API_URL } from '../../utils/urls';
 import useDebounce from '../../hooks/useDebounce';
+import { toast } from 'react-toastify';
 
 interface Transaction {
     historyTransactionId: number;
@@ -45,57 +46,79 @@ interface Balance {
 }
 
 export default function AdminBalancePage() {
-    const { isAuthenticated, userInfo } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     if (!isAuthenticated) {
         redirect('/');
         return;
     }
-    const userId = userInfo.id;
     const [balance, setBalance] = useState<Balance | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const fetchBalance = async () => {
-        const response = await axios.get(`${API_URL}/balance/` + userId);
-        setBalance(response.data);
-    };
+    const [searchResult, setSearchResult] = useState(null);
+    // const fetchBalance = async () => {
+    //     const response = await axios.get(`${API_URL}/balance/` + userId);
+    //     setBalance(response.data);
+    // };
     const DebounceInput = () => {
         const [searchStr, setSearchStr] = useState<string>('');
         useDebounce(
             async () => {
-                await axios.get(`${API_URL}/artwork?Query=${searchStr}`);
+                if (searchStr) {
+                    await axios
+                        .get(`${API_URL}/admin/account?userEmail=${searchStr}`)
+                        .then((res) => {
+                            if (res.status === 200) {
+                                setSearchResult(res.data.accountId);
+                            }
+                            return axios.get(
+                                `${API_URL}/balance/${searchResult}`
+                            );
+                        })
+                        .then((balanceRes) => {
+                            if (balanceRes.status === 200) {
+                                setBalance(balanceRes.data);
+                            }
+                            return axios.post(`${API_URL}/balance/history`, {
+                                accountId: searchResult,
+                            });
+                        })
+                        .then((transactionRes) => {
+                            if (transactionRes.status === 200) {
+                                setTransactions(transactionRes.data);
+                            }
+                        })
+                        .catch((err) => {
+                            setBalance(null);
+                            setTransactions([]);
+                            toast.error(err.response.statusText);
+                        });
+                }
             },
             [searchStr],
-            500
+            1000
         );
         const handleSearch = (
             e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         ) => setSearchStr(e.target.value);
         return (
             <div>
-                <Input
-                    sx={{ backgroundColor: '#fff', borderRadius: '20px', paddingLeft:'10px' }}
-                    disableUnderline
-                    placeholder="Enter email:"
-                    onChange={(e) => handleSearch(e)}
-                />
-                <Button>Search</Button>
+                <form>
+                    <Input
+                        sx={{
+                            backgroundColor: '#fff',
+                            borderRadius: '20px',
+                            paddingLeft: '10px',
+                        }}
+                        disableUnderline
+                        placeholder="Enter email:"
+                        type="email"
+                        onChange={(e) => handleSearch(e)}
+                    />
+                    <Button type="submit">Search</Button>
+                </form>
             </div>
         );
     };
-    const fetchTransactions = async () => {
-        const response = await axios.post(`${API_URL}/balance/history`, {
-            accountId: userId,
-            // transactionType: 1, // Adjust this as needed
-            // fromDate: '2023-01-01', // Example start date
-            // toDate: '2025-01-01', // Example end date
-        });
-        setTransactions(response.data);
-    };
-
-    useEffect(() => {
-        fetchBalance();
-        fetchTransactions();
-    }, []);
 
     return (
         <div style={{ marginTop: '30px' }}>

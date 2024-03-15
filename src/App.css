@@ -6,3 +6,9 @@
     min-width: 100%;
     background-color: #e1e1e1;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
