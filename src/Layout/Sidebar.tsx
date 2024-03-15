@@ -13,10 +13,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import useAuth from '../hooks/useAuth';
-import { Roles } from '../types/user';
+import { AccountBalanceWallet, Flag } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 const drawerWidth = 240;
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
@@ -54,9 +52,9 @@ export default function Sidebar({
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     children: JSX.Element;
 }) {
+    const navigate = useNavigate();
     const theme = useTheme();
 
-    const { isAuthenticated, userInfo } = useAuth();
     const handleDrawerClose = () => {
         setOpen(false);
     };
@@ -76,15 +74,17 @@ export default function Sidebar({
                         boxSizing: 'border-box',
                     },
                 }}
-                variant='persistent'
-                anchor='left'
-                open={open}>
+                variant="persistent"
+                anchor="left"
+                open={open}
+            >
                 <DrawerHeader>
                     <Typography
-                        variant='h5'
+                        variant="h5"
                         noWrap
-                        component='div'
-                        sx={{ mr: 12, display: { xs: 'block', sm: 'block' } }}>
+                        component="div"
+                        sx={{ mr: 12, display: { xs: 'block', sm: 'block' } }}
+                    >
                         Arthub
                     </Typography>
                     <IconButton onClick={handleDrawerClose}>
@@ -97,44 +97,29 @@ export default function Sidebar({
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map(
-                        (text, index) => (
-                            <ListItem
-                                key={text}
-                                disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? (
-                                            <InboxIcon />
-                                        ) : (
-                                            <MailIcon />
-                                        )}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </ListItem>
-                        ),
-                    )}
-                </List>
-                <Divider />
-                <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem
-                            key={text}
-                            disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? (
-                                        <InboxIcon />
-                                    ) : (
-                                        <MailIcon />
-                                    )}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
+                    {[
+                        {
+                            text: 'Reported Artworks',
+                            icon: <Flag />,
+                            route: '/reported-artworks',
+                        },
+                        {
+                            text: 'Transaction History',
+                            icon: <AccountBalanceWallet />,
+                            route: '/admin/balance',
+                        },
+                    ].map((element, index) => (
+                        <ListItem key={index} disablePadding>
+                            <ListItemButton
+                                onClick={() => navigate(element.route)}
+                            >
+                                <ListItemIcon>{element.icon}</ListItemIcon>
+                                <ListItemText primary={element.text} />
                             </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
+                <Divider />
             </Drawer>
             <Main open={open}>{children}</Main>
         </Box>

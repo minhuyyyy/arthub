@@ -3,7 +3,6 @@ import Layout from './Layout/Layout';
 import LoginPage from './auth/Login';
 import CardDetails from './components/ArtworkCard/CardDetails';
 import Loadable from './components/Loadable';
-import BalancePage from './components/Pages/Balance';
 import BuyArtworkPage from './components/Pages/BuyArtwork';
 import ChangePassword from './components/Pages/ChangePassword';
 import CreatePost from './components/Pages/CreatePost';
@@ -16,6 +15,9 @@ import ReportPage from './components/Pages/Report';
 import UploadArtwork from './components/Pages/UploadArtwork';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
+import AdminBalancePage from './components/Pages/AdminBalancePage';
+import SearchResult from './components/Pages/SearchResult';
+import BalancePage from './components/Pages/balance';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -25,11 +27,7 @@ const UserTable = Loadable(
 const routes = [
     {
         path: '/',
-        element: (
-            // <AuthGuard>
-            <Layout />
-            // </AuthGuard>
-        ),
+        element: <Layout />,
         children: [
             {
                 path: '',
@@ -78,14 +76,14 @@ const routes = [
                             </ProtectedRoute>
                         ),
                     },
-                    {
-                        path: 'new-password',
-                        element: (
-                            <ProtectedRoute role={Roles.user}>
-                                <NewPassword />
-                            </ProtectedRoute>
-                        ),
-                    },
+                    // {
+                    //     path: 'new-password',
+                    //     element: (
+                    //         <ProtectedRoute role={Roles.user}>
+                    //             <NewPassword />
+                    //         </ProtectedRoute>
+                    //     ),
+                    // },
                     {
                         path: 'pre-orders',
                         element: (
@@ -104,6 +102,18 @@ const routes = [
                     </ProtectedRoute>
                 ),
             },
+            {
+                path: 'balance',
+                element: (
+                    <ProtectedRoute role={Roles.user}>
+                        <BalancePage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: 'search/:searchStr',
+                element: <SearchResult />,
+            },
         ],
     },
     {
@@ -117,6 +127,10 @@ const routes = [
             {
                 path: 'dashboard/user',
                 element: <UserTable />,
+            },
+            {
+                path: 'balance',
+                element: <AdminBalancePage />,
             },
         ],
     },
@@ -134,16 +148,6 @@ const routes = [
     //         },
     //     ],
     // },
-    {
-        path: 'balance',
-        element: <Layout />,
-        children: [
-            {
-                path: '',
-                element: <BalancePage />,
-            },
-        ],
-    },
 
     {
         path: 'report-page',

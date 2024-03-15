@@ -19,6 +19,7 @@ import {
     formatCurrency,
     formatDataStandard,
 } from '../../utils/helper/format.helper';
+import { API_URL } from '../../utils/urls';
 
 interface Transaction {
     historyTransactionId: number;
@@ -55,21 +56,16 @@ export default function BalancePage() {
     const [balance, setBalance] = useState<Balance | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const fetchBalance = async () => {
-        const response = await axios.get(
-            'http://localhost:5247/balance/' + userId
-        );
+        const response = await axios.get(`${API_URL}/balance/${userId}`);
         setBalance(response.data);
     };
     const fetchTransactions = async () => {
-        const response = await axios.post(
-            'http://localhost:5247/balance/history',
-            {
-                accountId: userId,
-                // transactionType: 1, // Adjust this as needed
-                // fromDate: '2023-01-01', // Example start date
-                // toDate: '2025-01-01', // Example end date
-            }
-        );
+        const response = await axios.post(`${API_URL}/balance/history`, {
+            accountId: userId,
+            // transactionType: 1, // Adjust this as needed
+            // fromDate: '2023-01-01', // Example start date
+            // toDate: '2025-01-01', // Example end date
+        });
         setTransactions(response.data);
     };
 
@@ -147,7 +143,7 @@ const ModalDepositWithdraw = ({
                 break;
         }
         await axios
-            .post('http://localhost:5247/balance/' + type, {
+            .post(`${API_URL}/balance/` + type, {
                 accountId: userId,
                 amount: amount,
             })
@@ -186,6 +182,7 @@ const ModalDepositWithdraw = ({
                         {transType === TransactionType.Withdraw &&
                             'Enter amount to withdraw'}
                     </h4>
+                    <h4>Amount:{formatCurrency(amount)}</h4>
                     <input
                         type="number"
                         placeholder="Enter amount"

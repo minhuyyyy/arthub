@@ -117,12 +117,12 @@ function CardDetails() {
                 }}
             >
                 <Grid container spacing={2}>
-                    <Grid item sm={12} md={4} lg={6}>
+                    <Grid item xs={12} md={4} lg={6}>
                         <Box
                             sx={{
                                 minWidth: '300px',
                                 maxWidth: '500px',
-                                height: '358px',
+                                height: '360px',
                                 position: 'relative',
                                 boxSizing: 'border-box',
                                 maskImage:

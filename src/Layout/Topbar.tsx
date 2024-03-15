@@ -3,7 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Button, Grid, Typography } from '@mui/material';
+import { Avatar, Grid, Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
@@ -18,9 +18,10 @@ import CustomButton from '../components/Link';
 import useAuth from '../hooks/useAuth';
 import { Roles } from '../types/user';
 import Sidebar from './Sidebar';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Wallet } from '@mui/icons-material';
+import useDebounce from '../hooks/useDebounce';
 const drawerWidth = 240;
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
@@ -91,9 +92,31 @@ export default function Topbar({ children }: { children: JSX.Element }) {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0);
-    const [showWalletSection, setShowWalletSection] = useState(false);
-    const [amount, setAmount] = useState(0);
-    const [showInput, setShowInput] = useState(false);
+    const DebounceInput = () => {
+        const [searchStr, setSearchStr] = useState<string>('');
+        useDebounce(
+            () => {
+                if (searchStr) {
+                    navigate(`/search/${searchStr}`);
+                }
+            },
+            [searchStr],
+            1000
+        );
+        const handleSearch = (
+            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            setSearchStr(e.target.value);
+        };
+        return (
+            <>
+                <StyledInputBase
+                    onChange={(e) => handleSearch(e)}
+                    placeholder="Search for artworks"
+                />
+            </>
+        );
+    };
     useEffect(() => {
         const getAvatar = async () => {
             await axios.get(`${API_URL}/profile/${userInfo.id}`).then((res) => {
@@ -130,31 +153,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
-    const handleWithdraw = async () => {
-        setShowInput(!showInput);
-        await axios.post(`${API_URL}/balance`, {
-            accountId: userInfo.id,
-            amount: amount,
-        });
-    };
-
-    const handleDeposit = async () => {
-        setShowInput(!showInput);
-        await axios.post(`${API_URL}/balance`, {
-            accountId: userInfo.id,
-            amount: amount,
-        });
-    };
-
-    useEffect(() => {
-        if (showWalletSection) {
-            axios.get(`${API_URL}/balance/${userInfo.id}`).then((res) => {
-                if (res.status === 200) {
-                    setBalance(res.data.balance);
-                }
-            });
-        }
-    });
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
@@ -316,12 +314,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                 <SearchIconWrapper>
                                     <SearchIcon />
                                 </SearchIconWrapper>
-                                <StyledInputBase
-                                    placeholder="Search…"
-                                    inputProps={{
-                                        'aria-label': 'search',
-                                    }}
-                                />
+                                <DebounceInput />
                             </Search>
                             <Box sx={{ flexGrow: 1 }} />
                             <Box
@@ -334,36 +327,39 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     },
                                 }}
                             >
-                                <div>
-                                    {/* <Typography
+                                {userInfo.role !== Roles.admin && (
+                                    <>
+                                        <div>
+                                            {/* <Typography
                                         variant="body2"
                                         display="inline"
                                         textAlign={'center'}
                                     > */}
-                                    Balance:
-                                    <strong>{`${balance.toLocaleString(
-                                        'vi-VN',
-                                        { style: 'currency', currency: 'VND' }
-                                    )}`}</strong>
-                                    {/* </Typography> */}
-                                </div>
-                                <IconButton
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Escape') {
-                                            setShowWalletSection(false);
-                                        }
-                                    }}
-                                    onClick={() =>
-                                        setShowWalletSection(!showWalletSection)
-                                    }
-                                    size="large"
-                                    aria-label="show 4 new mails"
-                                    color="inherit"
-                                >
-                                    <Badge badgeContent={4} color="error">
-                                        <Wallet />
-                                    </Badge>
-                                </IconButton>
+                                            Balance:
+                                            <strong>{`${balance.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}`}</strong>
+                                            {/* </Typography> */}
+                                        </div>
+                                        <IconButton
+                                            onClick={() => navigate('/balance')}
+                                            size="large"
+                                            aria-label="show 4 new mails"
+                                            color="inherit"
+                                        >
+                                            <Badge
+                                                badgeContent={4}
+                                                color="error"
+                                            >
+                                                <Wallet />
+                                            </Badge>
+                                        </IconButton>
+                                    </>
+                                )}
                                 <IconButton
                                     size="large"
                                     aria-label="show 17 new notifications"
@@ -458,49 +454,6 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             {renderMobileMenu}
             {renderMenu}
             <Sidebar open={open} setOpen={setOpen} children={children} />
-            {showWalletSection && (
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: '70px',
-                        right: '50px',
-                        backgroundColor: '#f9f9f9',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        padding: '10px',
-                        zIndex: 1,
-                    }}
-                >
-                    <Typography
-                        variant="body1"
-                        sx={{ fontWeight: 'bold', marginBottom: '5px' }}
-                    >
-                        Wallet Balance:
-                    </Typography>
-                    <Typography variant="body1" sx={{ marginBottom: '5px' }}>
-                        {balance.toLocaleString('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND',
-                        })}
-                    </Typography>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => setShowInput(!showInput)}
-                        sx={{ marginRight: '5px' }}
-                    >
-                        Withdraw
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => setShowInput(true)}
-                    >
-                        Deposit
-                    </Button>
-                </Box>
-            )}
         </Box>
     );
 }
