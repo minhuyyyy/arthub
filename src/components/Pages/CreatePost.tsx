@@ -71,7 +71,7 @@ function CreatePost() {
             <Box
                 sx={{
                     backgroundColor: '#fff',
-                    width: '350px',
+                    width: '93%',
                     height: '100%',
                     paddingTop: '20px',
                     border: 1,
@@ -103,7 +103,7 @@ function CreatePost() {
                         name="title"
                         value={formData.title}
                         onChange={(e) => handleChange(e)}
-                        placeholder="Add title"
+                        placeholder="How do you feel today?"
                         sx={{ marginLeft: '10px' }}
                         disableUnderline
                         fullWidth
@@ -125,7 +125,7 @@ function CreatePost() {
                         name="description"
                         onChange={(e) => handleChange(e)}
                         value={formData.description}
-                        placeholder="Add description"
+                        placeholder="Share your feeling"
                         disableUnderline
                         multiline
                         sx={{ marginLeft: '10px' }}
@@ -142,7 +142,7 @@ function CreatePost() {
                         marginRight: '20px',
                     }}
                 >
-                    Add artwork
+                    Link your artwork
                 </Button>
                 <Button
                     onClick={() => handleSubmit()}

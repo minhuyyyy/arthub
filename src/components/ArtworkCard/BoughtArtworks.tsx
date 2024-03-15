@@ -47,18 +47,22 @@ function BoughtArtworks({ profileId }: { profileId: string }) {
                             backgroundColor: '#fff',
                             width: '380px',
                             minHeight: '200px',
-                            paddingTop: '20px',
+                            // paddingTop: '20px',
                             border: 1,
                             borderRadius: '20px',
                             borderColor: '#fff',
                             display: 'flex',
                             flexDirection: 'row',
                             position: 'relative',
-                            marginTop: '20px',
+                            // marginTop: '20px',
                         }}
                     >
-                        <Typography textAlign={'start'} marginLeft={'20px'}>
-                            Bought Artworks
+                        <Typography
+                            color={'grey'}
+                            textAlign={'start'}
+                            marginLeft={'20px'}
+                        >
+                            <strong>Bought Artworks</strong>
                         </Typography>
                         {imgList.length > 0 ? (
                             <>
