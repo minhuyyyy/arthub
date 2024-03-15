@@ -18,7 +18,6 @@ import useAuth from '../../hooks/useAuth';
 import {
     formatCurrency,
     formatDataStandard,
-    formatPointCurrency,
 } from '../../utils/helper/format.helper';
 
 interface Transaction {
@@ -282,35 +281,6 @@ const TransactionComponent = ({
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* <ul
-                style={{
-                    textAlign: 'left',
-                    padding: 0,
-                    margin: 0,
-                }}
-            >
-                {transactions.map((transaction: Transaction) => (
-                    <li key={transaction.historyTransactionId}>
-                        {formatDataStandard(transaction.transactionDate)}
-                        <br />
-                        {transaction.transactionType ===
-                            TransactionType.Deposit && 'Deposit'}
-                        {transaction.transactionType ===
-                            TransactionType.Withdraw && 'Withdrawal'}
-                        {transaction.transactionType ===
-                            TransactionType.Purchase && 'Purchase'}
-                        {transaction.transactionType === TransactionType.Sell &&
-                            'Sell'}
-                        {': '} {formatCurrency(transaction.transactionAmount)}
-                        <br />
-                        {'Before: '}
-                        {formatCurrency(transaction.beforeTransactionBalance)}
-                        <br />
-                        {'After: '}
-                        {formatCurrency(transaction.afterTransactionBalance)}
-                    </li>
-                ))}
-            </ul> */}
         </div>
     );
 };

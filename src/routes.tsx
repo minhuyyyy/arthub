@@ -1,20 +1,21 @@
 import { lazy } from 'react';
 import Layout from './Layout/Layout';
 import LoginPage from './auth/Login';
+import CardDetails from './components/ArtworkCard/CardDetails';
 import Loadable from './components/Loadable';
+import BalancePage from './components/Pages/Balance';
+import BuyArtworkPage from './components/Pages/BuyArtwork';
+import ChangePassword from './components/Pages/ChangePassword';
+import CreatePost from './components/Pages/CreatePost';
+import EditProfilePage from './components/Pages/EditProfile';
 import UserHomePage from './components/Pages/Home';
+import NewPassword from './components/Pages/NewPassword';
+import PreOrdersPage from './components/Pages/PreOrders';
 import ProfilePage from './components/Pages/Profile';
+import ReportPage from './components/Pages/Report';
+import UploadArtwork from './components/Pages/UploadArtwork';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Roles } from './types/user';
-import CardDetails from './components/ArtworkCard/CardDetails';
-import EditProfilePage from './components/Pages/EditProfile';
-import PreOrdersPage from './components/Pages/PreOrders';
-import BuyArtworkPage from './components/Pages/BuyArtwork';
-import UploadArtwork from './components/Pages/UploadArtwork';
-import CreatePost from './components/Pages/CreatePost';
-import ChangePassword from './components/Pages/ChangePassword';
-import NewPassword from './components/Pages/NewPassword';
-import BalancePage from './components/Pages/Balance';
 
 const NotFound = Loadable(lazy(() => import('./auth/NotFound')));
 const Register = Loadable(lazy(() => import('./auth/Register')));
@@ -140,6 +141,17 @@ const routes = [
             {
                 path: '',
                 element: <BalancePage />,
+            },
+        ],
+    },
+
+    {
+        path: 'report-page',
+        element: <Layout />,
+        children: [
+            {
+                path: '',
+                element: <ReportPage />,
             },
         ],
     },
