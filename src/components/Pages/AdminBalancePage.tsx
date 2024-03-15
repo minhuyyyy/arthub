@@ -73,6 +73,7 @@ export default function AdminBalancePage() {
         return (
             <div>
                 <Input
+                    sx={{ backgroundColor: '#fff', borderRadius: '20px', paddingLeft:'10px' }}
                     disableUnderline
                     placeholder="Enter email:"
                     onChange={(e) => handleSearch(e)}

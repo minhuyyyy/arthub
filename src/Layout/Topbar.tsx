@@ -101,7 +101,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                 }
             },
             [searchStr],
-            500
+            1000
         );
         const handleSearch = (
             e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
