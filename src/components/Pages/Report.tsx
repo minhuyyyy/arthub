@@ -51,6 +51,13 @@ export default function ReportPage() {
         setListReport(data);
     };
     fecthReport();
+
+    const updateReport = (report: Report) => {
+        const newReport = listReport.map((r) =>
+            r.reportId === report.reportId ? report : r
+        );
+        setListReport(newReport);
+    };
     return (
         <>
             <h2>Report Page</h2>
@@ -108,6 +115,7 @@ export default function ReportPage() {
                                     <TableCell align="center">
                                         <ModalResolveTicket
                                             reportId={row.reportId}
+                                            updateReport={updateReport}
                                         />
                                     </TableCell>
                                 </TableRow>
@@ -164,30 +172,29 @@ const ModalResolveTicket = ({
     const handleClose = () => setOpen(false);
 
     const handleResolveTicket = async () => {
-        const response = await fetch(
-            'http://localhost:5247/report/' + reportId,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    reportId: reportId,
-                    resolveDescription: reportDescription,
-                    isBanArtwork: isBanArtwork,
-                    isResolved: true,
-                }),
-            }
-        )
+        await fetch('http://localhost:5247/report/' + reportId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                reportId: reportId,
+                resolveDescription: reportDescription,
+                isBanArtwork: isBanArtwork,
+                isResolved: true,
+            }),
+        })
             .then(async (res) => {
                 if (res.status === 200) {
                     toast.success('Success resolve ticket!');
                     const data = await res.json();
                     updateReport(data as Report);
                     handleClose();
+                } else {
+                    toast.error('Failed resolve ticket, try again!');
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 toast.error('Failed resolve ticket, try again!');
             });
     };
