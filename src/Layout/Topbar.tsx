@@ -5,7 +5,6 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar, Grid, Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
@@ -216,9 +215,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
         >
             <MenuItem>
                 <IconButton size="large" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <Wallet />
-                    </Badge>
+                    <Wallet />
                 </IconButton>
                 <p>Wallet</p>
             </MenuItem>
@@ -228,9 +225,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                     aria-label="show 17 new notifications"
                     color="inherit"
                 >
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
+                    <NotificationsIcon />
                 </IconButton>
                 <p>Notifications</p>
             </MenuItem>
@@ -351,12 +346,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                             aria-label="show 4 new mails"
                                             color="inherit"
                                         >
-                                            <Badge
-                                                badgeContent={4}
-                                                color="error"
-                                            >
-                                                <Wallet />
-                                            </Badge>
+                                            <Wallet />
                                         </IconButton>
                                     </>
                                 )}
@@ -365,9 +355,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                                     aria-label="show 17 new notifications"
                                     color="inherit"
                                 >
-                                    <Badge badgeContent={17} color="error">
-                                        <NotificationsIcon />
-                                    </Badge>
+                                    <NotificationsIcon />
                                 </IconButton>
                                 <Box>
                                     <Typography
