@@ -132,6 +132,10 @@ const routes = [
                 path: 'balance',
                 element: <AdminBalancePage />,
             },
+            {
+                path: 'reported-artworks',
+                element: <ReportPage />,
+            },
         ],
     },
     // {

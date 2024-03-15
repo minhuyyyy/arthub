@@ -101,7 +101,7 @@ export default function Sidebar({
                         {
                             text: 'Reported Artworks',
                             icon: <Flag />,
-                            route: '/reported-artworks',
+                            route: '/admin/reported-artworks',
                         },
                         {
                             text: 'Transaction History',
