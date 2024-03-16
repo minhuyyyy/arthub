@@ -42,7 +42,7 @@ function MenuButton({
                     isOpen(false);
                 }
             })
-            .catch((err) => toast.error(err.response.data));
+            .catch((err) => toast.error('Failed to delete'));
     };
 
     const handleDeleteArtwork = async () => {
@@ -54,7 +54,7 @@ function MenuButton({
                     isOpen(false);
                 }
             })
-            .catch((err) => toast.error(err.response.data));
+            .catch((err) => toast.error('Failed to delete'));
     };
 
     // Create an array of JSX elements for menu items
@@ -74,6 +74,8 @@ function MenuButton({
                 <Edit />
             </IconButton>
             <p>Update </p>
+        </MenuItem>,
+        <>
             {type === 'post' ? (
                 <>
                     <UpdatePostModal
@@ -106,7 +108,7 @@ function MenuButton({
                     </MenuItem>
                 </>
             )}
-        </MenuItem>,
+        </>,
     ];
 
     return (
