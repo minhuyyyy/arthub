@@ -48,6 +48,8 @@ function CardDetails() {
         artworkRating: 0,
     });
     const [liked, isLiked] = useState(false);
+    const [following, isFollowing] = useState(false);
+
     const { id } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
 
@@ -57,6 +59,34 @@ function CardDetails() {
     //         setOwner(res.data);
     //     }
     // };
+
+    const handleFollowUser = async () => {
+        await axios
+            .post(`${API_URL}/follow`, {
+                artistId: card.artistID,
+                followerId: userInfo.id,
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    isFollowing(true);
+                }
+            });
+    };
+
+    const handleUnfollowUser = async () => {
+        await axios
+            .delete(`${API_URL}/follow`, {
+                data: {
+                    artistId: card.artistID,
+                    followerId: userInfo.id,
+                },
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    isFollowing(false);
+                }
+            });
+    };
 
     const getCard = () => {
         axios
@@ -137,7 +167,7 @@ function CardDetails() {
                     </Grid>
                     <Grid item xs={12} md={8} lg={6}>
                         <Box marginTop="20px" width={400}>
-                            {userInfo && userInfo.id != card.artistID && (
+                            {/* {userInfo && userInfo.id != card.artistID && (
                                 <Button
                                     sx={{
                                         position: 'absolute',
@@ -149,7 +179,7 @@ function CardDetails() {
                                 >
                                     Share to profile
                                 </Button>
-                            )}
+                            )} */}
                             <Typography variant="h4" textAlign={'left'}>
                                 {card.name}
                             </Typography>
@@ -192,18 +222,37 @@ function CardDetails() {
                                 </Typography>
                             </Link>
                             {userInfo.id != card.artistID && (
-                                <Button
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '15px',
-                                        right: '30px',
-                                        borderRadius: '20px',
-                                        backgroundColor: '#e1e1e1 !important',
-                                        color: 'black',
-                                    }}
-                                >
-                                    Follow
-                                </Button>
+                                <>
+                                    {following ? (
+                                        <Button
+                                            sx={{
+                                                position: 'absolute',
+                                                right: '30px',
+                                                color: '#333',
+                                                borderRadius: '20px',
+                                                backgroundColor: '#dedede',
+                                            }}
+                                            variant="contained"
+                                            onClick={handleUnfollowUser}
+                                        >
+                                            Following
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            sx={{
+                                                position: 'absolute',
+                                                right: '30px',
+                                                borderRadius: '20px',
+                                                backgroundColor: '#dedede',
+                                                color: '#333',
+                                            }}
+                                            variant="contained"
+                                            onClick={handleFollowUser}
+                                        >
+                                            Follow
+                                        </Button>
+                                    )}
+                                </>
                             )}
                         </Box>
                         <Box textAlign={'left'}>

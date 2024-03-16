@@ -15,6 +15,7 @@ import { ArtworkType } from '../../types/artwork';
 import BoughtArtworks from '../ArtworkCard/BoughtArtworks';
 import { Roles } from '../../types/user';
 import FollowersModal from '../Modals/FollowersModal';
+import ViewArtworkModal from '../Modals/ViewArtworkModal';
 
 type ImageType = {
     artworkId?: number;
@@ -41,6 +42,7 @@ export default function ProfilePage() {
     const [profile, setProfile] = useState<IProfilePageProps>({});
     const [imgList, setImgList] = useState<ArtworkType[]>([]);
     const [open, isOpen] = useState(false);
+    const [openFollowerModal, isModalOpen] = useState(false);
     // const [openPreOrder, isOpenPreOrder] = useState(false);
     const [posts, setPosts] = useState<PostType[]>([]);
     const [selectedArtworkId, setSelectedArtworkId] = useState(0);
@@ -226,14 +228,14 @@ export default function ProfilePage() {
                         </h2>
                         <div
                             style={{ textAlign: 'left', cursor: 'pointer' }}
-                            onClick={() => isOpen(true)}
+                            onClick={() => isModalOpen(true)}
                         >
                             {followers} followers
                         </div>
                         <FollowersModal
                             userId={userId}
-                            open={open}
-                            isOpen={isOpen}
+                            open={openFollowerModal}
+                            isOpen={isModalOpen}
                         />
                         <Button
                             onClick={(e) => {
@@ -400,13 +402,13 @@ export default function ProfilePage() {
                                                                 alt={image.name}
                                                             />
                                                         </Box>
-                                                        {/* <ViewArtworkModal
+                                                        <ViewArtworkModal
                                                             open={open}
                                                             isOpen={isOpen}
                                                             artworkId={
                                                                 selectedArtworkId
                                                             }
-                                                        /> */}
+                                                        />
                                                     </>
                                                 )
                                             )}
