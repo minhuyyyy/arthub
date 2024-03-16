@@ -169,8 +169,8 @@ function UpdateArtworkModal({
                 // isPublic: true,
             })
             .then((res) => {
-                if (res.status === 201) {
-                    toast.success('Artwork posted successfully!');
+                if (res.status === 200) {
+                    toast.success('Artwork updated successfully!');
                     handleClose();
                 }
             })
@@ -245,7 +245,7 @@ function UpdateArtworkModal({
                                 >
                                     <Input
                                         id="title"
-                                        name="title"
+                                        name="name"
                                         value={artwork?.name}
                                         onChange={(e) => handleChange(e)}
                                         placeholder="Add title"

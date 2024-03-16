@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { API_URL } from '../../utils/urls';
 
 interface Artwork {
     artworkId: number;
@@ -46,7 +47,7 @@ interface Report {
 export default function ReportPage() {
     const [listReport, setListReport] = useState<Report[]>([]);
     const fecthReport = async () => {
-        const response = await fetch('http://localhost:5247/report');
+        const response = await fetch(`${API_URL}/report`);
         const data = await response.json();
         setListReport(data);
     };
@@ -172,7 +173,7 @@ const ModalResolveTicket = ({
     const handleClose = () => setOpen(false);
 
     const handleResolveTicket = async () => {
-        await fetch('http://localhost:5247/report/' + reportId, {
+        await fetch(`${API_URL}/report/${reportId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
