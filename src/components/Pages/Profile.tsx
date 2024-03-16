@@ -2,18 +2,19 @@ import { Avatar, Box, Button, Grid, Popover, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { MouseEvent, useEffect, useState } from 'react';
-import PreOrderModal from '../Modals/PreOrderModal';
+// import PreOrderModal from '../Modals/PreOrderModal';
 import axios from 'axios';
 import NotFound from '../../auth/NotFound';
 import { toast } from 'react-toastify';
 import CreatePost from './CreatePost';
-import ViewArtworkModal from '../Modals/ViewArtworkModal';
+// import ViewArtworkModal from '../Modals/ViewArtworkModal';
 import Post from '../Posts/Post';
 import { PostType } from '../../types/post';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
 import BoughtArtworks from '../ArtworkCard/BoughtArtworks';
 import { Roles } from '../../types/user';
+import FollowersModal from '../Modals/FollowersModal';
 
 type ImageType = {
     artworkId?: number;
@@ -40,9 +41,11 @@ export default function ProfilePage() {
     const [profile, setProfile] = useState<IProfilePageProps>({});
     const [imgList, setImgList] = useState<ArtworkType[]>([]);
     const [open, isOpen] = useState(false);
-    const [openPreOrder, isOpenPreOrder] = useState(false);
+    // const [openPreOrder, isOpenPreOrder] = useState(false);
     const [posts, setPosts] = useState<PostType[]>([]);
     const [selectedArtworkId, setSelectedArtworkId] = useState(0);
+    const [followers, setFollowers] = useState(0);
+    const [following, isFollowing] = useState(false);
     const getProfile = async () => {
         // setLoading(true);
         try {
@@ -64,6 +67,33 @@ export default function ProfilePage() {
             // setLoading(false);
         }
     };
+
+    const getFollowersNumber = async () => {
+        await axios
+            .get(`${API_URL}/follow/followers-count/${userId}`)
+            .then((res) => {
+                if (res.status === 200) {
+                    setFollowers(res.data.followersCount);
+                }
+            });
+    };
+
+    const getFollowers = async () => {
+        await axios
+            .get(`${API_URL}/follow/list-follower-id/${userId}`)
+            .then((res) => {
+                if (res.status === 200) {
+                    if (res.data.listFollowerId) {
+                        res.data.listFollowerId.find((id) => {
+                            if (id == userInfo.id) {
+                                isFollowing(true);
+                            }
+                        });
+                    }
+                }
+            });
+    };
+
     const getPosts = async () => {
         try {
             const postPromise = axios.get(`${API_URL}/post/user/${userId}`);
@@ -115,43 +145,26 @@ export default function ProfilePage() {
         }
     };
 
-    // const getUserName = async () => {
-    //     const updatedPosts = await Promise.all(
-    //         posts.map(async (post) => {
-    //             const updatedComments = await Promise.all(
-    //                 post.comments.map(async (comment) => {
-    //                     try {
-    //                         const res = await axios.get(
-    //                             `${API_URL}/profile/user/${comment.memberId}`
-    //                         );
-    //                         if (res.status === 200) {
-    //                             return {
-    //                                 ...comment,
-    //                                 userName: res.data.fullName,
-    //                             };
-    //                         }
-    //                     } catch (error) {
-    //                         console.error(
-    //                             `Error fetching username for comment ${comment.commentId}: ${error}`
-    //                         );
-    //                     }
-    //                     return comment; // Return original comment if fetching fails or status is not 200
-    //                 })
-    //             );
-    //             return { ...post, comments: updatedComments };
-    //         })
-    //     );
-    //     setPosts(updatedPosts);
-    // };
+    const handleFollowUser = async () => {
+        await axios
+            .post(`${API_URL}/follow`, {
+                artistId: userId,
+                followerId: userInfo.id,
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    setFollowers(followers + 1);
+                    isFollowing(true);
+                }
+            });
+    };
 
     useEffect(() => {
+        getFollowers();
+        getFollowersNumber();
         getProfile();
         getPosts();
-    }, []);
-
-    useEffect(() => {
-        console.log(posts);
-    }, [posts]);
+    }, [userId]);
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -166,12 +179,12 @@ export default function ProfilePage() {
 
     isAuthenticated;
 
-    const openModal = () => {
-        if (isAuthenticated) {
-            return isOpenPreOrder(true);
-        }
-        return navigate('/session/signin');
-    };
+    // const openModal = () => {
+    //     if (isAuthenticated) {
+    //         return isOpenPreOrder(true);
+    //     }
+    //     return navigate('/session/signin');
+    // };
 
     const copyProfileLink = () => {
         navigator.clipboard.writeText(`${location.host}${location.pathname}`);
@@ -211,9 +224,17 @@ export default function ProfilePage() {
                         <h2 style={{ width: '200px', textAlign: 'left' }}>
                             {profile?.fullName}
                         </h2>
-                        <p style={{ textAlign: 'left' }}>
-                            {profile?.followerCount} followers
-                        </p>
+                        <div
+                            style={{ textAlign: 'left', cursor: 'pointer' }}
+                            onClick={() => isOpen(true)}
+                        >
+                            {followers} followers
+                        </div>
+                        <FollowersModal
+                            userId={userId}
+                            open={open}
+                            isOpen={isOpen}
+                        />
                         <Button
                             onClick={(e) => {
                                 copyProfileLink();
@@ -221,6 +242,7 @@ export default function ProfilePage() {
                             }}
                             color="success"
                             variant="contained"
+                            sx={{ marginRight: '10px' }}
                         >
                             Share profile
                         </Button>
@@ -257,30 +279,47 @@ export default function ProfilePage() {
                                 >
                                     Edit profile
                                 </Button>
-                                <Button
+                                {/* <Button
                                     color="info"
                                     variant="contained"
                                     onClick={() =>
                                         navigate(`/profile/pre-orders`)
                                     }
-                                >
+                                    >
                                     Pre-orders
-                                </Button>
+                                </Button> */}
                             </>
                         ) : (
                             <>
-                                <Button
-                                    onClick={openModal}
-                                    color="info"
-                                    variant="contained"
-                                >
-                                    Pre-order from {profile?.fullName}
-                                </Button>
-                                <PreOrderModal
-                                    open={openPreOrder}
-                                    isOpen={isOpenPreOrder}
-                                />
+                                {following ? (
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleFollowUser}
+                                    >
+                                        Following
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleFollowUser}
+                                    >
+                                        Follow
+                                    </Button>
+                                )}
                             </>
+                            //     <>
+                            //         <Button
+                            //             onClick={openModal}
+                            //             color="info"
+                            //             variant="contained"
+                            //         >
+                            //             Pre-order from {profile?.fullName}
+                            //         </Button>
+                            //         <PreOrderModal
+                            //             open={openPreOrder}
+                            //             isOpen={isOpenPreOrder}
+                            //         />
+                            //     </>
                         )}
                     </div>
                 </Box>
@@ -304,8 +343,9 @@ export default function ProfilePage() {
                                 <Typography
                                     textAlign={'start'}
                                     marginLeft={'20px'}
+                                    color="gray"
                                 >
-                                    Artworks
+                                    <strong>Artworks</strong>
                                 </Typography>
                                 {imgList.length > 0 ? (
                                     <>
@@ -360,13 +400,13 @@ export default function ProfilePage() {
                                                                 alt={image.name}
                                                             />
                                                         </Box>
-                                                        <ViewArtworkModal
+                                                        {/* <ViewArtworkModal
                                                             open={open}
                                                             isOpen={isOpen}
                                                             artworkId={
                                                                 selectedArtworkId
                                                             }
-                                                        />
+                                                        /> */}
                                                     </>
                                                 )
                                             )}
@@ -382,10 +422,12 @@ export default function ProfilePage() {
                                     </Typography>
                                 )}
                             </Box>
-                            <BoughtArtworks profileId={userId!} />
                         </Grid>
                         <Grid item xs={12} sm={12} md={8} lg={6}>
-                            <Box position={'relative'}>
+                            <BoughtArtworks profileId={userId!} />
+                        </Grid>
+                        <Grid item sm={12}>
+                            <Box width={'100%'}>
                                 {userInfo.role !== Roles.admin &&
                                     userInfo.id == parseInt(userId) && (
                                         <CreatePost />

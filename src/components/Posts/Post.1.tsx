@@ -7,13 +7,13 @@ import {
     Typography,
 } from '@mui/material';
 import { Send } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import CommentMenu from '../Menu/CommentMenu';
 
-function Post({
+export function Post({
     title,
     description,
     image,
@@ -21,7 +21,7 @@ function Post({
     avatar,
     fullName,
     accountId,
-    comments: initialComments,
+    comments,
 }: {
     title: string;
     description: string;
@@ -39,45 +39,20 @@ function Post({
 }) {
     const [content, setContent] = useState('');
     const { userInfo } = useAuth();
-    const [comments, setComments] = useState(initialComments); // Initialize comments state with the initial comments
-    const [profile, setProfile] = useState({});
 
-    const getProfile = async () => {
-        await axios.get(`${API_URL}/profile/${accountId}`).then((res) => {
-            if (res.status === 200) {
-                setProfile(res.data);
-            }
-        });
-    };
-    useEffect(() => {
-        getProfile();
-    }, [accountId]);
     const handlePostComment = async () => {
-        try {
-            const response = await axios.post(`${API_URL}/comment`, {
-                content: content,
-                postId: postId,
-                memberId: userInfo.id,
-            });
-            if (response.status === 201) {
-                const newComment = {
-                    commentId: response.data.commentId,
-                    content: content,
-                    memberId: userInfo.id,
-                    memberName: userInfo.fullName,
-                };
-                setComments([...comments, newComment]);
-                setContent(''); // Clear the input field after adding the comment
-            }
-        } catch (error) {
-            console.error('Error posting comment:', error);
-            // Handle error
-        }
+        await axios.post(`${API_URL}/comment`, {
+            content: content,
+            postId: postId,
+            memberId: userInfo.id,
+        });
+        // Refresh comments after posting
+        window.location.reload();
     };
 
     return (
         <div>
-            <Box sx={{ minHeight: '500px', padding: '10px' }}>
+            <Box sx={{ minHeight: '500px' }}>
                 <Grid container>
                     <Grid item lg={12}>
                         <Box
@@ -85,15 +60,15 @@ function Post({
                             display={'flex'}
                             flexDirection={'row'}
                         >
-                            <Avatar src={profile.avatar} />
+                            <Avatar src={avatar} />
                             <Typography
                                 variant={'h5'}
                                 component={'h3'}
                                 position={'absolute'}
-                                top={10}
+                                top={0}
                                 left={50}
                             >
-                                {profile.fullName}
+                                {fullName}
                             </Typography>
                         </Box>
                     </Grid>
@@ -109,7 +84,7 @@ function Post({
                             alt={title}
                             style={{ width: '70%', margin: '0 auto' }}
                         />
-                        {comments.length > 0 && (
+                        {comments.length > 0 ? (
                             <>
                                 <Typography>Comments</Typography>
                                 <Box
@@ -118,7 +93,6 @@ function Post({
                                         overflowY: 'scroll',
                                         position: 'relative',
                                         width: '100%',
-                                        marginBottom: '30px',
                                     }}
                                 >
                                     {comments.map((comment) => (
@@ -158,18 +132,16 @@ function Post({
                                     ))}
                                 </Box>
                             </>
-                            // ) : (
-                            //     <Typography>No comments yet</Typography>
+                        ) : (
+                            <Typography>No comments yet</Typography>
                         )}
                         <Box
                             sx={{
                                 position: 'absolute',
                                 display: 'flex',
-                                bottom: 5,
+                                bottom: 0,
                                 flexDirection: 'row',
-                                width: '90%',
-                                backgroundColor: '#ece8e8',
-                                borderRadius: '20px',
+                                width: '100%',
                             }}
                         >
                             <Avatar
@@ -187,7 +159,6 @@ function Post({
                                         color: '#333',
                                         borderBottomLeftRadius: '20px',
                                         width: '100%',
-                                        // height: '100px',
                                     }}
                                     disableUnderline
                                     placeholder="Add comment"
@@ -196,13 +167,7 @@ function Post({
                                     multiline
                                 />
                                 {content.length > 0 && (
-                                    <IconButton
-                                        type="submit"
-                                        sx={{
-                                            position: 'absolute',
-                                            right: 0,
-                                        }}
-                                    >
+                                    <IconButton type="submit">
                                         <Send />
                                     </IconButton>
                                 )}
@@ -214,5 +179,3 @@ function Post({
         </div>
     );
 }
-
-export default Post;

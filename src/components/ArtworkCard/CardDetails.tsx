@@ -4,17 +4,27 @@ import {
     Button,
     Grid,
     IconButton,
+    Rating,
     Typography,
+    styled,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Favorite, FavoriteBorderOutlined } from '@mui/icons-material';
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
 
+const StyledRating = styled(Rating)({
+    '& .MuiRating-iconFilled': {
+        color: '#ff6d75',
+    },
+    '& .MuiRating-iconHover': {
+        color: '#ff3d47',
+    },
+});
 function CardDetails() {
     document.title = 'Details';
     const navigate = useNavigate();
@@ -76,27 +86,15 @@ function CardDetails() {
         setLikedCard();
     }, []);
 
-    const likeCard = async () => {
+    const rateCard = async (rating: string) => {
         const res = await axios.post(`${API_URL}/rating`, {
             userId: userInfo.id,
-            rating: 1,
+            rating: rating,
             artworkId: card.artworkId,
         });
         if (res.status === 200) {
+            getCard();
             isLiked(true);
-        }
-    };
-
-    const unlikeCard = async () => {
-        const res = await axios.delete(`${API_URL}/rating`, {
-            data: {
-                userId: userInfo.id,
-                rating: 0,
-                artworkId: card.artworkId,
-            },
-        });
-        if (res.status === 200) {
-            isLiked(false);
         }
     };
 
@@ -220,25 +218,26 @@ function CardDetails() {
                                     }}
                                 >
                                     <Typography component={'p'} variant="body2">
-                                        {card.artworkRating}
+                                        Rating{' '}
+                                        <strong>{card.artworkRating}</strong>
                                     </Typography>
-                                    {liked ? (
-                                        <IconButton
-                                            size="large"
-                                            edge="end"
-                                            onClick={() => unlikeCard()}
-                                        >
-                                            <Favorite />
-                                        </IconButton>
-                                    ) : (
-                                        <IconButton
-                                            size="large"
-                                            edge="end"
-                                            onClick={() => likeCard()}
-                                        >
-                                            <FavoriteBorderOutlined />
-                                        </IconButton>
-                                    )}
+                                    <StyledRating
+                                        name="customized-color"
+                                        defaultValue={0}
+                                        getLabelText={(value: number) =>
+                                            `${value} Heart${
+                                                value !== 1 ? 's' : ''
+                                            }`
+                                        }
+                                        onClick={(e) =>
+                                            rateCard(e.target.value)
+                                        }
+                                        precision={1}
+                                        icon={<Favorite fontSize="inherit" />}
+                                        emptyIcon={
+                                            <FavoriteBorder fontSize="inherit" />
+                                        }
+                                    />
                                 </Box>
                             )}
                         </Box>
@@ -249,11 +248,13 @@ function CardDetails() {
                                     top={160}
                                     position={'absolute'}
                                 >
-                                    {`For sale - `}
-                                    {card.price.toLocaleString('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND',
-                                    })}
+                                    {`For sale : `}
+                                    <strong>
+                                        {card.price.toLocaleString('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        })}
+                                    </strong>
                                 </Typography>
                                 {userInfo.id != card.artistID && (
                                     <Button

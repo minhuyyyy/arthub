@@ -42,6 +42,7 @@ function EditProfilePage() {
         fullName: '',
         emailAddress: '',
     });
+    const { userId } = useParams();
     const [photoUrl, setPhotoUrl] = useState<string>('');
     const API_URL = import.meta.env.VITE_API_URL;
     const getProfile = async () => {
@@ -178,6 +179,7 @@ function EditProfilePage() {
                                         onChange={(e) => handleInputChange(e)}
                                         fullWidth
                                         name="emailAddress"
+                                        type="email"
                                     />
                                 </Box>
                                 <Button

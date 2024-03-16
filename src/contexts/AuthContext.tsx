@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }) => {
                 id: decoded.MemberId,
                 email: decoded.email,
                 role: parseInt(decoded.Role),
+                fullName: decoded.name,
             };
             dispatch({
                 type: 'INIT',
