@@ -164,7 +164,7 @@ export default function ProfilePage() {
         getFollowersNumber();
         getProfile();
         getPosts();
-    }, []);
+    }, [userId]);
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -225,12 +225,16 @@ export default function ProfilePage() {
                             {profile?.fullName}
                         </h2>
                         <div
-                            style={{ textAlign: 'left' }}
+                            style={{ textAlign: 'left', cursor: 'pointer' }}
                             onClick={() => isOpen(true)}
                         >
                             {followers} followers
                         </div>
-                        <FollowersModal open={open} isOpen={isOpen} />
+                        <FollowersModal
+                            userId={userId}
+                            open={open}
+                            isOpen={isOpen}
+                        />
                         <Button
                             onClick={(e) => {
                                 copyProfileLink();

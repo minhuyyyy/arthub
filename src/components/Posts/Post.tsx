@@ -40,10 +40,18 @@ function Post({
     const [content, setContent] = useState('');
     const { userInfo } = useAuth();
     const [comments, setComments] = useState(initialComments); // Initialize comments state with the initial comments
+    const [profile, setProfile] = useState({});
 
+    const getProfile = async () => {
+        await axios.get(`${API_URL}/profile/${accountId}`).then((res) => {
+            if (res.status === 200) {
+                setProfile(res.data);
+            }
+        });
+    };
     useEffect(() => {
-        console.log(userInfo);
-    });
+        getProfile();
+    }, [accountId]);
     const handlePostComment = async () => {
         try {
             const response = await axios.post(`${API_URL}/comment`, {
@@ -77,15 +85,15 @@ function Post({
                             display={'flex'}
                             flexDirection={'row'}
                         >
-                            <Avatar src={avatar} />
+                            <Avatar src={profile.avatar} />
                             <Typography
                                 variant={'h5'}
                                 component={'h3'}
                                 position={'absolute'}
-                                top={0}
+                                top={10}
                                 left={50}
                             >
-                                {fullName}
+                                {profile.fullName}
                             </Typography>
                         </Box>
                     </Grid>

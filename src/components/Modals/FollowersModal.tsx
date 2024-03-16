@@ -5,6 +5,7 @@ import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import useAuth from '../../hooks/useAuth';
 import { Avatar, Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const style = {
     position: 'relative',
@@ -28,9 +29,11 @@ interface Follower {
 export default function AddArtworkModal({
     open,
     isOpen,
+    userId,
 }: {
     open: boolean;
     isOpen: Dispatch<SetStateAction<boolean>>;
+    userId: number;
 }) {
     const { userInfo } = useAuth();
     const handleClose = () => isOpen(false);
@@ -39,7 +42,7 @@ export default function AddArtworkModal({
     const getFollowers = async () => {
         try {
             const res = await axios.get(
-                `${API_URL}/follow/list-follower-id/${userInfo.id}`
+                `${API_URL}/follow/list-follower-id/${userId}`
             );
             if (res.status === 200) {
                 const followerIds = res.data.listFollowerId;
@@ -62,7 +65,7 @@ export default function AddArtworkModal({
         if (open) {
             getFollowers();
         }
-    }, [open]);
+    }, [open, userId]);
 
     return (
         <div>
@@ -83,13 +86,9 @@ export default function AddArtworkModal({
                                     }}
                                 >
                                     <Grid item xs={4}>
-                                        <Box
-                                            sx={
-                                                {
-                                                    // width: '100%',
-                                                    // height: '100px',
-                                                }
-                                            }
+                                        <Link
+                                            to={`/profile/${follower.accountId}`}
+                                            onClick={() => isOpen(false)}
                                         >
                                             <Avatar
                                                 src={follower.avatar}
@@ -100,7 +99,7 @@ export default function AddArtworkModal({
                                                     objectFit: 'cover',
                                                 }}
                                             />
-                                        </Box>
+                                        </Link>
                                     </Grid>
                                     <Grid item xs={8}>
                                         <Typography variant="h5" gutterBottom>
