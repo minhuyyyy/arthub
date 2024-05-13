@@ -132,9 +132,11 @@ export default function Topbar({ children }: { children: JSX.Element }) {
                 }
             });
         };
-        getAvatar();
-        getBalance();
-    }, [userInfo]);
+        if (userInfo.id) {
+            getAvatar();
+            getBalance();
+        }
+    }, [userInfo.id]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };

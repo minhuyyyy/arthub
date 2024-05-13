@@ -16,22 +16,22 @@ export const uploadArtwork = async (name: string, description: string, image: st
 
 export const getArtworks = async (page: number, pageSize: number) => {
     const res = await apiService.get(`/artwork?Page=${page}&PageSize=${pageSize}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const getUserOrders = async (userId: number) => {
     const res = await apiService.get(`/order/buyer/${userId}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const getArtworkById = async (artworkId: number) => {
     const res = await apiService.get(`/artwork/${artworkId}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const getArtworkByUserId = async (userId: number) => {
     const res = await apiService.get(`/artwork/artist/${userId}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const likeCard = async (userId: number, rating: number, artworkId: number) => {
@@ -61,10 +61,10 @@ export const deleteArtwork = async (artworkId: number) => {
 
 export const getGenres = async () => {
     const res = await apiService.get('/genres')
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const searchArtwork = async (searchStr: string) => {
     const res = await apiService.get(`/artwork?Query=${searchStr}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }

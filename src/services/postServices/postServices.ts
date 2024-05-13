@@ -12,7 +12,7 @@ export const uploadPost = async (title: string, description: string, memberId: n
 
 export const getPostById = async (postId: number) => {
     const res = await apiService.get(`/post/${postId}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const updatePost = async (title: string, description: string, postId: number) => {
@@ -44,5 +44,5 @@ export const updateComment = async (commentId: number, content: string) => {
 
 export const getPostsByUserId = async (userId: number) => {
     const res = await apiService.get(`/post/user/${userId}`)
-    return handleApiResponse(res.data.items)
+    return handleApiResponse(res)
 }

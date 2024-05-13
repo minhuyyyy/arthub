@@ -66,13 +66,13 @@ const validationSchema = Yup.object().shape({
 
 const RegisterPage = () => {
     const theme = useTheme();
-    const { register } = useAuth();
+    const { handleRegister } = useAuth();
     const [loading, setLoading] = useState(false);
 
     const handleFormSubmit = async (values: FormValues) => {
         setLoading(true);
         try {
-            await register(
+            await handleRegister(
                 values.email,
                 values.fullname,
                 values.password,

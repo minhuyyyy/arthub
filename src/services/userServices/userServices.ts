@@ -2,17 +2,17 @@ import { apiService, handleApiResponse } from "../axios"
 
 export const getUserProfile = async (userId: number) => {
     const res = await apiService.get(`/profile/${userId}`)
-    return handleApiResponse(res.data)
+    return handleApiResponse(res)
 }
 
 export const getUserFollowersCount = async (userId: number) => {
     const res = await apiService.get(`/follow/followers-count/${userId}`)
-    return handleApiResponse(res.data.followersCount)
+    return handleApiResponse(res)
 }
 
 export const getFollowers = async (userId: number) => {
     const res = await apiService.get(`/follow/list-follower-id/${userId}`)
-    return handleApiResponse(res.data.listFollowerId)
+    return handleApiResponse(res)
 }
 
 export const updateProfile = async (userId: number, fullName: string, emailAddress: string, avatar: string) => {
@@ -37,5 +37,5 @@ export const changePassword = async (emailAddress: string, newPassword: string, 
 
 export const searchUserForAdmin = async (userEmail: string) => {
     const res = await apiService.get(`/admin/account?userEmail=${userEmail}`)
-    return handleApiResponse(res.data.accountId)
+    return handleApiResponse(res)
 }

@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../../utils/urls';
 import { formatDateShort } from '../../utils/helper/format.helper';
 import { ArtworkType } from '../../types/artwork';
+import { getArtworks } from '../../services/artworkServices/artworkServices';
 
 function ArtworkCard() {
     const [cards, setCards] = useState<ArtworkType[]>([]);
@@ -34,12 +35,12 @@ function ArtworkCard() {
     const loadMoreCards = async () => {
         setLoading(true);
         try {
-            const newCardsResponse = await axios.get(
-                `${API_URL}/artwork?Page=${page}&PageSize=${pageSize}`
-            );
+            const newCardsResponse = await getArtworks(page, pageSize);
             const newCards = newCardsResponse.data.items;
+
             setCards((prevCards) => [...prevCards, ...newCards]);
             setPage(page + 1);
+            console.log(cards);
         } catch (error) {
             // console.error('Error loading more cards:', error);
         } finally {
