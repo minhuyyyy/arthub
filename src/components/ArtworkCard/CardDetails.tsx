@@ -12,12 +12,19 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
-import { getArtworkById } from '../../services/artworkServices/artworkServices';
-import { getUserProfile } from '../../services/userServices/userServices';
+import {
+    getArtworkById,
+    likeCard,
+} from '../../services/artworkServices/artworkServices';
+import {
+    followUser,
+    getUserProfile,
+    unfollowUser,
+} from '../../services/userServices/userServices';
 
 const StyledRating = styled(Rating)({
     '& .MuiRating-iconFilled': {
@@ -63,31 +70,17 @@ function CardDetails() {
     // };
 
     const handleFollowUser = async () => {
-        await axios
-            .post(`${API_URL}/follow`, {
-                artistId: card.artistID,
-                followerId: userInfo.id,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    isFollowing(true);
-                }
-            });
+        const res = await followUser(card.artistID, userInfo.id);
+        if (res.status === 200) {
+            isFollowing(true);
+        }
     };
 
     const handleUnfollowUser = async () => {
-        await axios
-            .delete(`${API_URL}/follow`, {
-                data: {
-                    artistId: card.artistID,
-                    followerId: userInfo.id,
-                },
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    isFollowing(false);
-                }
-            });
+        const res = await unfollowUser(card.artistID, userInfo.id);
+        if (res.status === 200) {
+            isFollowing(false);
+        }
     };
 
     const getCard = async () => {
@@ -113,12 +106,8 @@ function CardDetails() {
         setLikedCard();
     }, []);
 
-    const rateCard = async (rating: string) => {
-        const res = await axios.post(`${API_URL}/rating`, {
-            userId: userInfo.id,
-            rating: rating,
-            artworkId: card.artworkId,
-        });
+    const rateCard = async (rating: number) => {
+        const res = await likeCard(Number(userInfo.id), rating, card.artworkId);
         if (res.status === 200) {
             getCard();
             isLiked(true);
@@ -276,7 +265,7 @@ function CardDetails() {
                                             }`
                                         }
                                         onClick={(e) =>
-                                            rateCard(e.target.value)
+                                            rateCard(Number(e.target.value))
                                         }
                                         precision={1}
                                         icon={<Favorite fontSize="inherit" />}

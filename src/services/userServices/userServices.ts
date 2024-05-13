@@ -40,3 +40,21 @@ export const searchUserForAdmin = async (userEmail: string) => {
     const res = await apiService.get(`/admin/account?userEmail=${userEmail}`)
     return handleApiResponse(res)
 }
+
+export const followUser = async (artistId: number, followerId: number): Promise<AxiosResponse<any, any>> => {
+    const res = await apiService.post('/follow', {
+        artistId: artistId,
+        followerId: followerId
+    })
+    return handleApiResponse(res)
+}
+
+export const unfollowUser = async (artistId: number, followerId: number): Promise<AxiosResponse<any, any>> => {
+    const res = await apiService.delete('/follow', {
+        data: {
+            artistId: artistId,
+            followerId: followerId
+        }
+    })
+    return handleApiResponse(res)
+}

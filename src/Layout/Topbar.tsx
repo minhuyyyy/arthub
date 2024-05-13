@@ -136,7 +136,7 @@ export default function Topbar({ children }: { children: JSX.Element }) {
             getAvatar();
             getBalance();
         }
-    }, [userInfo.id]);
+    }, [userInfo]);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };

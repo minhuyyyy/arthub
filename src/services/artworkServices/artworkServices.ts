@@ -35,7 +35,7 @@ export const getArtworkByUserId = async (userId: number) => {
     return handleApiResponse(res)
 }
 
-export const likeCard = async (userId: number, rating: number, artworkId: number) => {
+export const likeCard = async (userId: number, rating: number, artworkId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.post('/rating', {
         userId: userId,
         rating: rating,
