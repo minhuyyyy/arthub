@@ -60,11 +60,11 @@ const LoginPage = () => {
     // const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const { login } = useAuth();
+    const { handleLogin } = useAuth();
     const handleFormSubmit = async (values: FormValues) => {
         setLoading(true);
         try {
-            await login(values.email, values.password);
+            await handleLogin(values.email, values.password);
             setLoading(false);
         } catch (e) {
             setLoading(false);
