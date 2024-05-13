@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios"
 import { apiService, handleApiResponse } from "../axios"
 
 export const uploadArtwork = async (name: string, description: string, image: string, price: number, artistId: number, isPublic: boolean, isBuyAvailable: boolean, genreName: string) => {
@@ -24,7 +25,7 @@ export const getUserOrders = async (userId: number) => {
     return handleApiResponse(res)
 }
 
-export const getArtworkById = async (artworkId: number) => {
+export const getArtworkById = async (artworkId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.get(`/artwork/${artworkId}`)
     return handleApiResponse(res)
 }

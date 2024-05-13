@@ -107,6 +107,7 @@ const LoginPage = () => {
                                     }) => (
                                         <form onSubmit={handleSubmit}>
                                             <TextField
+                                                autoComplete="email"
                                                 fullWidth
                                                 size="small"
                                                 type="email"
@@ -130,6 +131,7 @@ const LoginPage = () => {
                                             <TextField
                                                 fullWidth
                                                 size="small"
+                                                autoComplete="password"
                                                 name="password"
                                                 type="password"
                                                 label="Password"

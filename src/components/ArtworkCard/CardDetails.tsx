@@ -12,10 +12,12 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '../../utils/urls';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
+import { getArtworkById } from '../../services/artworkServices/artworkServices';
+import { getUserProfile } from '../../services/userServices/userServices';
 
 const StyledRating = styled(Rating)({
     '& .MuiRating-iconFilled': {
@@ -88,20 +90,15 @@ function CardDetails() {
             });
     };
 
-    const getCard = () => {
-        axios
-            .get(`${API_URL}/artwork/${id}`)
-            .then((cardRes) => {
-                if (cardRes.status === 200) {
-                    setCard(cardRes.data);
-                }
-                return axios.get(`${API_URL}/profile/${cardRes.data.artistID}`);
-            })
-            .then((profileRes) => {
-                if (profileRes.status === 200) {
-                    setOwner(profileRes.data);
-                }
-            });
+    const getCard = async () => {
+        const cardRes = await getArtworkById(Number(id));
+        if (cardRes.status === 200) {
+            setCard(cardRes.data);
+        }
+        const profileRes = await getUserProfile(cardRes.data.artistID);
+        if (profileRes.status === 200) {
+            setOwner(profileRes.data);
+        }
     };
 
     const setLikedCard = () => {

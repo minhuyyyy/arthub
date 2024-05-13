@@ -1,6 +1,7 @@
+import { AxiosResponse } from "axios"
 import { apiService, handleApiResponse } from "../axios"
 
-export const getUserProfile = async (userId: number) => {
+export const getUserProfile = async (userId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.get(`/profile/${userId}`)
     return handleApiResponse(res)
 }

@@ -7,8 +7,8 @@ export const apiService = axios.create({
     baseURL: API_BASE_URL
 })
 
-export const handleApiResponse = (res: AxiosResponse, successMsg?: string, errorMsg?: string) => {
-if (res.status === 200 || res.status === 201) {
+export const handleApiResponse = (res: AxiosResponse<any, any>, successMsg?: string, errorMsg?: string) => {
+    if (res.status === 200 || res.status === 201) {
         if (successMsg) {
             toast.success(successMsg)
         }
