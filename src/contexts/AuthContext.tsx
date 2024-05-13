@@ -6,7 +6,7 @@ import { decodeToken } from '../hooks/useJWT';
 import { useNavigate } from 'react-router-dom';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { login } from '../services/authServices/authServices';
 const initialState: User = {
     userInfo: {
         id: 0,
@@ -63,9 +63,9 @@ const reducer = (state, action) => {
 const AuthContext = createContext({
     ...initialState,
     method: 'JWT',
-    login: (email: string, password: string) => {},
+    handleLogin: (email: string, password: string) => {},
     logout: () => {},
-    register: (
+    handleRegister: (
         email: string,
         fullname: string,
         password: string,
@@ -102,38 +102,28 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const handleLogin = async (email: string, password: string) => {
         try {
-            await axios
-                .post(`${API_URL}/login`, {
-                    emailAddress: email,
-                    accountPassword: password,
-                })
-                .then((res) => {
-                    if (res.status === 200) {
-                        const { token } = res.data;
-                        const decoded = decodeToken(token);
-                        setSession(token);
-                        const user = {
-                            id: decoded.MemberId,
-                            email: decoded.email,
-                            role: parseInt(decoded.Role),
-                            fullName: decoded.FullName,
-                        };
-                        user;
+            const res = await login(email, password);
 
-                        toast.success('Login successfully!');
-                        dispatch({ type: 'LOGIN', payload: { user } });
-                        if (user.role === Roles.admin) {
-                            navigate('/admin');
-                        } else navigate('/');
-                    }
-                })
-                .catch((err) => {
-                    if (err.response.status === 401) {
-                        toast.error('Invalid email or password');
-                    } else toast.error('Something went wrong @@');
-                });
+            if (res.status === 200) {
+                const { token } = res.data;
+                const decoded = decodeToken(token);
+                setSession(token);
+                const user = {
+                    id: decoded.MemberId,
+                    email: decoded.email,
+                    role: parseInt(decoded.Role),
+                    fullName: decoded.FullName,
+                };
+                user;
+
+                toast.success('Login successfully!');
+                dispatch({ type: 'LOGIN', payload: { user } });
+                if (user.role === Roles.admin) {
+                    navigate('/admin');
+                } else navigate('/');
+            }
         } catch (error) {
             // console.error(error);
         }
@@ -145,7 +135,7 @@ export const AuthProvider = ({ children }) => {
         navigate('/');
     };
 
-    const register = async (
+    const handleRegister = async (
         email: string,
         fullname: string,
         password: string,
@@ -176,7 +166,13 @@ export const AuthProvider = ({ children }) => {
     return (
         <>
             <AuthContext.Provider
-                value={{ ...state, method: 'JWT', login, logout, register }}
+                value={{
+                    ...state,
+                    method: 'JWT',
+                    handleLogin,
+                    logout,
+                    handleRegister,
+                }}
             >
                 {children}
             </AuthContext.Provider>
