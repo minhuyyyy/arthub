@@ -7,14 +7,18 @@ import {
     Button,
 } from '@mui/material';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import { ArtworkType } from '../../types/artwork';
 import { ArtistType } from '../../types/artist';
 import { formatDateShort } from '../../utils/helper/format.helper';
 import { Favorite, FavoriteOutlined } from '@mui/icons-material';
 import MenuButton from '../Menu/Menu';
 import useAuth from '../../hooks/useAuth';
+import {
+    getArtworkById,
+    likeCard,
+    unlikeCard,
+} from '../../services/artworkServices/artworkServices';
+import { getUserProfile } from '../../services/userServices/userServices';
 
 const style = {
     position: 'relative',
@@ -63,13 +67,11 @@ export default function ViewArtworkModal({
     const { userInfo } = useAuth();
     const getArtwork = async () => {
         try {
-            const artworkRes = await axios.get(
-                `${API_URL}/artwork/${artworkId}`
-            );
+            const artworkRes = await getArtworkById(artworkId!);
             if (artworkRes.status === 200) {
                 setArtwork(artworkRes.data);
-                const artistRes = await axios.get(
-                    `${API_URL}/profile/${artworkRes.data.artistID}`
+                const artistRes = await getUserProfile(
+                    artworkRes.data.artistID
                 );
                 if (artistRes.status === 200) {
                     setArtist(artistRes.data);
@@ -100,26 +102,16 @@ export default function ViewArtworkModal({
         isOpen(false);
     };
 
-    const likeCard = async () => {
-        const res = await axios.post(`${API_URL}/rating`, {
-            userId: userInfo.id,
-            rating: 1,
-            artworkId: artwork.artworkId,
-        });
+    const rateCard = async () => {
+        const res = await likeCard(userInfo.id, 1, artworkId!);
         if (res.status === 200) {
             isLiked(true);
         }
     };
 
-    const unlikeCard = async () => {
+    const unrateCard = async () => {
         try {
-            const res = await axios.delete(`${API_URL}/rating`, {
-                data: {
-                    userId: userInfo.id,
-                    rating: 0,
-                    artworkId: artwork.artworkId,
-                },
-            });
+            const res = await unlikeCard(userInfo.id, 0, artworkId!);
             if (res.status === 200) {
                 isLiked(false);
             }
@@ -218,11 +210,11 @@ export default function ViewArtworkModal({
                                 {artwork.membersRated.length}
                             </Typography>
                             {liked ? (
-                                <IconButton onClick={() => unlikeCard()}>
+                                <IconButton onClick={() => unrateCard()}>
                                     <FavoriteOutlined />
                                 </IconButton>
                             ) : (
-                                <IconButton onClick={() => likeCard()}>
+                                <IconButton onClick={() => rateCard()}>
                                     <Favorite />
                                 </IconButton>
                             )}
