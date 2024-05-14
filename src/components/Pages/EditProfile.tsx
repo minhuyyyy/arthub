@@ -8,13 +8,15 @@ import {
     styled,
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { redirect, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AppSuspense from '../Suspense';
-import axios from 'axios';
 import { CloudUpload } from '@mui/icons-material';
 import NotFound from '../../auth/NotFound';
-import useAuth from '../../hooks/useAuth';
+import {
+    getUserProfile,
+    updateProfile,
+} from '../../services/userServices/userServices';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -44,22 +46,14 @@ function EditProfilePage() {
     });
     const { userId } = useParams();
     const [photoUrl, setPhotoUrl] = useState<string>('');
-    const API_URL = import.meta.env.VITE_API_URL;
     const getProfile = async () => {
-        await axios
-            .get(`${API_URL}/profile/${userId}`)
-            .then((res) => {
-                if (res.status === 200) {
-                    setProfile(res.data);
-                    setPhotoUrl(res.data.avatar);
-                }
-            })
-            .catch((err) => {
-                err;
-                if (err.response.status === 404) {
-                    toast.error('Profile not found');
-                }
-            });
+        const res = await getUserProfile(userId!);
+        if (res.status === 200) {
+            setProfile(res.data);
+            setPhotoUrl(res.data.avatar);
+        } else if (res.status === 404) {
+            toast.error('Profile not found');
+        }
     };
     const handleAddPhoto = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -85,21 +79,12 @@ function EditProfilePage() {
     };
 
     const handleUpdateProfile = async () => {
-        await axios
-            .put(`${API_URL}/profile/${userId}`, {
-                id: userId,
-                fullName: profile.fullName,
-                emailAddress: profile.emailAddress,
-                avatar: photoUrl,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Profile updated successfully');
-                }
-            })
-            .catch((err) => {
-                toast.error(err.response.data);
-            });
+        await updateProfile(
+            userId!,
+            profile.fullName,
+            profile.emailAddress,
+            profile.avatar!
+        );
     };
 
     useEffect(() => {

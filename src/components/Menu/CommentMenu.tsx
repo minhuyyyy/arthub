@@ -1,15 +1,21 @@
 import { Delete, Edit, More, Send } from '@mui/icons-material';
 import { IconButton, Input, Menu, MenuItem } from '@mui/material';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
+import { deleteComment } from '../../services/postServices/postServices';
+import { Comment } from '../../types/comment';
 
 function CommentMenu({
+    comments,
+    setComments,
     ownComment,
     commentId,
     content,
 }: {
+    comments: Comment[];
+    setComments: Dispatch<SetStateAction<Comment[]>>;
     ownComment: boolean;
     commentId: number;
     content: string;
@@ -30,9 +36,13 @@ function CommentMenu({
 
     const handleDeleteComment = async () => {
         try {
-            await axios.delete(`${API_URL}/comment/${commentId}`);
-            toast.success('Comment deleted successfully!');
-            window.location.reload();
+            const res = await deleteComment(commentId);
+            if (res.status === 204) {
+                toast.success('Comment deleted successfully!');
+                setComments((prev) =>
+                    prev.filter((comment) => comment.commentId !== commentId)
+                );
+            }
         } catch (error) {
             // console.error('Error deleting comment:', error);
             toast.error('Failed to delete comment');

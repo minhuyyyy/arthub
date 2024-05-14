@@ -1,3 +1,5 @@
+import { Comment } from "./comment";
+
 export type PostType = {
     postId: number;
     title: string;
@@ -6,11 +8,5 @@ export type PostType = {
     memberId?: number;
     isPublic?: boolean;
     artworkId: number;
-    comments: {
-        memberName: string;
-        commentId: number;
-        content: string;
-        memberId: number;
-        memberAvatar: string;
-    }[];
+    comments: Comment[];
 };

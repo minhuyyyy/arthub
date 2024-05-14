@@ -12,8 +12,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import useAuth from '../../hooks/useAuth';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import AppSuspense from '../Suspense';
 import { ArtworkType } from '../../types/artwork';
 import {
@@ -254,7 +252,7 @@ function CardDetails() {
                                 >
                                     <Typography component={'p'} variant="body2">
                                         Rating{' '}
-                                        <strong>{card.artworkRating}</strong>
+                                        <strong>{card.membersRated}</strong>
                                     </Typography>
                                     <StyledRating
                                         name="customized-color"

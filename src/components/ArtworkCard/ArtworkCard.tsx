@@ -7,10 +7,8 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
-import axios from 'axios';
 import './Artwork.scss';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../../utils/urls';
 import { formatDateShort } from '../../utils/helper/format.helper';
 import { ArtworkType } from '../../types/artwork';
 import { getArtworks } from '../../services/artworkServices/artworkServices';
@@ -40,7 +38,6 @@ function ArtworkCard() {
 
             setCards((prevCards) => [...prevCards, ...newCards]);
             setPage(page + 1);
-            console.log(cards);
         } catch (error) {
             // console.error('Error loading more cards:', error);
         } finally {

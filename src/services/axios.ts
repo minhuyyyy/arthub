@@ -4,7 +4,13 @@ import { API_URL } from '../utils/urls'
 const API_BASE_URL: string = API_URL
 
 export const apiService = axios.create({
-    baseURL: API_BASE_URL
+    baseURL: API_BASE_URL,
+    // withCredentials: true
+    headers: {
+        Authorization:
+            `Bearer ${localStorage.getItem('accessToken')}`
+
+    }
 })
 
 export const handleApiResponse = (res: AxiosResponse<any, any>, successMsg?: string, errorMsg?: string) => {
@@ -14,9 +20,12 @@ export const handleApiResponse = (res: AxiosResponse<any, any>, successMsg?: str
         }
         return res
     } else {
-        if (errorMsg) {
-            return toast.error(errorMsg)
-        } else return toast.error(res.data.title)
+        if ((res.status === 401 || res.status === 404 || res.status === 500)) {
+            if (errorMsg) {
+                toast.error(errorMsg)
+            } else toast.error(res.data.title)
+        }
+        return res
     }
 }
 

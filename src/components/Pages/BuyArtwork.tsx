@@ -7,6 +7,11 @@ import { ArtworkType } from '../../types/artwork';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import AppSuspense from '../Suspense';
+import { getUserBalance } from '../../services/BalanceServices/balanceServices';
+import {
+    buyArtwork,
+    getArtworkById,
+} from '../../services/artworkServices/artworkServices';
 
 export default function CheckOut() {
     const { id } = useParams();
@@ -23,14 +28,14 @@ export default function CheckOut() {
     };
 
     const getBalance = async () => {
-        const res = await axios.get(`${API_URL}/balance/${userInfo.id}`);
+        const res = await getUserBalance(userInfo.id);
         if (res.status === 200) {
             setBalance(res.data.balance);
         }
     };
 
     const getArtwork = async () => {
-        const res = await axios.get(`${API_URL}/artwork/${id}`);
+        const res = await getArtworkById(id!);
         if (res.status === 200) {
             setArtwork(res.data);
         }
@@ -71,27 +76,13 @@ export default function CheckOut() {
     });
 
     const handleConfirm = async () => {
-        await axios
-            .post(`${API_URL}/order`, {
-                buyerId: userInfo.id,
-                totalQuantity: 1,
-                totalAmount: artwork.price,
-                orderDetails: [
-                    {
-                        artworkId: artwork?.artworkId,
-                        unitPrice: artwork.price,
-                    },
-                ],
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Artwork bought!');
-                    navigate('/');
-                }
-            })
-            .catch((err) => {
-                toast.error(err.response.data.msg);
-            });
+        await buyArtwork(
+            userInfo.id,
+            1,
+            artwork.price,
+            artwork.artworkId,
+            artwork.price
+        );
     };
 
     return (

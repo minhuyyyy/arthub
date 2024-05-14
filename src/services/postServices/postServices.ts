@@ -1,6 +1,7 @@
+import { AxiosResponse } from "axios"
 import { apiService, handleApiResponse } from "../axios"
 
-export const uploadPost = async (title: string, description: string, memberId: number, artworkId: number) => {
+export const uploadPost = async (title: string, description: string, memberId: number, artworkId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.post('/post', {
         title: title,
         description: description,
@@ -42,7 +43,12 @@ export const updateComment = async (commentId: number, content: string) => {
     return handleApiResponse(res, 'Comment updated successfully!', 'Failed to update comment')
 }
 
-export const getPostsByUserId = async (userId: number) => {
+export const getPostsByUserId = async (userId: string): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.get(`/post/user/${userId}`)
+    return handleApiResponse(res)
+}
+
+export const getPostComments = async (postId: number) => {
+    const res = await apiService.get(`/comment/post/${postId}`)
     return handleApiResponse(res)
 }

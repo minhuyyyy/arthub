@@ -20,12 +20,12 @@ export const getArtworks = async (page: number, pageSize: number) => {
     return handleApiResponse(res)
 }
 
-export const getUserOrders = async (userId: number) => {
+export const getUserOrders = async (userId: string) => {
     const res = await apiService.get(`/order/buyer/${userId}`)
     return handleApiResponse(res)
 }
 
-export const getArtworkById = async (artworkId: number): Promise<AxiosResponse<any, any>> => {
+export const getArtworkById = async (artworkId: string): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.get(`/artwork/${artworkId}`)
     return handleApiResponse(res)
 }
@@ -69,3 +69,14 @@ export const searchArtwork = async (searchStr: string) => {
     const res = await apiService.get(`/artwork?Query=${searchStr}`)
     return handleApiResponse(res)
 }
+
+export const buyArtwork = async (buyerId: number, totalQuantity: number, totalAmount: number, artworkId: number, unitPrice: number) => {
+    const res = await apiService.post('/order', {
+        artworkId: artworkId, unitPrice: unitPrice,
+        buyerId: buyerId, totalAmount: totalAmount, totalQuantity: totalQuantity, orderDetails: [{
+        }]
+    })
+    return handleApiResponse(res, 'Artwork bought!', res.data.msg)
+}
+
+// export const getUserBoughtArtworks = async()

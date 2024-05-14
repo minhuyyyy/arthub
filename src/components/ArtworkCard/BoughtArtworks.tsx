@@ -1,11 +1,13 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import axios from 'axios';
 import { ArtworkType } from '../../types/artwork';
-import { API_URL } from '../../utils/urls';
 import ViewArtworkModal from '../Modals/ViewArtworkModal';
 import { toast } from 'react-toastify';
+import {
+    getArtworkByUserId,
+    getUserOrders,
+} from '../../services/artworkServices/artworkServices';
 
 function BoughtArtworks({ profileId }: { profileId: string }) {
     const [open, isOpen] = useState<boolean>(false);
@@ -14,13 +16,13 @@ function BoughtArtworks({ profileId }: { profileId: string }) {
 
     const getBoughtArtworks = async () => {
         try {
-            const res = await axios.get(`${API_URL}/order/buyer/${profileId}`);
+            const res = await getUserOrders(profileId);
             if (res.status === 200) {
                 const artworks: ArtworkType[] = [];
                 for (const order of res.data) {
                     for (const artwork of order.orderDetails) {
-                        const resArtwork = await axios.get(
-                            `${API_URL}/artwork/${artwork.artworkId}`
+                        const resArtwork = await getArtworkByUserId(
+                            artwork.artworkId
                         );
                         if (resArtwork.status === 200) {
                             artworks.push(resArtwork.data);

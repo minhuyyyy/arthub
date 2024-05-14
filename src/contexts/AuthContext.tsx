@@ -27,7 +27,9 @@ const initialState: User = {
 const setSession = (accessToken: string) => {
     if (accessToken) {
         localStorage.setItem('accessToken', accessToken);
-        axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+        axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem(
+            'accessToken'
+        )}`;
     } else {
         localStorage.removeItem('accessToken');
         delete axios.defaults.headers.common.Authorization;
@@ -116,14 +118,12 @@ export const AuthProvider = ({ children }) => {
                     role: parseInt(decoded.Role),
                     fullName: decoded.FullName,
                 };
-                user;
-
-                toast.success('Login successfully!');
+                // toast.success('Login successfully!');
                 dispatch({ type: 'LOGIN', payload: { user } });
                 if (user.role === Roles.admin) {
                     navigate('/admin');
                 } else navigate('/');
-            }
+            } 
         } catch (error) {
             // console.error(error);
         }

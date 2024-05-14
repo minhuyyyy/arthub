@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { API_URL } from '../../utils/urls';
 import AddArtworkModal from '../Modals/AddArtworkModal';
 import { ArtworkType } from '../../types/artwork';
+import { uploadPost } from '../../services/postServices/postServices';
 
 function CreatePost() {
     const { userInfo } = useAuth();
@@ -42,28 +43,23 @@ function CreatePost() {
     };
 
     const handleSubmit = async () => {
-        await axios
-            .post(`${API_URL}/post`, {
-                title: formData.title,
-                description: formData.description,
-                memberId: parseInt(userInfo.id),
-                artworkId: selectedArtwork.artworkId,
-            })
-            .then((res) => {
-                if (res.status === 201) {
-                    toast.success('Artwork posted successfully!');
-                    setFormData({
-                        title: '',
-                        description: '',
-                    });
-                    setSelectedArtwork({});
-                }
-            })
-            .catch((err) => {
-                if (err.response.status === 400) {
-                    toast.error(err.response.data.errors.Name[0]);
-                } else toast.error('Something went wrong @@');
+        const res = await uploadPost(
+            formData.title,
+            formData.description,
+            Number(userInfo.id),
+            selectedArtwork.artworkId
+        );
+        if (res.status === 201) {
+            setFormData({
+                title: '',
+                description: '',
             });
+            setSelectedArtwork({});
+            window.location.reload();
+        }
+        if (res.status === 400) {
+            toast.error(res.data.errors.Name[0]);
+        } else toast.error('Something went wrong @@');
     };
 
     return (

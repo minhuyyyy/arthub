@@ -12,6 +12,7 @@ import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import CommentMenu from '../Menu/CommentMenu';
+import { Comment } from '../../types/comment';
 
 function Post({
     title,
@@ -19,27 +20,20 @@ function Post({
     image,
     postId,
     avatar,
-    fullName,
     accountId,
-    comments: initialComments,
+    comments,
 }: {
     title: string;
     description: string;
     image: string;
     postId: number;
     avatar: string;
-    fullName: string;
     accountId: number;
-    comments: {
-        commentId: number;
-        content: string;
-        memberId: number;
-        memberName: string;
-    }[];
+    comments: Comment[];
 }) {
     const [content, setContent] = useState('');
     const { userInfo } = useAuth();
-    const [comments, setComments] = useState(initialComments); // Initialize comments state with the initial comments
+    const [postComments, setComments] = useState<Array<Comment>>(comments); // Initialize comments state with the initial comments
     const [profile, setProfile] = useState({});
 
     const getProfile = async () => {
@@ -60,13 +54,13 @@ function Post({
                 memberId: userInfo.id,
             });
             if (response.status === 201) {
-                const newComment = {
+                const newComment: Comment = {
                     commentId: response.data.commentId,
                     content: content,
                     memberId: userInfo.id,
-                    memberName: userInfo.fullName,
+                    memberName: userInfo.fullName!,
                 };
-                setComments([...comments, newComment]);
+                setComments([...postComments, newComment]);
                 setContent(''); // Clear the input field after adding the comment
             }
         } catch (error) {
@@ -109,7 +103,7 @@ function Post({
                             alt={title}
                             style={{ width: '70%', margin: '0 auto' }}
                         />
-                        {comments.length > 0 && (
+                        {postComments.length > 0 && (
                             <>
                                 <Typography>Comments</Typography>
                                 <Box
@@ -121,7 +115,7 @@ function Post({
                                         marginBottom: '30px',
                                     }}
                                 >
-                                    {comments.map((comment) => (
+                                    {postComments.map((comment) => (
                                         <Box
                                             key={comment.commentId}
                                             sx={{
@@ -147,6 +141,8 @@ function Post({
                                                 {comment.content}
                                             </Typography>
                                             <CommentMenu
+                                                comments={postComments}
+                                                setComments={setComments}
                                                 ownComment={
                                                     comment.memberId ===
                                                     accountId

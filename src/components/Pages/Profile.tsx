@@ -2,8 +2,6 @@ import { Avatar, Box, Button, Grid, Popover, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { MouseEvent, useEffect, useState } from 'react';
-// import PreOrderModal from '../Modals/PreOrderModal';
-import axios from 'axios';
 import NotFound from '../../auth/NotFound';
 import { toast } from 'react-toastify';
 import CreatePost from './CreatePost';
@@ -16,6 +14,17 @@ import BoughtArtworks from '../ArtworkCard/BoughtArtworks';
 import { Roles } from '../../types/user';
 import FollowersModal from '../Modals/FollowersModal';
 import ViewArtworkModal from '../Modals/ViewArtworkModal';
+import {
+    followUser,
+    getUserFollowers,
+    getUserFollowersCount,
+    getUserProfile,
+} from '../../services/userServices/userServices';
+import {
+    getPostComments,
+    getPostsByUserId,
+} from '../../services/postServices/postServices';
+import { getArtworkById } from '../../services/artworkServices/artworkServices';
 
 type ImageType = {
     artworkId?: number;
@@ -34,7 +43,6 @@ interface IProfilePageProps {
 
 export default function ProfilePage() {
     document.title = 'Profile';
-    const API_URL = import.meta.env.VITE_API_URL;
     const { userId } = useParams();
     const { isAuthenticated, userInfo } = useAuth();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -51,55 +59,44 @@ export default function ProfilePage() {
     const getProfile = async () => {
         // setLoading(true);
         try {
-            await axios
-                .get(`${API_URL}/profile/${userId}`)
-                .then((res) => {
-                    if (res.status === 200) {
-                        setProfile(res.data);
-                        setImgList(res.data.viewArtworks);
-                        // setLoading(false);
-                    }
-                })
-                .catch((error) => {
-                    if (error.response.status === 404) {
-                        return <NotFound />;
-                    } else toast.error('Something went wrong');
-                });
+            const res = await getUserProfile(userId);
+            if (res.status === 200) {
+                setProfile(res.data);
+                setImgList(res.data.viewArtworks);
+                // setLoading(false);
+            } else {
+                if (res.status === 404) {
+                    return <NotFound />;
+                } else toast.error('Something went wrong');
+            }
         } catch (error) {
             // setLoading(false);
         }
     };
 
     const getFollowersNumber = async () => {
-        await axios
-            .get(`${API_URL}/follow/followers-count/${userId}`)
-            .then((res) => {
-                if (res.status === 200) {
-                    setFollowers(res.data.followersCount);
-                }
-            });
+        const res = await getUserFollowersCount(userId!);
+        if (res.status === 200) {
+            setFollowers(res.data.followersCount);
+        }
     };
 
     const getFollowers = async () => {
-        await axios
-            .get(`${API_URL}/follow/list-follower-id/${userId}`)
-            .then((res) => {
-                if (res.status === 200) {
-                    if (res.data.listFollowerId) {
-                        res.data.listFollowerId.find((id) => {
-                            if (id == userInfo.id) {
-                                isFollowing(true);
-                            }
-                        });
+        const res = await getUserFollowers(userId!);
+        if (res.status === 200) {
+            if (res.data.listFollowerId) {
+                res.data.listFollowerId.find((id: number) => {
+                    if (id == userInfo.id) {
+                        isFollowing(true);
                     }
-                }
-            });
+                });
+            }
+        }
     };
 
     const getPosts = async () => {
         try {
-            const postPromise = axios.get(`${API_URL}/post/user/${userId}`);
-            const postResponse = await postPromise;
+            const postResponse = await getPostsByUserId(userId!);
 
             if (postResponse.status === 200) {
                 const postData = postResponse.data.items;
@@ -109,16 +106,14 @@ export default function ProfilePage() {
                         await new Promise((resolve) =>
                             setTimeout(resolve, 500)
                         );
-                        return axios.get(
-                            `${API_URL}/artwork/${item.artworkId}`
-                        );
+                        return getArtworkById(item.artworkId);
                     }
                 );
 
                 const commentPromises = postData.map(async (item: PostType) => {
                     // Add a delay before making the comment API call
                     await new Promise((resolve) => setTimeout(resolve, 500));
-                    return axios.get(`${API_URL}/comment/post/${item.postId}`);
+                    return getPostComments(item.postId);
                 });
 
                 const [artworkResponses, commentResponses] = await Promise.all([
@@ -148,17 +143,11 @@ export default function ProfilePage() {
     };
 
     const handleFollowUser = async () => {
-        await axios
-            .post(`${API_URL}/follow`, {
-                artistId: userId,
-                followerId: userInfo.id,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    setFollowers(followers + 1);
-                    isFollowing(true);
-                }
-            });
+        const res = await followUser(userId!, userInfo.id);
+        if (res.status === 200) {
+            setFollowers(followers + 1);
+            isFollowing(true);
+        }
     };
 
     useEffect(() => {
@@ -233,7 +222,7 @@ export default function ProfilePage() {
                             {followers} followers
                         </div>
                         <FollowersModal
-                            userId={userId}
+                            userId={Number(userId)}
                             open={openFollowerModal}
                             isOpen={isModalOpen}
                         />
@@ -431,7 +420,7 @@ export default function ProfilePage() {
                         <Grid item sm={12}>
                             <Box width={'100%'}>
                                 {userInfo.role !== Roles.admin &&
-                                    userInfo.id == parseInt(userId) && (
+                                    userInfo.id == parseInt(userId!) && (
                                         <CreatePost />
                                     )}
                                 {posts.map((post) => (

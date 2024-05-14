@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { API_URL } from '../../utils/urls';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import { changePassword } from '../../services/userServices/userServices';
 
 function ChangePassword() {
     const { userInfo } = useAuth();
@@ -28,22 +29,12 @@ function ChangePassword() {
     });
 
     const handleFormSubmit = async (values) => {
-        console.log(values);
-        await axios
-            .post(`${API_URL}/reset-password`, {
-                emailAddress: userInfo.email,
-                newPassword: values.newPassword,
-                confirmPassword: values.confirmNewPassword,
-                token: token,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Password changed successfully');
-                }
-            })
-            .catch((err) => {
-                toast.error(err.response.data);
-            });
+        await changePassword(
+            userInfo.email,
+            values.newPassword,
+            values.confirmNewPassword,
+            token!
+        );
     };
 
     return (

@@ -1,11 +1,14 @@
+import { AxiosResponse } from "axios"
 import { apiService, handleApiResponse } from "../axios"
 
-export const login = async (emailAddress: string, accountPassword: string) => {
+export const login = async (emailAddress: string, accountPassword: string): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.post('/login', {
         emailAddress: emailAddress,
         accountPassword: accountPassword
     })
-    return handleApiResponse(res)
+    console.log(res.status);
+
+    return handleApiResponse(res, 'Login successfully!', 'Invalid email or password!')
 }
 
 export const register = async (email: string,
