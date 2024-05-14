@@ -1,10 +1,8 @@
 import { Box, Button, Input } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
-import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
-import { API_URL } from '../../utils/urls';
 import AddArtworkModal from '../Modals/AddArtworkModal';
 import { ArtworkType } from '../../types/artwork';
 import { uploadPost } from '../../services/postServices/postServices';

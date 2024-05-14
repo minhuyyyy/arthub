@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button, ThemeProvider, createTheme } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import { ArtworkType } from '../../types/artwork';
 import useAuth from '../../hooks/useAuth';
-import { toast } from 'react-toastify';
 import AppSuspense from '../Suspense';
 import { getUserBalance } from '../../services/BalanceServices/balanceServices';
 import {
