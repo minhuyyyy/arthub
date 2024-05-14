@@ -3,11 +3,10 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import UpdatePostModal from '../Modals/UpdatePostModal';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
 import ReportArtworkModal from '../Modals/ReportModal';
 import UpdateArtworkModal from '../Modals/UpdateArtworkModal';
+import { deleteArtwork } from '../../services/artworkServices/artworkServices';
 
 function MenuButton({
     artistId,
@@ -34,27 +33,19 @@ function MenuButton({
     };
 
     const handleDeletePost = async () => {
-        await axios
-            .delete(`${API_URL}/posts/${postId}`)
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Post deleted successfully!');
-                    isOpen(false);
-                }
-            })
-            .catch((err) => toast.error('Failed to delete'));
+        const res = await deleteArtwork(postId);
+        if (res.status === 200) {
+            toast.success('Post deleted successfully!');
+            isOpen(false);
+        } else toast.error('Failed to delete');
     };
 
     const handleDeleteArtwork = async () => {
-        await axios
-            .delete(`${API_URL}/artwork/${postId}`)
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Post deleted successfully!');
-                    isOpen(false);
-                }
-            })
-            .catch((err) => toast.error('Failed to delete'));
+        const res = await deleteArtwork(postId);
+        if (res.status === 200) {
+            toast.success('Artwork deleted successfully!');
+            isOpen(false);
+        } else toast.error('Failed to delete artwork');
     };
 
     // Create an array of JSX elements for menu items

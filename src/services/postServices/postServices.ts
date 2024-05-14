@@ -52,3 +52,8 @@ export const getPostComments = async (postId: number) => {
     const res = await apiService.get(`/comment/post/${postId}`)
     return handleApiResponse(res)
 }
+
+export const deletePost = async (postId: number): Promise<AxiosResponse<any, any>> => {
+    const res = apiService.delete(`posts/${postId}`)
+    return handleApiResponse(res)
+}

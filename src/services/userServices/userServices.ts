@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios"
 import { apiService, handleApiResponse } from "../axios"
 
-export const getUserProfile = async (userId: string): Promise<AxiosResponse<any, any>> => {
+export const getUserProfile = async (userId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.get(`/profile/${userId}`)
     return handleApiResponse(res)
 }
@@ -41,13 +41,14 @@ export const searchUserForAdmin = async (userEmail: string) => {
     return handleApiResponse(res)
 }
 
-export const followUser = async (artistId: number, followerId: number): Promise<AxiosResponse<any, any>> => {
-    const res = await apiService.post('/follow', {
-        artistId: artistId,
-        followerId: followerId
-    })
-    return handleApiResponse(res)
-}
+export const
+    followUser = async (artistId: number, followerId: number): Promise<AxiosResponse<any, any>> => {
+        const res = await apiService.post('/follow', {
+            artistId: artistId,
+            followerId: followerId
+        })
+        return handleApiResponse(res)
+    }
 
 export const unfollowUser = async (artistId: number, followerId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.delete('/follow', {

@@ -9,10 +9,10 @@ import {
 import { Send } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import useAuth from '../../hooks/useAuth';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import CommentMenu from '../Menu/CommentMenu';
 import { Comment } from '../../types/comment';
+import { postComment } from '../../services/postServices/postServices';
+import { getUserProfile } from '../../services/userServices/userServices';
 
 function Post({
     title,
@@ -37,22 +37,21 @@ function Post({
     const [profile, setProfile] = useState({});
 
     const getProfile = async () => {
-        await axios.get(`${API_URL}/profile/${accountId}`).then((res) => {
-            if (res.status === 200) {
-                setProfile(res.data);
-            }
-        });
+        const res = await getUserProfile(accountId);
+        if (res.status === 200) {
+            setProfile(res.data);
+        }
     };
     useEffect(() => {
         getProfile();
     }, [accountId]);
     const handlePostComment = async () => {
         try {
-            const response = await axios.post(`${API_URL}/comment`, {
-                content: content,
-                postId: postId,
-                memberId: Number(userInfo.id),
-            });
+            const response = await postComment(
+                content,
+                postId,
+                Number(userInfo.id)
+            );
             if (response.status === 201) {
                 const newComment: Comment = {
                     commentId: response.data.commentId,

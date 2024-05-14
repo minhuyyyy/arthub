@@ -1,8 +1,6 @@
 import { Delete, Edit, More, Send } from '@mui/icons-material';
 import { IconButton, Input, Menu, MenuItem } from '@mui/material';
 import { Dispatch, SetStateAction, useState } from 'react';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
 import {
     deleteComment,

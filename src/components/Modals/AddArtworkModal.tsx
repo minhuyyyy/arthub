@@ -1,10 +1,9 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import useAuth from '../../hooks/useAuth';
 import { ArtworkType } from '../../types/artwork';
+import { getArtworkByUserId } from '../../services/artworkServices/artworkServices';
 
 const style = {
     position: 'relative',
@@ -33,7 +32,7 @@ export default function AddArtworkModal({
     const handleClose = () => isOpen(false);
     const [artworks, setArtworks] = useState<ArtworkType[]>([]);
     const getArtwork = async () => {
-        const res = await axios.get(`${API_URL}/artwork/artist/${userInfo.id}`);
+        const res = await getArtworkByUserId(userInfo.id);
         if (res.status === 200) {
             setArtworks(res.data);
         }

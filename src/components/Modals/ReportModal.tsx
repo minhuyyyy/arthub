@@ -8,10 +8,9 @@ import {
     FormControlLabel,
     Radio,
 } from '@mui/material';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import { submitReport } from '../../services/reportServices/reportServices';
 
 const ReportArtworkModal = ({
     postId,
@@ -44,20 +43,10 @@ const ReportArtworkModal = ({
         setSelectedReason(event.target.value);
 
     const handleSubmit = async () => {
-        await axios
-            .post(`${API_URL}/report`, {
-                reportReason: selectedReason,
-                artworkId: postId,
-                reporterId: userInfo.id,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Artwork reported!');
-                }
-            })
-            .catch((err) => {
-                toast.error(err.response.data.title);
-            });
+        const res = await submitReport(selectedReason, postId, userInfo.id);
+        if (res.status === 200) {
+            toast.success('Artwork reported!');
+        } else toast.error(res.data.title);
         handleClose();
     };
 

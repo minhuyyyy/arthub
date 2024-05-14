@@ -1,11 +1,12 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_URL } from '../../utils/urls';
-import useAuth from '../../hooks/useAuth';
 import { Avatar, Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import {
+    getUserFollowers,
+    getUserProfile,
+} from '../../services/userServices/userServices';
 
 const style = {
     position: 'relative',
@@ -35,22 +36,17 @@ export default function AddArtworkModal({
     isOpen: Dispatch<SetStateAction<boolean>>;
     userId: number;
 }) {
-    const { userInfo } = useAuth();
     const handleClose = () => isOpen(false);
     const [followers, setFollowers] = useState<Follower[]>([]);
 
     const getFollowers = async () => {
         try {
-            const res = await axios.get(
-                `${API_URL}/follow/list-follower-id/${userId}`
-            );
+            const res = await getUserFollowers(userId.toString());
             if (res.status === 200) {
                 const followerIds = res.data.listFollowerId;
                 const followersData = await Promise.all(
-                    followerIds.map(async (id) => {
-                        const profileRes = await axios.get(
-                            `${API_URL}/profile/${id}`
-                        );
+                    followerIds.map(async (id: number) => {
+                        const profileRes = await getUserProfile(id);
                         return profileRes.data;
                     })
                 );

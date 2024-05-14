@@ -6,10 +6,12 @@ import {
     useEffect,
     useState,
 } from 'react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
-import { API_URL } from '../../utils/urls';
 import { PostType } from '../../types/post';
+import {
+    getPostById,
+    updatePost,
+} from '../../services/postServices/postServices';
 
 function UpdatePostModal({
     open,
@@ -38,7 +40,7 @@ function UpdatePostModal({
     };
 
     const getPost = async () => {
-        const postRes = await axios.get(`${API_URL}/post/${postId}`);
+        const postRes = await getPostById(postId);
         if (postRes.status === 200) {
             setPost(postRes.data);
         }
@@ -58,23 +60,13 @@ function UpdatePostModal({
     };
 
     const handleSubmit = async () => {
-        await axios
-            .put(`${API_URL}/post/${post?.postId}`, {
-                title: post?.title,
-                description: post?.description,
-                postId: post?.postId,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Artwork posted successfully!');
-                    isOpen(false);
-                }
-            })
-            .catch((err) => {
-                if (err.response.status === 400) {
-                    toast.error(err.response.data.errors.Name[0]);
-                } else toast.error('Something went wrong @@');
-            });
+        const res = await updatePost(post?.title, post?.description, postId);
+        if (res.status === 200) {
+            toast.success('Artwork posted successfully!');
+            isOpen(false);
+        } else if (res.status === 400) {
+            toast.error(res.data.errors.Name[0]);
+        } else toast.error('Something went wrong @@');
     };
 
     return (

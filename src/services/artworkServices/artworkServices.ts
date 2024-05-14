@@ -25,7 +25,7 @@ export const getUserOrders = async (userId: string) => {
     return handleApiResponse(res)
 }
 
-export const getArtworkById = async (artworkId: string): Promise<AxiosResponse<any, any>> => {
+export const getArtworkById = async (artworkId: number): Promise<AxiosResponse<any, any>> => {
     const res = await apiService.get(`/artwork/${artworkId}`)
     return handleApiResponse(res)
 }
@@ -60,7 +60,21 @@ export const deleteArtwork = async (artworkId: number) => {
     return handleApiResponse(res, 'Artwwork deleted successfully!', 'Failed to delete artwork')
 }
 
-export const getGenres = async () => {
+export const updateArtwork = async (artworkId: number, name: string, description: string, image: string, price: number, artistId: number, isPublic: boolean, isBuyAvailable: boolean) => {
+    const res = await apiService.put(`/artwork/${artworkId}`, {
+        name: name,
+        description: description,
+        image: image,
+        price: price,
+        artworkId: artworkId,
+        artistId: artistId,
+        isPublic: isPublic,
+        isBuyAvailable: isBuyAvailable
+    })
+    return handleApiResponse(res)
+}
+
+export const getArtworkGenres = async () => {
     const res = await apiService.get('/genres')
     return handleApiResponse(res)
 }

@@ -24,13 +24,16 @@ import {
     useEffect,
     useState,
 } from 'react';
-import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
-import { API_URL } from '../../utils/urls';
 import { ArtworkType } from '../../types/artwork';
 import { GenreType } from '../../types/genre';
+import {
+    getArtworkById,
+    getArtworkGenres,
+    updateArtwork,
+} from '../../services/artworkServices/artworkServices';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -79,24 +82,19 @@ function UpdateArtworkModal({
     const [artwork, setArtwork] = useState<ArtworkType>({});
     const [buyStatus, canBuy] = useState(false);
     const getArtwork = () => {
-        axios
-            .get(`${API_URL}/artwork/${artworkId}`)
-            .then((res) => {
-                if (res.status === 200) {
-                    setArtwork(res.data);
-                    setPhotoUrl(res.data.image);
-                    canBuy(res.data.isBuyAvailable);
-                    // setSelectedGenre(res.data.genreId);
-                }
-            })
-            .catch((err) => toast.error(err.response.data.title));
+        const res = await getArtworkById(artworkId);
+        if (res.status === 200) {
+            setArtwork(res.data);
+            setPhotoUrl(res.data.image);
+            canBuy(res.data.isBuyAvailable);
+            // setSelectedGenre(res.data.genreId);
+        } else toast.error(res.data.title);
     };
-    const getGenres = () => {
-        axios.get(`${API_URL}/genres`).then((res) => {
-            if (res.status === 200) {
-                setGenres(res.data); // Update genres state
-            }
-        });
+    const getGenres = async () => {
+        const res = await getArtworkGenres();
+        if (res.status === 200) {
+            setGenres(res.data); // Update genres state
+        }
     };
     const setName = () => {
         const genreName = genres.find(
@@ -151,34 +149,22 @@ function UpdateArtworkModal({
     };
 
     const handleSubmit = async () => {
-        await axios
-            .put(`${API_URL}/artwork/${artworkId}`, {
-                name: artwork?.name,
-                description: artwork?.description,
-                image: photoUrl,
-                price: artwork?.price,
-                artworkId: artworkId,
-                artistId: userInfo.id,
-                // owner: {
-                //     artistName: userInfo.username,
-                //     artistAvatar: userInfo.imageUrl,
-                // },
-                isPublic: true,
-                isBuyAvailable: buyStatus,
-                // genreName: selectedGenre.toString() || newGenre.toString(),
-                // isPublic: true,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    toast.success('Artwork updated successfully!');
-                    handleClose();
-                }
-            })
-            .catch((err) => {
-                if (err.response.status === 400) {
-                    toast.error(err.response.data.errors.Name[0]);
-                } else toast.error('Something went wrong @@');
-            });
+        const res = await updateArtwork(
+            artworkId,
+            artwork.name,
+            artwork.description,
+            photoUrl,
+            artwork.price,
+            userInfo.id,
+            true,
+            buyStatus
+        );
+        if (res.status === 200) {
+            toast.success('Artwork updated successfully!');
+            handleClose();
+        } else if (res.status === 400) {
+            toast.error(res.data.errors.Name[0]);
+        } else toast.error('Something went wrong @@');
     };
     const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         canBuy(e.target.checked);
