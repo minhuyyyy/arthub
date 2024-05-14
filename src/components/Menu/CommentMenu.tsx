@@ -4,7 +4,10 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../utils/urls';
 import { toast } from 'react-toastify';
-import { deleteComment } from '../../services/postServices/postServices';
+import {
+    deleteComment,
+    updateComment,
+} from '../../services/postServices/postServices';
 import { Comment } from '../../types/comment';
 
 function CommentMenu({
@@ -51,13 +54,18 @@ function CommentMenu({
 
     const handleUpdateComment = async () => {
         try {
-            await axios.put(`${API_URL}/comment/${commentId}`, {
-                commentId: commentId,
-                content: updatedContent,
-            });
-            toast.success('Comment updated successfully!');
-            setIsEditing(false);
-            window.location.reload();
+            const res = await updateComment(commentId, updatedContent);
+            if (res.status === 200) {
+                toast.success('Comment updated successfully!');
+                setIsEditing(false);
+                setComments((prev) =>
+                    prev.map((comment) =>
+                        comment.commentId === commentId
+                            ? { ...comment, content: updatedContent }
+                            : comment
+                    )
+                );
+            }
         } catch (error) {
             // console.error('Error updating comment:', error);
             toast.error('Failed to update comment');

@@ -51,13 +51,13 @@ function Post({
             const response = await axios.post(`${API_URL}/comment`, {
                 content: content,
                 postId: postId,
-                memberId: userInfo.id,
+                memberId: Number(userInfo.id),
             });
             if (response.status === 201) {
                 const newComment: Comment = {
                     commentId: response.data.commentId,
                     content: content,
-                    memberId: userInfo.id,
+                    memberId: Number(userInfo.id),
                     memberName: userInfo.fullName!,
                 };
                 setComments([...postComments, newComment]);
