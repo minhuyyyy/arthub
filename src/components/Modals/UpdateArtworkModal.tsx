@@ -81,7 +81,7 @@ function UpdateArtworkModal({
 
     const [artwork, setArtwork] = useState<ArtworkType>({});
     const [buyStatus, canBuy] = useState(false);
-    const getArtwork = () => {
+    const getArtwork = async () => {
         const res = await getArtworkById(artworkId);
         if (res.status === 200) {
             setArtwork(res.data);

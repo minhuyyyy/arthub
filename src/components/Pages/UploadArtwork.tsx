@@ -16,12 +16,14 @@ import {
 } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import { handleBudgetChange } from '../../utils/utils';
 import { toast } from 'react-toastify';
-import { API_URL } from '../../utils/urls';
 import { GenreType } from '../../types/genre';
+import {
+    getArtworkGenres,
+    uploadArtwork,
+} from '../../services/artworkServices/artworkServices';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -52,11 +54,10 @@ function UploadArtwork() {
     const [buyStatus, canBuy] = useState(false);
 
     const fetchGenres = async () => {
-        await axios.get(`${API_URL}/genres`).then((res) => {
-            if (res.status === 200) {
-                setGenres(res.data);
-            }
-        });
+        const res = await getArtworkGenres();
+        if (res.status === 200) {
+            setGenres(res.data);
+        }
     };
 
     const handleGenreChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -99,41 +100,30 @@ function UploadArtwork() {
     };
 
     const handleSubmit = async () => {
-        await axios
-            .post(`${API_URL}/artwork`, {
-                name: formData.title,
-                description: formData.description,
-                image: photoUrl,
-                price: formData.price,
-                artistId: userInfo.id,
-                // owner: {
-                //     artistName: userInfo.username,
-                //     artistAvatar: userInfo.imageUrl,
-                // },
-                isPublic: true,
-                isBuyAvailable: buyStatus,
-                genreName: selectedGenre.toString() || newGenre.toString(),
-                // isPublic: true,
-            })
-            .then((res) => {
-                if (res.status == 201) {
-                    toast.success('Artwork posted successfully!');
-                    setFormData({
-                        title: '',
-                        description: '',
-                        price: 0,
-                    });
-                    setSelectedGenre('');
-                    canBuy(false);
-                    setPhoto(null);
-                    setPhotoUrl('');
-                }
-            })
-            .catch((err) => {
-                if (err.response.status === 400) {
-                    toast.error(err.response.data.errors.Name[0]);
-                } else toast.error('Something went wrong @@');
+        const res = await uploadArtwork(
+            formData.title,
+            formData.description,
+            photoUrl,
+            formData.price,
+            userInfo.id,
+            true,
+            buyStatus,
+            selectedGenre.toString() || newGenre.toString()
+        );
+        if (res.status == 201) {
+            toast.success('Artwork posted successfully!');
+            setFormData({
+                title: '',
+                description: '',
+                price: 0,
             });
+            setSelectedGenre('');
+            canBuy(false);
+            setPhoto(null);
+            setPhotoUrl('');
+        } else if (res.status === 400) {
+            toast.error(res.data.errors.Name[0]);
+        } else toast.error('Something went wrong @@');
     };
     const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         canBuy(e.target.checked);
